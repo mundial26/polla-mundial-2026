@@ -215,7 +215,7 @@ tr:hover td{background:#faf8f4}
 .regla-item:last-child{border-bottom:none}
 
 /* ── MUSIC ───────────────────────────────────────── */
-#musicBtn{position:fixed;bottom:24px;left:20px;z-index:500;width:44px;height:44px;border-radius:50%;background:var(--g);color:#fff;border:none;font-size:18px;cursor:pointer;box-shadow:var(--shm);display:flex;align-items:center;justify-content:center;transition:.2s}
+#musicBtn{position:fixed;bottom:24px;left:20px;z-index:500;width:44px;height:44px;border-radius:50%;background:var(--g);color:#fff;border:none;font-size:18px;cursor:pointer;box-shadow:var(--shm);display:flex;align-items:center;justify-content:center;transition:.2s;text-decoration:none}
 #musicBtn:hover{background:var(--g2);transform:scale(1.07)}
 #musicBtn.playing{background:var(--o);color:var(--g)}
 #ytFrame{position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;pointer-events:none}
@@ -715,6 +715,37 @@ tr:hover td{background:#faf8f4}
 <div id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCSibUXA-wthPCANrd594ZLe9tBPZJRQXU",
+    authDomain: "polla-mundial-2026-4536e.firebaseapp.com",
+    databaseURL: "https://polla-mundial-2026-4536e-default-rtdb.firebaseio.com",
+    projectId: "polla-mundial-2026-4536e",
+    storageBucket: "polla-mundial-2026-4536e.firebasestorage.app",
+    messagingSenderId: "822706640703",
+    appId: "1:822706640703:web:66576492873e9a4f24e58a",
+    measurementId: "G-5JJK5HL1P1"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+
+  // Exponer funciones Firebase al scope global para que el código principal las use
+  window._fbRef = (path) => ref(database, path);
+  window._fbSet = (path, value) => set(ref(database, path), value);
+  window._fbGet = (path) => get(ref(database, path));
+  window._fbOnValue = (path, callback) => onValue(ref(database, path), callback);
+  window._fbReady = true;
+
+  // Disparar evento cuando Firebase esté listo
+  window.dispatchEvent(new Event('firebaseReady'));
+</script>
+
 <script>
 // ════════════════════════════════════════════════
 // FIXTURE OFICIAL FIFA MUNDIAL 2026
@@ -875,31 +906,119 @@ let DB = {
 };
 let currentUser=null, isAdmin=false, charts={};
 
-function loadDB(){
-  const d=localStorage.getItem('polla2026v3');
-  if(d)try{
-    const parsed=JSON.parse(d);
-    // Mantener estructura base de partidos, solo restaurar resultados y datos dinámicos
-    if(parsed.partidos){
-      parsed.partidos.forEach(saved=>{
-        const idx=DB.partidos.findIndex(p=>p.id===saved.id);
-        if(idx>=0){DB.partidos[idx].gol1=saved.gol1;DB.partidos[idx].gol2=saved.gol2;
-          // actualizar equipos en eliminatorios por si se editaron
-          if(saved.fase!=='Grupos'){DB.partidos[idx].equipo1=saved.equipo1;DB.partidos[idx].equipo2=saved.equipo2;}
-        }
-      });
-    }
-    DB.participantes=parsed.participantes||[];
-    DB.pronosticos=parsed.pronosticos||{};
-    DB.config={...DB.config,...(parsed.config||{})};
-    if(DB.config.puntoDiferencia===undefined) DB.config.puntoDiferencia=3;
-    DB.premiosDesc={...DB.premiosDesc,...(parsed.premiosDesc||{})};
-    DB.semanasHabilitadas=parsed.semanasHabilitadas||{'S1':true};
-    DB.semanasCerradas=parsed.semanasCerradas||{};
-    DB.semanasCierres=parsed.semanasCierres||{};
-  }catch(e){}
+// ════════════════════════════════════════════════
+// FIREBASE — carga y guarda datos en la nube
+// ════════════════════════════════════════════════
+
+// Muestra overlay de carga mientras conecta
+function mostrarCargando(msg){
+  let el=document.getElementById('fbLoadingOverlay');
+  if(!el){
+    el=document.createElement('div');
+    el.id='fbLoadingOverlay';
+    el.style.cssText='position:fixed;inset:0;background:rgba(8,22,14,.95);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:16px;font-family:\'DM Sans\',sans-serif';
+    el.innerHTML='<div style="font-size:48px">⚽</div><div id="fbLoadingMsg" style="font-size:16px;letter-spacing:1px"></div>';
+    document.body.appendChild(el);
+  }
+  document.getElementById('fbLoadingMsg').textContent=msg||'Conectando...';
 }
-function saveDB(){localStorage.setItem('polla2026v3',JSON.stringify(DB));}
+function ocultarCargando(){
+  const el=document.getElementById('fbLoadingOverlay');
+  if(el)el.remove();
+}
+
+function applyParsed(parsed){
+  if(!parsed) return;
+  if(parsed.partidos){
+    parsed.partidos.forEach(saved=>{
+      const idx=DB.partidos.findIndex(p=>p.id===saved.id);
+      if(idx>=0){
+        DB.partidos[idx].gol1=saved.gol1;
+        DB.partidos[idx].gol2=saved.gol2;
+        if(saved.fase!=='Grupos'){DB.partidos[idx].equipo1=saved.equipo1;DB.partidos[idx].equipo2=saved.equipo2;}
+      }
+    });
+  }
+  DB.participantes=parsed.participantes||[];
+  DB.pronosticos=parsed.pronosticos||{};
+  DB.config={...DB.config,...(parsed.config||{})};
+  if(DB.config.puntoDiferencia===undefined) DB.config.puntoDiferencia=3;
+  DB.premiosDesc={...DB.premiosDesc,...(parsed.premiosDesc||{})};
+  DB.semanasHabilitadas=parsed.semanasHabilitadas||{'S1':true};
+  DB.semanasCerradas=parsed.semanasCerradas||{};
+  DB.semanasCierres=parsed.semanasCierres||{};
+}
+
+// saveDB: guarda en Firebase (y también en localStorage como respaldo offline)
+function saveDB(){
+  // Respaldo local siempre
+  localStorage.setItem('polla2026v3',JSON.stringify(DB));
+  // Guardar en Firebase si está disponible
+  if(window._fbReady && window._fbSet){
+    // Serializar partidos solo con goles y equipos dinámicos (eliminatorios)
+    const partidosToSave = DB.partidos.map(p=>({
+      id:p.id, fase:p.fase, equipo1:p.equipo1, equipo2:p.equipo2,
+      gol1:p.gol1, gol2:p.gol2
+    }));
+    const dataToSave = {
+      participantes: DB.participantes,
+      partidos: partidosToSave,
+      pronosticos: DB.pronosticos,
+      config: DB.config,
+      premiosDesc: DB.premiosDesc,
+      semanasHabilitadas: DB.semanasHabilitadas,
+      semanasCerradas: DB.semanasCerradas,
+      semanasCierres: DB.semanasCierres
+    };
+    window._fbSet('polla2026v3', dataToSave).catch(e=>console.warn('Firebase save error:',e));
+  }
+}
+
+// loadDB: escucha cambios en tiempo real desde Firebase
+function loadDB(){
+  // 1. Primero cargamos desde localStorage para no mostrar pantalla vacía
+  const local=localStorage.getItem('polla2026v3');
+  if(local){try{applyParsed(JSON.parse(local));}catch(e){}}
+
+  // 2. Cuando Firebase esté listo, suscribimos al cambio en tiempo real
+  function suscribirFirebase(){
+    mostrarCargando('Conectando a la nube...');
+    window._fbOnValue('polla2026v3', (snapshot)=>{
+      ocultarCargando();
+      const data=snapshot.val();
+      if(data){
+        applyParsed(data);
+        // Sincronizar localStorage con lo que llegó de Firebase
+        localStorage.setItem('polla2026v3',JSON.stringify(data));
+        // Si ya hay sesión activa, re-renderizar la página actual
+        if(currentUser){
+          const activePage=document.querySelector('.page.active');
+          if(activePage){
+            const name=activePage.id.replace('page-','');
+            renderPage(name);
+          }
+          populateLoginSelect();
+        }
+      } else {
+        // Base de datos vacía: primer uso, no hay datos todavía
+        console.log('Firebase vacío — primera vez o base limpia');
+      }
+    });
+  }
+
+  if(window._fbReady){
+    suscribirFirebase();
+  } else {
+    window.addEventListener('firebaseReady', suscribirFirebase, {once:true});
+    // Timeout de seguridad: si Firebase no responde en 5s, continuar offline
+    setTimeout(()=>{
+      if(!document.getElementById('fbLoadingOverlay')) return;
+      ocultarCargando();
+      console.warn('Firebase no disponible — modo offline');
+    }, 5000);
+  }
+}
+
 loadDB();
 
 // ════════════════════════════════════════════════
@@ -1404,7 +1523,7 @@ function renderInicio(){
       document.getElementById('cdEstado').textContent='';
       return;
     }
-    document.getElementById('cdPartidoLabel').textContent=
+    document.getElementById('cdPartidoLabel').innerHTML=
       `⏳ Cierre: ${bandera(proxPartido.equipo1)} ${nombreCorto(proxPartido.equipo1)} vs ${nombreCorto(proxPartido.equipo2)} ${bandera(proxPartido.equipo2)}`;
     const diff=proxCierre-now;
     const d=Math.floor(diff/86400000);
@@ -2046,7 +2165,7 @@ function importarDatos(e){
   };
   r.readAsText(f);
 }
-function resetearDatos(){if(!confirm('¿RESETEAR TODO? Perderás todos los datos.'))return;if(!confirm('¿CONFIRMAS?'))return;localStorage.removeItem('polla2026v3');location.reload();}
+function resetearDatos(){if(!confirm('¿RESETEAR TODO? Perderás todos los datos.'))return;if(!confirm('¿CONFIRMAS?'))return;localStorage.removeItem('polla2026v3');if(window._fbReady&&window._fbSet){window._fbSet('polla2026v3',null).then(()=>location.reload()).catch(()=>location.reload());}else{location.reload();}}
 
 // ════════════════════════════════════════════════
 // ADMIN — ESTADÍSTICAS
@@ -2680,95 +2799,20 @@ function borrarCierreAuto(semId){
 populateLoginSelect();
 </script>
 
-<!-- YouTube player oculto — Dai Dai Shakira x Burna Boy (canción oficial Mundial 2026) -->
-<iframe id="ytFrame"
-  src="https://www.youtube.com/embed/WaIpa_G0l-U?autoplay=0&loop=1&playlist=WaIpa_G0l-U&enablejsapi=1&controls=0&mute=0"
-  allow="autoplay; encrypted-media"
-  allowfullscreen>
-</iframe>
-
-<!-- Botón flotante música -->
-<button id="musicBtn" title="Reproducir / Pausar — Dai Dai (Shakira)" onclick="toggleMusic()">🔇</button>
+<!-- Botón flotante Spotify — Dai Dai (Shakira x Burna Boy, canción oficial Mundial 2026) -->
+<a id="musicBtn"
+   href="https://open.spotify.com/track/1BxfuPKGuaTgP7aM0Bbdwr"
+   target="_blank"
+   rel="noopener"
+   title="🎵 Escuchar Dai Dai — Shakira x Burna Boy (Spotify)">🎵</a>
 
 <script>
-// ── MUSIC PLAYER ──
-let musicPlaying = false;
-let ytReady = false;
-let ytPlayer = null;
-
-// Cargar YouTube IFrame API
-(function(){
-  const tag = document.createElement('script');
-  tag.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(tag);
-})();
-
-function onYouTubeIframeAPIReady(){
-  ytPlayer = new YT.Player('ytFrame', {
-    videoId: 'WaIpa_G0l-U',
-    playerVars: {
-      autoplay: 0,
-      loop: 1,
-      playlist: 'WaIpa_G0l-U',
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      rel: 0,
-      modestbranding: 1,
-    },
-    events: {
-      onReady: function(e){
-        ytReady = true;
-        document.getElementById('musicBtn').style.display = 'flex';
-        // Arrancar automáticamente cuando el usuario ya hizo login
-        if(typeof currentUser !== 'undefined' && currentUser){
-          startMusic();
-        }
-      },
-      onStateChange: function(e){
-        // Si termina (estado 0) volver a reproducir
-        if(e.data === YT.PlayerState.ENDED){
-          ytPlayer.seekTo(0);
-          ytPlayer.playVideo();
-        }
-      }
-    }
-  });
-}
-
-function startMusic(){
-  if(!ytReady || !ytPlayer) return;
-  ytPlayer.setVolume(30);
-  ytPlayer.playVideo();
-  musicPlaying = true;
-  const btn = document.getElementById('musicBtn');
-  btn.textContent = '🔊';
-  btn.classList.add('playing');
-  btn.title = 'Pausar música — Dai Dai (Shakira)';
-}
-
+// La música ahora abre Spotify en una nueva pestaña — sin problemas de autoplay
 function toggleMusic(){
-  if(!ytReady || !ytPlayer) return;
-  if(musicPlaying){
-    ytPlayer.pauseVideo();
-    musicPlaying = false;
-    const btn = document.getElementById('musicBtn');
-    btn.textContent = '🔇';
-    btn.classList.remove('playing');
-    btn.title = 'Reproducir — Dai Dai (Shakira)';
-  } else {
-    startMusic();
-  }
+  window.open('https://open.spotify.com/track/1BxfuPKGuaTgP7aM0Bbdwr','_blank','noopener');
 }
-
-// Arrancar música tras login — se llama desde loginParticipante() y loginAdmin()
-function iniciarMusicaPostLogin(){
-  setTimeout(()=>{
-    if(ytReady && ytPlayer && !musicPlaying){
-      startMusic();
-    }
-  }, 800);
-}
+// Stub vacío — se llama tras login pero ya no hace falta arrancar nada automático
+function iniciarMusicaPostLogin(){}
 </script>
 </body>
 </html>
