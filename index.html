@@ -4,224 +4,419 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>⚽ Polla Mundial FIFA 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:wght@400;600;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 <style>
-/* ── TOKENS ─────────────────────────────────────── */
+/* ── DESIGN TOKENS ──────────────────────────────── */
 :root{
-  --g:#1a5c38;--g2:#227a4a;--g3:#0d3520;
-  --o:#c8a84b;--o2:#e8c96a;--r:#c0392b;
-  --bg:#f2efe9;--bg2:#ffffff;--bg3:#f8f6f2;
-  --tx:#1a1a1a;--tx2:#666;--br:#e2ddd6;
-  --rad:12px;--rads:8px;
-  --sh:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.05);
-  --shm:0 4px 24px rgba(0,0,0,.12);
+  /* Colores */
+  --g:#00FF88;--g2:#00CC6A;--g3:#030610;
+  --o:#FFB800;--o2:#FFD700;
+  --r:#FF4444;
+  --pu:#8B2FFF;--pu2:#5A14CC;
+  /* Fondos */
+  --bg:#030610;--bg2:rgba(7,12,34,.72);--bg3:rgba(255,255,255,.05);
+  /* Texto */
+  --tx:#F2F6FF;--tx2:#C5CFEE;--tx3:#7888B8;
+  /* Bordes */
+  --br:rgba(255,255,255,.09);--br2:rgba(255,255,255,.16);
+  /* Glass */
+  --cbg:rgba(0,0,0,.45);--cbd:rgba(255,255,255,.09);
+  /* Radios */
+  --rad:12px;--rads:8px;--radfull:999px;
+  /* Fuentes */
+  --fh:'Bebas Neue',sans-serif;
+  --fb:'Exo 2',sans-serif;
+  --fu:'Rajdhani',sans-serif;
+  /* Sombras */
+  --sh:0 4px 20px rgba(0,0,0,.5);
+  --sh-card:0 0 0 1px rgba(255,255,255,.06),0 4px 24px rgba(0,0,0,.4);
+  --shm:0 8px 40px rgba(0,0,0,.7);
+  --sh-hover:0 8px 32px rgba(0,0,0,.6),0 0 0 1px rgba(0,255,136,.12);
 }
-/* ── ALIASES para código JS existente ─────────────── */
+/* ── ALIASES legado JS ── */
 :root{
   --verde:var(--g);--verde2:var(--g2);--oro:var(--o);--oro2:var(--o2);
-  --rojo:var(--r);--bg:var(--bg);--bg2:var(--bg2);
-  --texto:var(--tx);--texto2:var(--tx2);--borde:var(--br);--radio:var(--rad);
+  --rojo:var(--r);--texto:var(--tx);--texto2:var(--tx2);
+  --borde:var(--br);--radio:var(--rad);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+html{overflow-x:hidden}
+body{font-family:var(--fb);background:var(--bg);color:var(--tx);min-height:100vh;-webkit-font-smoothing:antialiased}
 
-/* ── HEADER ──────────────────────────────────────── */
-header{background:var(--g);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2)}
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:0 20px;max-width:1200px;margin:0 auto;height:54px;gap:12px}
-.logo{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:2px;color:var(--o2);display:flex;align-items:center;gap:10px;white-space:nowrap}
-.logo span{color:rgba(255,255,255,.55);font-size:10px;display:block;letter-spacing:3px;font-family:'DM Sans',sans-serif;font-weight:500;line-height:1}
+/* ── FONDO CAPAS FIJAS ──────────────────────────── */
+.bg-photo{position:fixed;inset:0;z-index:-5;background:url('https://pollamundialista.com/wp-content/themes/astra-child/images/fondo-estadio.jpg') center/cover no-repeat;opacity:.14}
+.bg-night{position:fixed;inset:0;z-index:-4;background:#020410}
+.bg-spotlights{position:fixed;inset:0;z-index:-3;pointer-events:none;background:radial-gradient(ellipse 40% 55% at 0% 0%,rgba(255,240,160,.05) 0%,transparent 70%),radial-gradient(ellipse 40% 55% at 100% 0%,rgba(255,240,160,.05) 0%,transparent 70%);animation:spotPulse 7s ease-in-out infinite}
+@keyframes spotPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.bg-neon{position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 50% 30% at 50% 100%,rgba(0,200,80,.04) 0%,transparent 65%),radial-gradient(ellipse 60% 25% at 15% 5%,rgba(80,30,180,.05) 0%,transparent 60%),radial-gradient(ellipse 60% 25% at 85% 5%,rgba(80,30,180,.05) 0%,transparent 60%)}
+
+/* ── HEADER ─────────────────────────────────────── */
+header{background:rgba(3,6,16,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(0,255,136,.1)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:0 32px;max-width:1200px;margin:0 auto;height:62px;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;white-space:nowrap}
 nav#mainNav{display:flex;gap:1px}
-nav#mainNav button{background:transparent;border:none;color:rgba(255,255,255,.6);padding:7px 13px;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;transition:.15s;white-space:nowrap}
-nav#mainNav button:hover{background:rgba(255,255,255,.1);color:#fff}
-nav#mainNav button.active{background:rgba(255,255,255,.13);color:#fff;box-shadow:inset 0 -2px 0 var(--o2)}
-.user-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);padding:5px 13px;border-radius:20px;font-size:12px;display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;transition:.15s}
-.user-badge:hover{background:rgba(255,255,255,.18)}
-.rol-badge{font-size:10px;padding:2px 7px;border-radius:10px;background:var(--o);color:var(--g);font-weight:700;margin-left:2px}
+nav#mainNav button{background:transparent;border:none;color:rgba(255,255,255,.45);padding:8px 14px;border-radius:6px;cursor:pointer;font-family:var(--fu);font-size:13px;font-weight:700;transition:.15s;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
+nav#mainNav button:hover{color:#fff;background:rgba(255,255,255,.07)}
+nav#mainNav button.active{color:var(--g);background:rgba(0,255,136,.1);box-shadow:inset 0 0 0 1px rgba(0,255,136,.28);text-shadow:0 0 12px rgba(0,255,136,.4)}
+.user-badge{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:7px 16px;border-radius:var(--radfull);font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;white-space:nowrap;transition:.15s;font-family:var(--fu);text-transform:uppercase;letter-spacing:.3px}
+.user-badge:hover{background:rgba(255,255,255,.12)}
+.rol-badge{font-size:10px;padding:2px 8px;border-radius:var(--radfull);background:var(--o2);color:#000;font-weight:700;margin-left:2px}
 
-/* ── BOTTOM NAV ──────────────────────────────────── */
-#bottomNav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;background:var(--g);box-shadow:0 -1px 0 rgba(255,255,255,.07),0 -4px 20px rgba(0,0,0,.18)}
+/* ── BOTTOM NAV ─────────────────────────────────── */
+#bottomNav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;background:rgba(3,6,16,.95);backdrop-filter:blur(20px);border-top:1px solid rgba(0,255,136,.1)}
 #bottomNav .bnav-inner{display:flex;max-width:480px;margin:0 auto}
-#bottomNav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 4px 10px;background:transparent;border:none;border-top:2px solid transparent;cursor:pointer;color:rgba(255,255,255,.45);font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;transition:.15s;line-height:1}
-#bottomNav button .bnav-icon{font-size:20px;line-height:1}
-#bottomNav button:hover{color:#fff;background:rgba(255,255,255,.06)}
-#bottomNav button.active{color:var(--o2);border-top-color:var(--o2)}
-@media(min-width:768px){#bottomNav{display:none!important};body.logged-in main{padding-bottom:24px};body.logged-in #musicBtn{bottom:24px};nav#mainNav{display:flex!important}}
-@media(max-width:767px){nav#mainNav{display:none!important};#bottomNav.visible{display:block};body.logged-in main{padding-bottom:76px};body.logged-in #musicBtn{bottom:78px}}
+#bottomNav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px 12px;background:transparent;border:none;border-top:2px solid transparent;cursor:pointer;color:rgba(255,255,255,.3);font-family:var(--fu);font-size:10px;font-weight:700;transition:.15s;line-height:1;letter-spacing:.5px;text-transform:uppercase}
+#bottomNav button .bnav-icon{font-size:19px;line-height:1}
+#bottomNav button:hover{color:rgba(255,255,255,.7)}
+#bottomNav button.active{color:var(--g);border-top-color:var(--g);text-shadow:0 0 10px rgba(0,255,136,.4)}
+@media(min-width:768px){#bottomNav{display:none!important};body.logged-in main{padding-bottom:24px};nav#mainNav{display:flex!important}}
+@media(max-width:767px){nav#mainNav{display:none!important};#bottomNav.visible{display:block};body.logged-in main{padding-bottom:80px}}
 
-/* ── LAYOUT ──────────────────────────────────────── */
-main{max-width:1200px;margin:0 auto;padding:24px 16px}
+/* ── LAYOUT ─────────────────────────────────────── */
+main{max-width:1200px;margin:0 auto;padding:32px 28px;position:relative;z-index:1}
+@media(max-width:600px){main{padding:20px 16px}}
 .page{display:none}.page.active{display:block}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media(max-width:700px){.grid-2,.grid-4{grid-template-columns:1fr 1fr}}
+.page.scroll-section{display:none} /* controlado por body.parallax-active */
+.page.modal-page{display:block}    /* controlado por transform */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:700px){.grid-2,.grid-4{grid-template-columns:1fr 1fr;gap:14px}}
 @media(max-width:460px){.grid-2,.grid-4{grid-template-columns:1fr}}
 
-/* ── CARD ────────────────────────────────────────── */
-.card{background:var(--bg2);border-radius:var(--rad);border:1px solid var(--br);padding:20px;margin-bottom:16px;box-shadow:var(--sh)}
-.card-title{font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:.5px;color:var(--g);margin-bottom:14px}
+/* ── CARD ─────────────────────────────────────────── */
+.card{background:var(--cbg);border-radius:var(--rad);border:1px solid var(--cbd);padding:24px;margin-bottom:20px;box-shadow:var(--sh-card);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.card-title{font-family:var(--fu);font-size:15px;font-weight:700;color:var(--tx);margin-bottom:18px;letter-spacing:.3px;text-transform:uppercase}
 
-/* ── STATS ───────────────────────────────────────── */
-.stat-card{background:var(--bg2);border-radius:var(--rad);border:1px solid var(--br);padding:16px;text-align:center;box-shadow:var(--sh)}
-.stat-num{font-family:'Bebas Neue',cursive;font-size:34px;color:var(--g);line-height:1}
-.stat-label{font-size:11px;color:var(--tx2);margin-top:3px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+/* ── STATS ─────────────────────────────────────────── */
+.stat-card{background:var(--cbg);border-radius:var(--rad);border:1px solid var(--cbd);padding:22px 20px;text-align:center;backdrop-filter:blur(10px);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent)}
+.stat-num{font-family:var(--fh);font-size:42px;color:var(--g);line-height:1;margin-top:6px;text-shadow:0 0 20px rgba(0,255,136,.4)}
+.stat-label{font-size:11px;color:var(--tx3);margin-top:6px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;font-family:var(--fu)}
 
-/* ── SECTION TITLE ───────────────────────────────── */
-.section-title{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:.5px;color:var(--g);margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.section-title::after{content:'';flex:1;height:1.5px;background:linear-gradient(to right,var(--br),transparent)}
+/* ── SECTION TITLE ──────────────────────────────── */
+.section-title{font-family:var(--fh);font-size:24px;letter-spacing:2px;color:var(--tx);margin-bottom:22px;margin-top:8px;display:flex;align-items:center;gap:12px}
+.section-title::before{content:'';width:4px;height:22px;background:linear-gradient(to bottom,var(--g),var(--pu));border-radius:2px;flex-shrink:0}
+.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--cbd),transparent)}
 
 /* ── BUTTONS ─────────────────────────────────────── */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:7px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;transition:.15s}
-.btn-verde{background:var(--g);color:#fff}.btn-verde:hover{background:var(--g2)}
-.btn-oro{background:var(--o);color:var(--g)}.btn-oro:hover{background:var(--o2)}
-.btn-sm{padding:6px 13px;font-size:12px;border-radius:6px}
-.btn-outline{background:transparent;border:1.5px solid var(--g);color:var(--g)}.btn-outline:hover{background:var(--g);color:#fff}
-.btn-rojo{background:var(--r);color:#fff}.btn-rojo:hover{opacity:.85}
-.btn-gris{background:#ece9e3;color:var(--tx2)}.btn-gris:hover{background:#e2ddd6}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border:none;cursor:pointer;font-family:var(--fu);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;border-radius:var(--rads);transition:transform .15s,box-shadow .15s,filter .15s;white-space:nowrap;line-height:1}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn:active{transform:translateY(0)}
+.btn-verde{background:linear-gradient(135deg,#00FF88,#00D870);color:#000;font-weight:900;box-shadow:0 4px 22px rgba(0,255,136,.45)}
+.btn-verde:hover{box-shadow:0 8px 32px rgba(0,255,136,.65)}
+.btn-oro{background:linear-gradient(135deg,var(--pu),var(--pu2));color:#fff;box-shadow:0 4px 22px rgba(139,47,255,.4)}
+.btn-oro:hover{box-shadow:0 8px 32px rgba(139,47,255,.6)}
+.btn-sm{padding:8px 16px;font-size:12px;border-radius:6px}
+.btn-outline{background:transparent;border:1.5px solid rgba(0,255,136,.4);color:var(--g)}.btn-outline:hover{background:rgba(0,255,136,.1)}
+.btn-rojo{background:rgba(255,68,68,.15);color:#ff6b6b;border:1px solid rgba(255,68,68,.3)}.btn-rojo:hover{background:rgba(255,68,68,.25)}
+.btn-gris{background:rgba(255,255,255,.07);color:var(--tx2);border:1px solid var(--cbd)}.btn-gris:hover{background:rgba(255,255,255,.12)}
 
-/* ── FORMS ───────────────────────────────────────── */
-input,select{width:100%;padding:9px 12px;border:1.5px solid var(--br);border-radius:var(--rads);font-family:'DM Sans',sans-serif;font-size:14px;background:var(--bg2);color:var(--tx);outline:none;transition:.15s}
-input:focus,select:focus{border-color:var(--g)}
-label{display:block;font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
-.form-group{margin-bottom:14px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* ── FORMS ─────────────────────────────────────────── */
+input,select{width:100%;padding:11px 14px;border:1.5px solid var(--cbd);border-radius:var(--rads);font-family:var(--fb);font-size:14px;background:rgba(255,255,255,.06);color:var(--tx);outline:none;transition:.15s}
+input:focus,select:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(0,255,136,.12);background:rgba(255,255,255,.09)}
+input::placeholder{color:var(--tx3)}
+select option{background:#0a1020;color:var(--tx)}
+label{display:block;font-family:var(--fu);font-size:11px;font-weight:700;color:var(--tx3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.form-group{margin-bottom:18px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:600px){.form-row{grid-template-columns:1fr}}
 
-/* ── TABLE ───────────────────────────────────────── */
+/* ── TABLE ─────────────────────────────────────────── */
 table{width:100%;border-collapse:collapse;font-size:14px}
-th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx2);border-bottom:2px solid var(--br);background:var(--bg3)}
-td{padding:10px 14px;border-bottom:1px solid #f0ece5;vertical-align:middle}
+th{padding:12px 16px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);border-bottom:1px solid var(--cbd);background:rgba(255,255,255,.03);font-family:var(--fu)}
+td{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:#faf8f4}
-.table-wrap{overflow-x:auto;border-radius:var(--rad);border:1px solid var(--br)}
+tr:hover td{background:rgba(255,255,255,.03)}
+.table-wrap{overflow-x:auto;border-radius:var(--rad);border:1px solid var(--cbd)}
 
-/* ── BADGES & CHIPS ──────────────────────────────── */
-.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;line-height:1.3;white-space:nowrap}
-.badge-verde{background:#e0f0e7;color:#1a5c38}
-.badge-oro{background:#fdf2d8;color:#8a6c1a}
-.badge-rojo{background:#fde8e6;color:var(--r)}
-.badge-gris{background:#eeeae3;color:#666}
-.badge-azul{background:#e0ecfa;color:#1a4c8c}
-.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:var(--bg3);border-radius:20px;font-size:12px;color:var(--tx2);border:1px solid var(--br)}
+/* ── BADGES & CHIPS ─────────────────────────────── */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--radfull);font-size:11px;font-weight:700;line-height:1.4;white-space:nowrap;font-family:var(--fu);letter-spacing:.3px}
+.badge-verde{background:rgba(0,255,136,.12);color:var(--g);border:1px solid rgba(0,255,136,.25)}
+.badge-oro{background:rgba(255,215,0,.12);color:var(--o2);border:1px solid rgba(255,215,0,.25)}
+.badge-rojo{background:rgba(255,68,68,.12);color:#ff6b6b;border:1px solid rgba(255,68,68,.25)}
+.badge-gris{background:rgba(255,255,255,.07);color:var(--tx3);border:1px solid var(--cbd)}
+.badge-azul{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.25)}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:rgba(255,255,255,.06);border-radius:var(--radfull);font-size:12px;color:var(--tx2);border:1px solid var(--cbd);font-weight:500}
 
 /* ── RANKING ─────────────────────────────────────── */
-.rank-pos{font-family:'Bebas Neue',cursive;font-size:20px;width:28px;text-align:center;display:inline-block}
-.rank-1{color:var(--o)}.rank-2{color:#9a9a9a}.rank-3{color:#b5763a}
+.rank-pos{font-family:var(--fh);font-size:22px;width:30px;text-align:center;display:inline-block}
+.rank-1{color:var(--o2);text-shadow:0 0 12px rgba(255,215,0,.4)}.rank-2{color:#94a3b8}.rank-3{color:#cd7f32}
 .avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
-.rank-row-1 td{background:linear-gradient(90deg,#fffae8,#fff)!important}
-.rank-row-1:hover td{background:linear-gradient(90deg,#fff3cc,#fffae8)!important}
-.rank-row-2 td{background:linear-gradient(90deg,#f5f5f5,#fff)!important}
-.rank-row-3 td{background:linear-gradient(90deg,#fdf3ec,#fff)!important}
+.rank-row-1 td{background:linear-gradient(90deg,rgba(255,215,0,.07),transparent)!important}
+.rank-row-2 td{background:linear-gradient(90deg,rgba(255,255,255,.03),transparent)!important}
+.rank-row-3 td{background:linear-gradient(90deg,rgba(205,127,50,.06),transparent)!important}
+.rank-row-1:hover td{background:linear-gradient(90deg,rgba(255,215,0,.13),transparent)!important}
+.rank-row-2:hover td{background:linear-gradient(90deg,rgba(255,255,255,.06),transparent)!important}
+.rank-row-3:hover td{background:linear-gradient(90deg,rgba(205,127,50,.1),transparent)!important}
+@media(max-width:640px){.rank-col-hide{display:none}}
 
-/* ── PARTIDO CARD ────────────────────────────────── */
-.partido-card{background:var(--bg2);border:1px solid var(--br);border-radius:var(--rad);padding:14px;margin-bottom:8px;transition:.15s;box-shadow:var(--sh)}
-.partido-card:hover{border-color:#c4bfb8}
-.partido-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:4px}
-.partido-equipos{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
-.equipo-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;text-align:center}
-.equipo-bandera{font-size:22px;line-height:1;display:block;text-align:center;width:100%}
-.equipo-nombre{font-weight:600;font-size:13px;line-height:1.3;text-align:center;width:100%}
-.score-input{display:flex;align-items:center;gap:6px;justify-content:center}
-.score-box{width:42px;height:42px;text-align:center;font-size:18px;font-weight:700;border:2px solid var(--br);border-radius:var(--rads);padding:0}
+/* ── PARTIDO CARD ───────────────────────────────── */
+.partido-card{background:var(--cbg);border:1px solid var(--cbd);border-radius:var(--rad);padding:20px;margin-bottom:12px;transition:.2s;backdrop-filter:blur(8px)}
+.partido-card:hover{border-color:rgba(0,255,136,.25);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.partido-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:6px}
+.partido-equipos{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px}
+.equipo-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;text-align:center}
+.equipo-bandera{font-size:26px;line-height:1;display:block;text-align:center;width:100%}
+.equipo-nombre{font-weight:700;font-size:13px;line-height:1.3;text-align:center;width:100%;font-family:var(--fu)}
+.score-input{display:flex;align-items:center;gap:8px;justify-content:center}
+.score-box{width:48px;height:48px;text-align:center;font-size:20px;font-weight:700;border:1.5px solid var(--cbd);border-radius:var(--rads);padding:0;background:rgba(255,255,255,.06);color:var(--tx);transition:.15s}
 .score-box::-webkit-inner-spin-button,.score-box::-webkit-outer-spin-button{opacity:1}
-.score-box:focus{border-color:var(--g);outline:none}
-.vs-sep{font-family:'Bebas Neue',cursive;font-size:20px;color:var(--tx2)}
-.prono-score{background:var(--g);color:#fff;padding:4px 10px;border-radius:6px;font-family:'Bebas Neue',cursive;font-size:20px}
-.resultado-correcto{border-left:4px solid #27ae60}
-.resultado-parcial{border-left:4px solid var(--o)}
-.resultado-incorrecto{border-left:4px solid #e74c3c}
+.score-box:focus{border-color:var(--g);outline:none;box-shadow:0 0 0 3px rgba(0,255,136,.15);background:rgba(0,255,136,.07)}
+.vs-sep{font-family:var(--fh);font-size:24px;color:var(--tx3)}
+.prono-score{background:rgba(0,255,136,.15);color:var(--g);border:1px solid rgba(0,255,136,.3);padding:4px 12px;border-radius:var(--rads);font-family:var(--fh);font-size:22px;text-shadow:0 0 10px rgba(0,255,136,.4)}
+.resultado-correcto{border-left:3px solid var(--g)}
+.resultado-parcial{border-left:3px solid var(--o)}
+.resultado-incorrecto{border-left:3px solid var(--r)}
 
 /* ── SUBTABS ─────────────────────────────────────── */
-.grupo-tab{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
-.grupo-tab button{padding:5px 12px;border-radius:20px;border:1.5px solid var(--br);background:transparent;cursor:pointer;font-size:12px;font-weight:600;color:var(--tx2);transition:.15s}
-.grupo-tab button.active{background:var(--g);color:#fff;border-color:var(--g)}
-.tabs{display:flex;gap:0;border-bottom:2px solid var(--br);margin-bottom:20px;overflow-x:auto}
-.tab-btn{padding:10px 16px;border:none;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--tx2);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s;white-space:nowrap}
-.tab-btn.active{color:var(--g);border-bottom-color:var(--g)}
+.grupo-tab{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.grupo-tab button{padding:6px 14px;border-radius:var(--radfull);border:1px solid var(--cbd);background:rgba(255,255,255,.04);cursor:pointer;font-size:12px;font-weight:700;color:var(--tx3);transition:.15s;font-family:var(--fu);text-transform:uppercase;letter-spacing:.5px}
+.grupo-tab button:hover{border-color:rgba(0,255,136,.4);color:var(--g)}
+.grupo-tab button.active{background:rgba(0,255,136,.12);color:var(--g);border-color:rgba(0,255,136,.4)}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--cbd);margin-bottom:24px;overflow-x:auto}
+.tab-btn{padding:12px 18px;border:none;background:none;cursor:pointer;font-family:var(--fu);font-size:13px;font-weight:700;color:var(--tx3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
+.tab-btn:hover{color:var(--tx)}
+.tab-btn.active{color:var(--g);border-bottom-color:var(--g);text-shadow:0 0 10px rgba(0,255,136,.3)}
 .tab-content{display:none}.tab-content.active{display:block}
 
-/* ── MISC ────────────────────────────────────────── */
-.progress-bar{background:#e8e5df;border-radius:4px;height:6px;overflow:hidden}
-.progress-fill{background:var(--g);height:100%;border-radius:4px;transition:.4s}
-.puntos-info{background:#f0f7f3;border:1.5px solid #b8dcc8;border-radius:var(--rads);padding:14px}
-.puntos-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px;border-bottom:1px solid #d0eadc}
+/* ── MISC ─────────────────────────────────────────── */
+.progress-bar{background:rgba(255,255,255,.08);border-radius:var(--radfull);height:5px;overflow:hidden}
+.progress-fill{background:linear-gradient(90deg,var(--g),var(--pu));height:100%;border-radius:var(--radfull);transition:.5s}
+.puntos-info{background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:var(--rad);padding:16px}
+.puntos-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13px;border-bottom:1px solid rgba(0,255,136,.1)}
 .puntos-row:last-child{border-bottom:none;font-weight:700;color:var(--g)}
-.empty{text-align:center;padding:40px 20px;color:var(--tx2)}
-.empty-icon{font-size:40px;margin-bottom:10px}
+.empty{text-align:center;padding:48px 20px;color:var(--tx3)}
+.empty-icon{font-size:44px;margin-bottom:12px;opacity:.4}
 .chart-wrap{position:relative;width:100%;height:240px}
-.pin-display{letter-spacing:6px;font-family:'Bebas Neue',cursive;font-size:24px;background:var(--bg);padding:10px;border-radius:var(--rads);margin:8px 0;color:var(--g)}
+.pin-display{letter-spacing:6px;font-family:var(--fh);font-size:24px;background:rgba(0,255,136,.08);padding:12px;border-radius:var(--rad);margin:8px 0;color:var(--g);border:1px solid rgba(0,255,136,.2);text-shadow:0 0 15px rgba(0,255,136,.3)}
 
-/* ── LOGIN ───────────────────────────────────────── */
-#loginOverlay{position:fixed;inset:0;background:rgba(8,22,14,.95);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-box{background:#fff;border-radius:20px;padding:36px;width:100%;max-width:360px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.3)}
-.login-box h1{font-family:'Bebas Neue',cursive;font-size:30px;color:var(--g);letter-spacing:2px;margin-bottom:2px}
-.login-box .sub{color:var(--tx2);font-size:13px;margin-bottom:22px}
-.login-tabs{display:flex;border:1.5px solid var(--br);border-radius:var(--rads);overflow:hidden;margin-bottom:20px}
-.login-tabs button{flex:1;padding:9px;border:none;background:transparent;cursor:pointer;font-weight:600;font-size:13px;color:var(--tx2);transition:.15s}
-.login-tabs button.active{background:var(--g);color:#fff}
+/* ── LOGIN ─────────────────────────────────────────── */
+#loginOverlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden}
+#loginOverlay::before{content:'';position:absolute;inset:0;background:url('https://pollamundialista.com/wp-content/themes/astra-child/images/fondo-estadio.jpg') center/cover no-repeat;opacity:.1;z-index:0}
+#loginOverlay::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,#020d04 0%,#030610 55%,#06101a 100%);z-index:0}
+.login-box{background:rgba(7,12,34,.9);border:1px solid rgba(0,255,136,.18);border-radius:16px;padding:40px 36px;width:100%;max-width:400px;text-align:center;box-shadow:0 0 0 1px rgba(255,255,255,.04),0 32px 80px rgba(0,0,0,.8);backdrop-filter:blur(24px);position:relative;z-index:1}
+.login-box h1{font-family:var(--fh);font-size:32px;color:var(--g);letter-spacing:3px;margin-bottom:4px;text-shadow:0 0 30px rgba(0,255,136,.4)}
+.login-box .sub{color:var(--tx3);font-size:13px;margin-bottom:28px;font-weight:500}
+.login-tabs{display:flex;background:rgba(255,255,255,.05);border-radius:var(--rads);overflow:hidden;margin-bottom:24px;padding:3px;gap:3px;border:1px solid var(--cbd)}
+.login-tabs button{flex:1;padding:9px;border:none;background:transparent;cursor:pointer;font-weight:700;font-size:12px;color:var(--tx3);transition:.15s;border-radius:5px;font-family:var(--fu);text-transform:uppercase;letter-spacing:.5px}
+.login-tabs button.active{background:rgba(0,255,136,.15);color:var(--g);border:1px solid rgba(0,255,136,.3)}
 
-/* ── TOAST ───────────────────────────────────────── */
-#toast{position:fixed;bottom:88px;right:20px;background:#1a1a1a;color:#fff;padding:12px 20px;border-radius:var(--rads);font-size:14px;opacity:0;transition:.3s;z-index:9999;max-width:300px;pointer-events:none;box-shadow:var(--shm)}
-#toast.show{opacity:1}
+/* ── TOAST ─────────────────────────────────────────── */
+#toast{position:fixed;bottom:88px;right:20px;background:rgba(7,12,34,.95);color:var(--tx);border:1px solid var(--cbd);padding:12px 18px;border-radius:var(--rad);font-size:13px;font-weight:500;opacity:0;transition:.25s;z-index:9999;max-width:300px;pointer-events:none;box-shadow:var(--shm);backdrop-filter:blur(12px)}
+#toast.show{opacity:1;transform:translateY(-4px)}
 @media(min-width:768px){#toast{bottom:24px;right:24px}}
 
 /* ══════════════════════════════════════════════════
    INICIO
 ══════════════════════════════════════════════════ */
-.dashboard-hero{background:linear-gradient(135deg,var(--g) 0%,#0a2b16 55%,#101828 100%);border-radius:16px;padding:24px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden}
-.dashboard-hero::before{content:'⚽';position:absolute;right:-8px;top:-18px;font-size:120px;opacity:.05;transform:rotate(-12deg);pointer-events:none}
-.hero-name{font-family:'Bebas Neue',cursive;font-size:30px;color:var(--o2);letter-spacing:1px;line-height:1}
-.hero-pos{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px}
-.hero-pts{font-family:'Bebas Neue',cursive;font-size:52px;color:#fff;line-height:1}
-.hero-pts-label{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:2px}
+.dashboard-hero{position:relative;overflow:hidden;border-radius:0;padding:32px;margin-bottom:0;color:#fff;border-bottom:1px solid rgba(0,255,136,.1)}
+.dashboard-hero::before{content:'';position:absolute;inset:0;z-index:0;background:url('https://pollamundialista.com/wp-content/themes/astra-child/images/fondo-estadio.jpg') center/cover no-repeat;opacity:.14}
+.dashboard-hero::after{content:'';position:absolute;inset:0;z-index:0;background:linear-gradient(135deg,rgba(3,6,16,.92) 40%,rgba(0,255,136,.04) 100%)}
+.dashboard-hero>*{position:relative;z-index:1}
+.hero-char{position:absolute;right:0;bottom:0;height:100%;max-height:180px;width:auto;object-fit:contain;object-position:bottom right;opacity:.28;pointer-events:none;z-index:1}
+@media(max-width:700px){.hero-char{max-height:120px;opacity:.15}}
+.hero-name{font-family:var(--fh);font-size:40px;color:#fff;letter-spacing:2px;line-height:1;text-shadow:0 0 30px rgba(0,0,0,1),0 2px 0 rgba(0,0,0,1)}
+.hero-pos{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:6px;text-transform:uppercase;letter-spacing:2px;font-weight:700;font-family:var(--fu)}
+.hero-pts{font-family:var(--fh);font-size:64px;color:var(--g);line-height:1;letter-spacing:-1px;text-shadow:0 0 30px rgba(0,255,136,.5),0 2px 0 rgba(0,0,0,1)}
+.hero-pts-label{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:2px;margin-top:3px;font-family:var(--fu)}
 
-.countdown-card{background:linear-gradient(135deg,#101828,var(--g));border-radius:var(--rad);padding:18px;color:#fff;text-align:center;border:1px solid rgba(255,255,255,.07)}
-.countdown-title{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.45);margin-bottom:12px}
-.countdown-digits{display:flex;justify-content:center;gap:6px;align-items:flex-end}
-.cd-block{display:flex;flex-direction:column;align-items:center}
-.cd-num{font-family:'Bebas Neue',cursive;font-size:36px;color:var(--o2);line-height:1;background:rgba(255,255,255,.07);border-radius:6px;padding:4px 10px;min-width:48px;text-align:center}
-.cd-label{font-size:9px;color:rgba(255,255,255,.4);margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
-.cd-sep{font-family:'Bebas Neue',cursive;font-size:28px;color:rgba(255,255,255,.25);margin-bottom:6px}
+.countdown-card{background:rgba(0,0,0,.65);border-radius:var(--rad);padding:28px 24px;color:#fff;text-align:center;border:1px solid rgba(0,255,136,.15);backdrop-filter:blur(12px)}
+.countdown-title{font-size:10px;text-transform:uppercase;letter-spacing:2.5px;color:rgba(255,255,255,.35);margin-bottom:16px;font-weight:700;font-family:var(--fu)}
+.countdown-digits{display:flex;justify-content:center;gap:10px;align-items:flex-end}
+.cd-block{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cd-num{font-family:var(--fh);font-size:44px;color:var(--g);line-height:1;background:rgba(0,0,0,.62);border:1px solid rgba(0,255,136,.25);border-radius:10px;padding:10px 14px;min-width:60px;text-align:center;letter-spacing:1px;text-shadow:0 0 20px rgba(0,255,136,.5)}
+.cd-label{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;font-family:var(--fu)}
+.cd-sep{font-family:var(--fh);font-size:26px;color:rgba(0,255,136,.2);margin-bottom:14px}
 
-.mini-rank-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0ece5}
+.mini-rank-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
 .mini-rank-row:last-child{border-bottom:none}
-.mini-rank-row.is-me{background:#f1f9f5;border-radius:8px;padding:8px 10px;margin:0 -4px}
+.mini-rank-row.is-me{background:rgba(0,255,136,.06);border-radius:8px;padding:10px 12px;margin:2px -4px;border-left:2px solid var(--g)}
 
-.resultado-mini{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f0ece5}
+.resultado-mini{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
 .resultado-mini:last-child{border-bottom:none}
 
-.proximo-partido-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0ece5;flex-wrap:wrap;gap:6px}
+.proximo-partido-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap;gap:6px}
 .proximo-partido-row:last-child{border-bottom:none}
 
 /* ══════════════════════════════════════════════════
    PARTICIPANTES
 ══════════════════════════════════════════════════ */
-.participante-card{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--br);border-radius:var(--rad);padding:14px;transition:.15s;box-shadow:var(--sh)}
-.participante-card:hover{border-color:#c4bfb8;box-shadow:0 4px 16px rgba(0,0,0,.08)}
-.participante-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.participante-card{display:flex;align-items:center;gap:16px;background:var(--cbg);border:1px solid var(--cbd);border-radius:var(--rad);padding:20px;transition:.2s;backdrop-filter:blur(8px)}
+.participante-card:hover{border-color:rgba(0,255,136,.25);box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(-2px)}
+.participante-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 
 /* ══════════════════════════════════════════════════
    PREMIOS
 ══════════════════════════════════════════════════ */
-.premio-card{background:var(--bg2);border-radius:14px;overflow:hidden;border:1px solid var(--br);box-shadow:var(--sh)}
-.premio-card-header{padding:14px 18px;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--g),var(--g3))}
-.premio-card-body{padding:14px 18px}
-.premio-icono{font-size:26px}
-.premio-titulo{font-family:'Bebas Neue',cursive;font-size:16px;color:var(--o2);letter-spacing:.5px}
-.premio-subtitulo{font-size:11px;color:rgba(255,255,255,.5);margin-top:1px}
-.premio-monto{font-family:'Bebas Neue',cursive;font-size:32px;color:var(--g);display:flex;align-items:baseline;gap:4px}
-.premio-monto-label{font-size:13px;color:var(--tx2);font-family:'DM Sans',sans-serif;font-weight:400}
-.regla-item{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid #f0ece5;font-size:13px;line-height:1.5}
+.premio-card{background:var(--cbg);border-radius:var(--rad);overflow:hidden;border:1px solid var(--cbd);backdrop-filter:blur(8px);transition:.2s}
+.premio-card:hover{transform:translateY(-3px);border-color:rgba(0,255,136,.25);box-shadow:0 10px 40px rgba(0,0,0,.6)}
+.premio-card-header{padding:16px 20px;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(139,47,255,.2),rgba(0,255,136,.08));border-bottom:1px solid var(--cbd)}
+.premio-card-body{padding:16px 20px}
+.premio-icono{font-size:24px}
+.premio-titulo{font-family:var(--fh);font-size:15px;color:var(--g);letter-spacing:1px;text-shadow:0 0 15px rgba(0,255,136,.3)}
+.premio-subtitulo{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;font-family:var(--fu)}
+.premio-monto{font-family:var(--fh);font-size:32px;color:var(--g);display:flex;align-items:baseline;gap:4px;text-shadow:0 0 20px rgba(0,255,136,.3)}
+.premio-monto-label{font-size:13px;color:var(--tx2);font-family:var(--fb);font-weight:400}
+.regla-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;line-height:1.5}
 .regla-item:last-child{border-bottom:none}
 
-/* ── MUSIC ───────────────────────────────────────── */
-#musicBtn{position:fixed;bottom:24px;left:20px;z-index:500;width:44px;height:44px;border-radius:50%;background:var(--g);color:#fff;border:none;font-size:18px;cursor:pointer;box-shadow:var(--shm);display:flex;align-items:center;justify-content:center;transition:.2s;text-decoration:none}
-#musicBtn:hover{background:var(--g2);transform:scale(1.07)}
-#musicBtn.playing{background:var(--o);color:var(--g)}
-#ytFrame{position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;pointer-events:none}
+/* ── INICIO GRID MOBILE ──────────────────────────── */
+@media(max-width:520px){.inicio-top-grid{grid-template-columns:1fr!important}}
+
+/* ── RULES COLLAPSIBLE ───────────────────────────── */
+.rules-body{overflow:hidden;transition:max-height .35s ease,opacity .25s ease;max-height:600px;opacity:1}
+.rules-body.collapsed{max-height:0;opacity:0}
+.rules-toggle-btn{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:rgba(0,255,136,.8);font-size:11px;font-weight:700;padding:5px 12px;border-radius:var(--radfull);cursor:pointer;letter-spacing:.5px;transition:.15s;font-family:var(--fu);text-transform:uppercase}
+.rules-toggle-btn:hover{background:rgba(0,255,136,.16);color:var(--g)}
+
+/* ── GANADORES PENDING STRIP ─────────────────────── */
+.pending-cats-strip{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px;background:rgba(255,255,255,.03);border-radius:var(--rad);border:1px solid var(--cbd)}
+
+/* ── GANADORES SEMANA (Inicio) ───────────────────── */
+.gsem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:700px){.gsem-grid{grid-template-columns:1fr}}
+.gsem-card{background:rgba(0,0,0,.55);border-radius:14px;overflow:hidden;border:1.5px solid rgba(0,255,136,.22);backdrop-filter:blur(10px);transition:.2s}
+.gsem-card:hover{border-color:rgba(0,255,136,.45);box-shadow:0 6px 28px rgba(0,255,136,.1)}
+.gsem-card.pending{border-color:rgba(255,255,255,.08);opacity:.65}
+.gsem-header{background:linear-gradient(135deg,rgba(139,47,255,.22),rgba(0,255,136,.06));padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.07)}
+.gsem-header-label{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--g);flex:1;line-height:1.2;text-shadow:0 0 10px rgba(0,255,136,.3)}
+.gsem-fechas{font-size:10px;color:var(--tx3);font-family:var(--fu);white-space:nowrap}
+.gsem-body{padding:12px 14px}
+.gsem-winner-row{display:flex;align-items:center;gap:10px}
+.gsem-medal{font-size:24px;flex-shrink:0}
+.gsem-name{font-weight:700;font-size:14px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gsem-area{font-size:11px;color:var(--tx2)}
+.gsem-pts{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--g);line-height:1;text-shadow:0 0 15px rgba(0,255,136,.4);flex-shrink:0}
+.gsem-pts-label{font-size:10px;color:var(--tx2);text-align:right}
+.gsem-tie{margin-top:7px;background:rgba(255,184,0,.1);border-radius:6px;padding:5px 9px;font-size:11px;color:var(--o2)}
+.gsem-pending-body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 14px;gap:6px;text-align:center}
+.gsem-pending-icon{font-size:30px;opacity:.35}
+.gsem-pending-txt{font-size:12px;color:var(--tx3)}
+
+/* ── SCROLLBAR ───────────────────────────────────── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,255,136,.2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,255,136,.4)}
+
+/* ── ANIMATIONS ──────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.page.active .card,.page.active .partido-card,.page.active .participante-card,.page.active .stat-card{animation:fadeUp .22s ease both}
+.page.active .card:nth-child(2){animation-delay:.04s}
+.page.active .card:nth-child(3){animation-delay:.07s}
+.page.active .card:nth-child(4){animation-delay:.10s}
+
+/* ══════════════════════════════════════════════════
+   PARALLAX SCROLLING ARCHITECTURE
+══════════════════════════════════════════════════ */
+html{scroll-behavior:smooth}
+
+/* Layout principal — flex column al loguearse */
+body.parallax-active main{
+  display:flex;flex-direction:column;
+  max-width:100%;padding:0;gap:0
+}
+
+/* Orden visual de las secciones públicas */
+#page-inicio{order:1}
+#page-ranking{order:2}
+#page-participantes{order:3}
+#page-premios{order:4}
+
+/* Scroll sections — ocultas hasta login */
+.scroll-section{
+  display:none;
+  scroll-margin-top:62px;
+  width:100%;
+}
+body.parallax-active .scroll-section{display:block}
+
+/* Contenido interno con max-width y padding */
+.scroll-inner{
+  max-width:1200px;
+  margin:0 auto;
+  padding:56px 28px 40px;
+}
+@media(max-width:600px){.scroll-inner{padding:36px 16px 28px}}
+
+/* Separador visual entre secciones (ventana al fondo parallax) */
+.section-divider{
+  height:80px;
+  background:transparent;
+  order:1.5; /* entre inicio y ranking — se sobreescribe inline */
+  position:relative;
+}
+.section-divider::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(0,255,136,.15),transparent);
+}
+.section-divider::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(139,47,255,.1),transparent);
+}
+@media(max-width:600px){.section-divider{height:40px}}
+
+/* ── MODAL OVERLAY PAGES ─────────────────────────── */
+.page.modal-page{
+  display:block;
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:rgba(3,6,16,.98);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  transform:translateX(100%);
+  transition:transform .42s cubic-bezier(.4,0,.2,1);
+}
+.page.modal-page.active{transform:translateX(0)}
+body.modal-open{overflow:hidden}
+
+/* Header sticky dentro del modal */
+.modal-topbar{
+  position:sticky;top:0;z-index:10;
+  background:rgba(3,6,16,.94);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(0,255,136,.1);
+  padding:12px 28px;
+  display:flex;align-items:center;gap:16px;
+}
+@media(max-width:600px){.modal-topbar{padding:10px 16px}}
+
+.modal-back-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  background:transparent;
+  border:1px solid rgba(0,255,136,.25);
+  color:var(--g);
+  padding:7px 16px;border-radius:var(--radfull);
+  cursor:pointer;
+  font-family:var(--fu);font-size:12px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;
+  transition:.15s;white-space:nowrap;flex-shrink:0;
+}
+.modal-back-btn:hover{background:rgba(0,255,136,.1)}
+
+.modal-section-title{
+  font-family:var(--fh);font-size:18px;letter-spacing:1.5px;
+  color:var(--tx);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Cuerpo del modal */
+.modal-body{
+  max-width:1200px;margin:0 auto;
+  padding:28px 28px 80px;
+}
+@media(max-width:600px){.modal-body{padding:20px 16px 90px}}
+
 </style>
 </head>
 <body>
+<div class="bg-photo"></div>
+<div class="bg-night"></div>
+<div class="bg-spotlights"></div>
+<div class="bg-neon"></div>
 
 <!-- ══════════════════ LOGIN ══════════════════ -->
 <div id="loginOverlay">
@@ -247,7 +442,7 @@ tr:hover td{background:#faf8f4}
       </div>
       <div class="form-group">
         <label>PIN de acceso (4 dígitos)</label>
-        <input type="password" maxlength="4" id="loginPin" placeholder="••••" style="text-align:center;font-size:24px;letter-spacing:10px">
+        <input type="password" maxlength="4" id="loginPin" placeholder="••••" style="text-align:center;font-size:24px;letter-spacing:10px" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4)" onkeydown="if(event.key==='Enter')loginParticipante()">
       </div>
       <button class="btn btn-verde" style="width:100%;justify-content:center;font-size:15px" onclick="loginParticipante()">Ingresar ▶</button>
       <p style="font-size:12px;color:var(--texto2);margin-top:10px">¿Sin acceso? Pide al administrador que te registre</p>
@@ -261,10 +456,87 @@ tr:hover td{background:#faf8f4}
       <button class="btn btn-verde" style="width:100%;justify-content:center;font-size:15px" onclick="loginAdmin()">Acceder ▶</button>
     </div>
     <div id="loginError" style="color:var(--rojo);font-size:13px;margin-top:10px;display:none;font-weight:600"></div>
+
+    <!-- DEMO -->
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)">
+      <button onclick="entrarDemo()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:rgba(139,47,255,.12);border:1px solid rgba(139,47,255,.3);color:rgba(200,180,255,.9);padding:11px 20px;border-radius:9px;cursor:pointer;font-family:var(--fu);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;transition:.15s"
+        onmouseover="this.style.background='rgba(139,47,255,.22)'" onmouseout="this.style.background='rgba(139,47,255,.12)'">
+        🎮 Vista Demo — ver con datos reales
+      </button>
+      <p style="font-size:11px;color:var(--tx3);margin-top:8px;text-align:center">Carga datos de ejemplo · no modifica nada</p>
+    </div>
   </div>
 </div>
 
-<!-- ══════════════════ HEADER ══════════════════ -->
+
+<!-- ══════════════════ POPUP REGLAS ══════════════════ -->
+<!-- ══════════════════ POPUP REGLAS ══════════════════ -->
+<div id="reglasPopup" style="display:none;position:fixed;inset:0;z-index:205;align-items:center;justify-content:center;padding:20px">
+  <div style="position:absolute;inset:0;background:rgba(2,4,16,.88);backdrop-filter:blur(10px)" onclick="cerrarReglasPopup()"></div>
+  <div style="position:relative;z-index:1;background:linear-gradient(135deg,rgba(0,20,10,.98) 0%,rgba(3,6,16,.99) 100%);border:1px solid rgba(0,255,136,.2);border-radius:16px;padding:32px 28px;width:100%;max-width:680px;box-shadow:0 32px 80px rgba(0,0,0,.85);max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="https://i.ibb.co/G3R8BtSw/tournaments-fifa-world-cup-2026-white-700x700-football-logos-cc.png" alt="" style="height:38px;width:auto;object-fit:contain" onerror="this.style.display='none'">
+        <div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--g);letter-spacing:2px;line-height:1;text-shadow:0 0 20px rgba(0,255,136,.4)">REGLAS DE LA POLLA</div>
+          <div style="font-size:11px;color:var(--tx3);letter-spacing:1px;text-transform:uppercase;font-family:var(--fu)">Mundial FIFA 2026</div>
+        </div>
+      </div>
+      <button onclick="cerrarReglasPopup()" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--tx2);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0" onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">&#x2715;</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px 32px">
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--o2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;font-family:var(--fu)">Para participar</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)"><span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x1F4B0;</span><span style="font-size:13px;color:rgba(255,255,255,.82);line-height:1.45">Apuesta de <strong style="color:#fff">S/ 10.00 por semana</strong> (jornada habilitada)</span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)"><span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x2705;</span><span style="font-size:13px;color:rgba(255,255,255,.82);line-height:1.45">Pronosticar <strong style="color:#fff">todos los partidos de la jornada</strong> antes del cierre</span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)"><span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x23F0;</span><span style="font-size:13px;color:rgba(255,255,255,.82);line-height:1.45">Cierre a las <strong style="color:#fff">18:00 hora Per&#xFA; del d&#xED;a anterior</strong></span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)"><span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x274C;</span><span style="font-size:13px;color:rgba(255,255,255,.82);line-height:1.45">Sin pron&#xF3;stico = <strong style="color:#fff">0 puntos</strong> en todos los partidos del d&#xED;a</span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0"><span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x1F512;</span><span style="font-size:13px;color:rgba(255,255,255,.82);line-height:1.45">Pron&#xF3;sticos <strong style="color:#fff">irrevocables</strong> una vez cerrada la ronda</span></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--o2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;font-family:var(--fu)">Desempate</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)"><span style="background:var(--g);color:#000;font-weight:900;font-size:11px;width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">1</span><span style="font-size:13px;color:rgba(255,255,255,.82);line-height:1.45">Mayor n&#xFA;mero de <strong style="color:#fff">marcadores exactos</strong> <span style="color:var(--g)">(5 pts)</span></span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)"><span style="background:var(--o2);color:#000;font-weight:900;font-size:11px;width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">2</span><span style="font-size:13px;color:rgba(255,255,255,.82);line-height:1.45">Mayor n&#xFA;mero de <strong style="color:#fff">diferencias exactas</strong> <span style="color:var(--o2)">(3 pts)</span></span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)"><span style="background:#60a5fa;color:#000;font-weight:900;font-size:11px;width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">3</span><span style="font-size:13px;color:rgba(255,255,255,.82);line-height:1.45">Mayor n&#xFA;mero de <strong style="color:#fff">ganadores / empates</strong> <span style="color:#60a5fa">(1 pt)</span></span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0"><span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x1F91D;</span><span style="font-size:13px;color:rgba(255,255,255,.82);line-height:1.45">Si persiste empate, <strong style="color:#fff">se comparte el premio</strong></span></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08)">
+      <div style="font-size:10px;font-weight:700;color:var(--o2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;font-family:var(--fu)">Sistema de puntuaci&#xF3;n</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:8px;padding:10px 14px"><span style="font-size:13px;color:rgba(255,255,255,.8)">&#x1F3AF; Marcador exacto</span><span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--g)">5 pts</span></div>
+        <div style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);border-radius:8px;padding:10px 14px"><span style="font-size:13px;color:rgba(255,255,255,.8)">&#x1F4CF; Diferencia exacta</span><span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--o2)">3 pts</span></div>
+        <div style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:space-between;background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);border-radius:8px;padding:10px 14px"><span style="font-size:13px;color:rgba(255,255,255,.8)">&#x2705; Ganador / empate</span><span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#60a5fa">1 pt</span></div>
+      </div>
+    </div>
+    <div style="margin-top:22px;text-align:center">
+      <button class="btn btn-verde" style="padding:12px 40px;font-size:14px" onclick="cerrarReglasPopup()">&#x2714; Entendido &#x2014; &#xA1;A pronosticar!</button>
+    </div>
+  </div>
+</div>
+<!-- ══════════════════ MODAL CAMBIO DE PIN ══════════════════ -->
+<div id="pinChangeOverlay" style="display:none;position:fixed;inset:0;z-index:210;align-items:center;justify-content:center;padding:20px">
+  <div style="position:absolute;inset:0;background:rgba(2,4,16,.92);backdrop-filter:blur(12px)"></div>
+  <div style="position:relative;z-index:1;background:rgba(7,12,34,.97);border:1px solid rgba(0,255,136,.25);border-radius:16px;padding:36px 32px;width:100%;max-width:380px;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.8)">
+    <div style="font-size:36px;margin-bottom:8px">🔐</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--g);letter-spacing:2px;margin-bottom:6px">CAMBIAR PIN</div>
+    <div style="font-size:13px;color:var(--tx2);margin-bottom:24px;line-height:1.5">Es tu primer ingreso.<br>Crea un PIN personal de <strong style="color:#fff">4 dígitos</strong>.</div>
+    <div class="form-group" style="text-align:left">
+      <label>Nuevo PIN (4 dígitos)</label>
+      <input type="password" id="pinNuevo" maxlength="4" placeholder="••••" style="text-align:center;font-size:28px;letter-spacing:12px" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4)" onkeydown="if(event.key==='Enter')document.getElementById('pinConfirm').focus()">
+    </div>
+    <div class="form-group" style="text-align:left">
+      <label>Confirmar PIN</label>
+      <input type="password" id="pinConfirm" maxlength="4" placeholder="••••" style="text-align:center;font-size:28px;letter-spacing:12px" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4)" onkeydown="if(event.key==='Enter')guardarNuevoPin()">
+    </div>
+    <div id="pinChangeError" style="color:var(--r);font-size:13px;margin-bottom:10px;display:none;font-weight:600"></div>
+    <button class="btn btn-verde" style="width:100%;justify-content:center;font-size:15px" onclick="guardarNuevoPin()">💾 Guardar y Entrar</button>
+  </div>
+</div>
 <header>
   <div class="header-inner">
     <div class="logo" style="display:flex;align-items:center;gap:8px">
@@ -314,11 +586,18 @@ tr:hover td{background:#faf8f4}
   </div>
 </div>
 
+<main>
 <!-- ══════════════════ RANKING ══════════════════ -->
-<div id="page-ranking" class="page active">
+<div id="page-ranking" class="page scroll-section">
+  <div class="scroll-inner">
 
-  <!-- BANNER REGLAS — siempre visible al tope -->
-  <div style="background:linear-gradient(135deg,var(--g) 0%,#0d3520 100%);border-radius:16px;overflow:hidden;margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,.15)">
+  <!-- BANNER REGLAS — colapsable -->
+  <div style="background:linear-gradient(135deg,rgba(0,20,10,.95) 0%,rgba(3,6,16,.99) 100%);border-radius:12px;overflow:hidden;margin-bottom:24px;border:1px solid rgba(0,255,136,.15)">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 20px 0">
+      <span style="font-family:'Bebas Neue',cursive;font-size:13px;color:rgba(255,255,255,.5);letter-spacing:2px">REGLAS Y PUNTUACIÓN</span>
+      <button class="rules-toggle-btn" id="rulesBannerBtn" onclick="toggleRulesBanner()">▲ Ocultar</button>
+    </div>
+    <div id="rulesBannerBody" class="rules-body">
     <div style="display:flex;flex-wrap:wrap">
       <div style="flex:0 0 auto;padding:24px 28px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid rgba(255,255,255,.08);min-width:150px">
         <img src="https://i.ibb.co/G3R8BtSw/tournaments-fifa-world-cup-2026-white-700x700-football-logos-cc.png" alt="FIFA 2026" style="width:90px;height:auto;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.4))" onerror="this.style.display='none'">
@@ -355,6 +634,7 @@ tr:hover td{background:#faf8f4}
         </div>
       </div>
     </div>
+    </div><!-- /rules-body -->
   </div>
 
   <!-- GANADORES POR CATEGORÍA -->
@@ -379,13 +659,14 @@ tr:hover td{background:#faf8f4}
     <div class="card"><div class="card-title">📊 Composición de Puntos</div><div class="chart-wrap"><canvas id="chartEvolucion"></canvas></div></div>
     <div class="card"><div class="card-title">🎯 Precisión (%)</div><div class="chart-wrap"><canvas id="chartPrecision"></canvas></div></div>
   </div>
-
+  </div><!-- /scroll-inner -->
 </div>
 
-</div>
+<div class="section-divider" style="order:2"></div>
 
 <!-- ══════════════════ MIS PRONÓSTICOS (participante + admin) ══════════════════ -->
-<div id="page-pronosticos" class="page">
+<div id="page-pronosticos" class="page modal-page">
+  <div class="modal-body">
   <div class="section-title" id="pronosTitle">📋 Mis Pronósticos</div>
   <div id="progresoPronos" style="margin-bottom:16px"></div>
   <div class="tabs">
@@ -409,20 +690,24 @@ tr:hover td{background:#faf8f4}
   <div id="prono-resumen" class="tab-content">
     <div id="resumenPronosticos"></div>
   </div>
+  </div><!-- /modal-body -->
 </div>
 
 <!-- ══════════════════ VER TODOS LOS PRONÓSTICOS (todos) ══════════════════ -->
-<div id="page-todos-pronos" class="page">
+<div id="page-todos-pronos" class="page modal-page">
+  <div class="modal-body">
   <div class="section-title">👁️ Pronósticos de Todos</div>
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
     <select id="filtroSemanaTodos" onchange="renderTodosPronos()" style="width:auto"></select>
     <div id="estadoSemanaBadge"></div>
   </div>
   <div id="todosPronos"></div>
+  </div><!-- /modal-body -->
 </div>
 
 <!-- ══════════════════ PARTIDOS (solo admin) ══════════════════ -->
-<div id="page-partidos" class="page">
+<div id="page-partidos" class="page modal-page">
+  <div class="modal-body">
   <div class="section-title">⚽ Partidos del Mundial 2026</div>
   <div class="tabs">
     <button class="tab-btn active" onclick="showTab('partidos','grupos')">Fase de Grupos</button>
@@ -441,10 +726,12 @@ tr:hover td{background:#faf8f4}
   <div id="partidos-cuartos" class="tab-content"><div id="container-cuartos"></div></div>
   <div id="partidos-semis" class="tab-content"><div id="container-semis"></div></div>
   <div id="partidos-final" class="tab-content"><div id="container-final"></div></div>
+  </div><!-- /modal-body -->
 </div>
 
 <!-- ══════════════════ RESULTADOS (solo admin) ══════════════════ -->
-<div id="page-resultados" class="page">
+<div id="page-resultados" class="page modal-page">
+  <div class="modal-body">
   <div class="section-title">📝 Cargar Resultados</div>
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
     <select id="filtroFaseAdmin" onchange="renderResultadosAdmin()" style="width:auto">
@@ -464,14 +751,15 @@ tr:hover td{background:#faf8f4}
     <button class="btn btn-oro btn-sm" onclick="recalcularTodo()">🔄 Recalcular todos los puntos</button>
   </div>
   <div id="resultadosAdminContainer"></div>
+  </div><!-- /modal-body -->
 </div>
 
 <!-- ══════════════════ ADMIN (solo admin) ══════════════════ -->
-<div id="page-admin" class="page">
+<div id="page-admin" class="page modal-page">
+  <div class="modal-body">
   <div class="section-title">⚙️ Administración</div>
   <div class="tabs">
     <button class="tab-btn active" onclick="showTab('admin-tab','registrar')">👥 Participantes</button>
-    <button class="tab-btn" onclick="showTab('admin-tab','pronosticos-admin')">🗑️ Pronósticos</button>
     <button class="tab-btn" onclick="showTab('admin-tab','semanas')">📅 Semanas</button>
     <button class="tab-btn" onclick="showTab('admin-tab','estadisticas')">📊 Estadísticas</button>
     <button class="tab-btn" onclick="showTab('admin-tab','config')">🔧 Configuración</button>
@@ -516,7 +804,7 @@ tr:hover td{background:#faf8f4}
     <div class="card">
       <div class="card-title">📅 Control de Semanas</div>
       <p style="font-size:13px;color:var(--texto2);margin-bottom:6px">Habilita cada ronda para que los participantes puedan ingresar sus pronósticos. Cada partido cierra <strong>a las 18:00 hora Perú del día anterior</strong> automáticamente.</p>
-      <div style="background:#fdf2d8;border:1.5px solid #e8c96a;border-radius:8px;padding:12px;margin-bottom:18px;font-size:13px">
+      <div style="background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.25);border-radius:8px;padding:12px;margin-bottom:18px;font-size:13px;color:var(--o2)">
         💡 <strong>Flujo normal:</strong> Habilita la ronda → los participantes pronostican → cada partido se cierra solo a las 18:00 del día anterior. El campo “Cierre automático” sirve para cerrar <em>toda la ronda</em> antes si es necesario (override manual).
       </div>
       <div id="semanasContainer"></div>
@@ -569,7 +857,7 @@ tr:hover td{background:#faf8f4}
     </div>
     <div class="card" style="margin-top:0">
       <div class="card-title">💾 Respaldo de Datos</div>
-      <div style="background:#fff8e1;border:1px solid #f0c040;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#7a5c00">
+      <div style="background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.25);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--o2)">
         <strong>⚠️ Importante:</strong> Todos los datos se almacenan en este navegador y dispositivo. Si limpias el caché o abres el sistema desde otro dispositivo, los datos no estarán disponibles. <strong>Exporta el JSON diariamente como respaldo.</strong>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -583,13 +871,15 @@ tr:hover td{background:#faf8f4}
       </div>
     </div>
   </div>
+  </div><!-- /modal-body -->
 </div>
 
 <!-- ══════════════════ INICIO ══════════════════ -->
-<div id="page-inicio" class="page">
+<div id="page-inicio" class="page scroll-section">
 
   <!-- Hero compacto -->
-  <div class="dashboard-hero" style="margin-bottom:14px">
+  <div class="dashboard-hero" style="margin-bottom:0">
+    <img class="hero-char" src="https://pollamundialista.com/wp-content/themes/astra-child/images/personaje-hero.png" alt="">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
       <div>
         <div class="hero-pos" id="dashHeroPosicion">Calculando posición...</div>
@@ -618,8 +908,10 @@ tr:hover td{background:#faf8f4}
     </div>
   </div>
 
+  <!-- Contenido post-hero -->
+  <div class="scroll-inner">
   <!-- Countdown + Top5 en grid -->
-  <div class="grid-2" style="margin-bottom:14px">
+  <div class="grid-2 inicio-top-grid" style="margin-bottom:20px;margin-top:20px">
     <!-- Countdown -->
     <div class="countdown-card">
       <div class="countdown-title" id="cdPartidoLabel">⏳ Próximo cierre</div>
@@ -659,30 +951,42 @@ tr:hover td{background:#faf8f4}
     </div>
   </div>
 
-  <!-- IDs necesarios por el JS (ocultos, el JS los escribe aunque no se muestren en hero) -->
+  <!-- Ganadores por semana — Fase de Grupos -->
+  <div style="margin-top:24px">
+    <div class="section-title" style="margin-bottom:14px">🏅 Ganadores Fase de Grupos</div>
+    <div class="gsem-grid" id="dashGanadoresSemanas"></div>
+  </div>
+
+  <!-- IDs necesarios por el JS -->
   <span id="dsMisDif" style="display:none"></span>
   <span id="dashDestacados" style="display:none"></span>
-
+  </div><!-- /scroll-inner -->
 </div>
 
+<div class="section-divider" style="order:1"></div>
 
 <!-- ══════════════════ PARTICIPANTES ══════════════════ -->
-<div id="page-participantes" class="page">
+<div id="page-participantes" class="page scroll-section">
+  <div class="scroll-inner">
   <div class="section-title">👥 Participantes</div>
   <div class="grid-4" id="partStats" style="margin-bottom:20px"></div>
   <div class="participante-grid" id="participantesGrid"></div>
+  </div><!-- /scroll-inner -->
 </div>
 
+<div class="section-divider" style="order:3"></div>
 
 <!-- ══════════════════ PREMIOS ══════════════════ -->
-<div id="page-premios" class="page">
+<div id="page-premios" class="page scroll-section">
+  <div class="scroll-inner">
   <div class="section-title">🎁 Premios</div>
 
   <!-- Reglas — al inicio de la página -->
-  <div class="card" style="margin-bottom:24px;background:linear-gradient(135deg,var(--g) 0%,#0d3520 100%);border:none;color:#fff">
+  <div class="card" style="margin-bottom:24px;background:linear-gradient(135deg,rgba(0,20,10,.96) 0%,rgba(3,6,16,.99) 100%);border:1px solid rgba(0,255,136,.15);color:#fff">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px 32px">
       <div>
         <div style="font-size:10px;font-weight:700;color:var(--o2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Para participar</div>
+        <div class="regla-item" style="border-color:rgba(255,255,255,.1)"><span>💰</span><span style="color:rgba(255,255,255,.85)">Apuesta de <strong style="color:#fff">S/ 10.00 por semana</strong> (jornada habilitada)</span></div>
         <div class="regla-item" style="border-color:rgba(255,255,255,.1)"><span>✅</span><span style="color:rgba(255,255,255,.85)">Pronosticar <strong style="color:#fff">todos los partidos de la jornada</strong> antes del cierre</span></div>
         <div class="regla-item" style="border-color:rgba(255,255,255,.1)"><span>⏰</span><span style="color:rgba(255,255,255,.85)">Cierre a las <strong style="color:#fff">18:00 hora Perú del día anterior</strong></span></div>
         <div class="regla-item" style="border-color:rgba(255,255,255,.1)"><span>❌</span><span style="color:rgba(255,255,255,.85)">Sin pronóstico = <strong style="color:#fff">0 puntos</strong> en todos los partidos del día</span></div>
@@ -709,6 +1013,7 @@ tr:hover td{background:#faf8f4}
   <!-- Historial de premiados -->
   <div class="section-title" style="margin-bottom:16px">🏅 Historial de Premiados</div>
   <div id="historialPremiados"></div>
+  </div><!-- /scroll-inner -->
 </div>
 
 </main>
@@ -899,7 +1204,7 @@ let DB = {
     FIN:'Premio al mejor en la final',
     TOP3:'Premio al campeón general del torneo'
   },
-  semanasHabilitadas:{'S1':true},
+  semanasHabilitadas:{},
   semanasCerradas:{},
   semanasCierres:{},
   grupoActivo:'A', pronoGrupoActivo:'A'
@@ -930,12 +1235,15 @@ function ocultarCargando(){
 function applyParsed(parsed){
   if(!parsed) return;
   if(parsed.partidos){
+    // Firebase omite los null — hay que convertir undefined a null
     parsed.partidos.forEach(saved=>{
       const idx=DB.partidos.findIndex(p=>p.id===saved.id);
       if(idx>=0){
-        DB.partidos[idx].gol1=saved.gol1;
-        DB.partidos[idx].gol2=saved.gol2;
-        if(saved.fase!=='Grupos'){DB.partidos[idx].equipo1=saved.equipo1;DB.partidos[idx].equipo2=saved.equipo2;}
+        DB.partidos[idx].gol1 = (saved.gol1 !== undefined && saved.gol1 !== -1) ? saved.gol1 : null;
+        DB.partidos[idx].gol2 = (saved.gol2 !== undefined && saved.gol2 !== -1) ? saved.gol2 : null;
+        // Restaurar nombres de equipo solo si vienen definidos (eliminatorios editados)
+        if(saved.equipo1 !== undefined) DB.partidos[idx].equipo1 = saved.equipo1;
+        if(saved.equipo2 !== undefined) DB.partidos[idx].equipo2 = saved.equipo2;
       }
     });
   }
@@ -944,7 +1252,7 @@ function applyParsed(parsed){
   DB.config={...DB.config,...(parsed.config||{})};
   if(DB.config.puntoDiferencia===undefined) DB.config.puntoDiferencia=3;
   DB.premiosDesc={...DB.premiosDesc,...(parsed.premiosDesc||{})};
-  DB.semanasHabilitadas=parsed.semanasHabilitadas||{'S1':true};
+  DB.semanasHabilitadas=parsed.semanasHabilitadas||{};
   DB.semanasCerradas=parsed.semanasCerradas||{};
   DB.semanasCierres=parsed.semanasCierres||{};
 }
@@ -955,11 +1263,18 @@ function saveDB(){
   localStorage.setItem('polla2026v3',JSON.stringify(DB));
   // Guardar en Firebase si está disponible
   if(window._fbReady && window._fbSet){
-    // Serializar partidos solo con goles y equipos dinámicos (eliminatorios)
-    const partidosToSave = DB.partidos.map(p=>({
-      id:p.id, fase:p.fase, equipo1:p.equipo1, equipo2:p.equipo2,
-      gol1:p.gol1, gol2:p.gol2
-    }));
+    // Solo guardar partidos que tengan resultado o sean eliminatorios con equipos definidos
+    // Evitar guardar null (Firebase los omite y causa UNDEFINED al leer)
+    const partidosToSave = DB.partidos
+      .filter(p => p.gol1 !== null || (p.fase !== 'Grupos' && p.equipo1 && !p.equipo1.startsWith('1°') && !p.equipo1.startsWith('2°') && !p.equipo1.startsWith('3°') && !p.equipo1.startsWith('G.')))
+      .map(p=>({
+        id: p.id,
+        fase: p.fase,
+        equipo1: p.equipo1,
+        equipo2: p.equipo2,
+        gol1: p.gol1 !== null ? p.gol1 : -1,
+        gol2: p.gol2 !== null ? p.gol2 : -1
+      }));
     const dataToSave = {
       participantes: DB.participantes,
       partidos: partidosToSave,
@@ -992,11 +1307,14 @@ function loadDB(){
         localStorage.setItem('polla2026v3',JSON.stringify(data));
         // Si ya hay sesión activa, re-renderizar la página actual
         if(currentUser){
-          const activePage=document.querySelector('.page.active');
-          if(activePage){
-            const name=activePage.id.replace('page-','');
-            renderPage(name);
-          }
+          // Re-renderizar todas las secciones públicas
+          renderInicio();
+          renderRanking();
+          renderParticipantes();
+          renderPremios();
+          // Re-renderizar modal abierto si hay uno
+          const openModal = document.querySelector('.modal-page.active');
+          if(openModal) renderPage(openModal.id.replace('page-',''));
           populateLoginSelect();
         }
       } else {
@@ -1046,12 +1364,42 @@ function loginParticipante(){
   if(!p||String(p.pin)!==String(pin)){showErr('PIN incorrecto');return;}
   currentUser=p; isAdmin=false;
   document.getElementById('loginOverlay').style.display='none';
+  // Primer ingreso: forzar cambio de PIN
+  if(!p.pinCambiado){
+    const ov=document.getElementById('pinChangeOverlay');
+    ov.style.display='flex';
+    document.getElementById('pinNuevo').value='';
+    document.getElementById('pinConfirm').value='';
+    document.getElementById('pinChangeError').style.display='none';
+    setTimeout(()=>document.getElementById('pinNuevo').focus(),100);
+    return;
+  }
+  completarLogin(p);
+}
+
+function guardarNuevoPin(){
+  const n=document.getElementById('pinNuevo').value;
+  const c=document.getElementById('pinConfirm').value;
+  const err=document.getElementById('pinChangeError');
+  if(n.length!==4||!/^\d{4}$/.test(n)){err.textContent='El PIN debe ser exactamente 4 dígitos numéricos';err.style.display='';return;}
+  if(n!==c){err.textContent='Los PINs no coinciden';err.style.display='';return;}
+  // Guardar nuevo PIN y marcar como cambiado
+  const idx=DB.participantes.findIndex(x=>x.id===currentUser.id);
+  if(idx>=0){DB.participantes[idx].pin=n;DB.participantes[idx].pinCambiado=true;currentUser=DB.participantes[idx];}
+  saveDB();
+  document.getElementById('pinChangeOverlay').style.display='none';
+  completarLogin(currentUser);
+  toast('✅ PIN actualizado correctamente');
+}
+
+function completarLogin(p){
   document.getElementById('userBadgeText').textContent=p.nombre;
   document.getElementById('userRolBadge').style.display='none';
-  // Ocultar todas las pestañas admin
   document.querySelectorAll('.admin-only').forEach(b=>b.style.display='none');
+  document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='');
   initApp();
   iniciarMusicaPostLogin();
+  mostrarReglasPopup();
 }
 function loginAdmin(){
   const pass=document.getElementById('adminPass').value;
@@ -1060,8 +1408,9 @@ function loginAdmin(){
   document.getElementById('loginOverlay').style.display='none';
   document.getElementById('userBadgeText').textContent='Admin';
   document.getElementById('userRolBadge').style.display='';
-  // Mostrar pestañas admin en header nav
+  // Mostrar pestañas admin en header nav, ocultar pronósticos
   document.querySelectorAll('.admin-only').forEach(b=>b.style.display='');
+  document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='none');
   initApp();
   iniciarMusicaPostLogin();
 }
@@ -1076,24 +1425,122 @@ function initApp(){
   populateLoginSelect();
   populateFiltroSemanaTodos();
   document.getElementById('bottomNav').classList.add('visible');
-  document.body.classList.add('logged-in');
-  showPage('inicio');
+  document.body.classList.add('logged-in','parallax-active');
+
+  // Render todas las secciones públicas al mismo tiempo
+  renderInicio();
+  renderRanking();
+  renderParticipantes();
+  renderPremios();
+
+  // Scroll al tope
+  window.scrollTo({top:0,behavior:'instant'});
+
+  // Activar nav inicial
+  updateNavActive('inicio');
+
+  // Iniciar IntersectionObserver
+  initScrollObserver();
 }
 
 // ════════════════════════════════════════════════
-// NAVEGACIÓN
+// NAVEGACIÓN — PARALLAX + MODALES
 // ════════════════════════════════════════════════
+const PUBLIC_PAGES = ['inicio','ranking','participantes','premios'];
+const MODAL_TITLES = {
+  'pronosticos':'📋 Mis Pronósticos',
+  'todos-pronos':'👁️ Ver Todos los Pronósticos',
+  'partidos':'⚽ Partidos del Mundial',
+  'resultados':'📝 Cargar Resultados',
+  'admin':'⚙️ Administración'
+};
+
 function showPage(name){
-  // Protección: participantes solo pueden ver páginas permitidas
+  if(isAdmin && name==='pronosticos') name='resultados';
   const paginasParticipante=['inicio','ranking','pronosticos','participantes','premios'];
   if(!isAdmin && !paginasParticipante.includes(name)) return;
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('nav button[data-page], #bottomNav button[data-page]').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  // Activar en ambas navs
-  document.querySelectorAll(`[data-page="${name}"]`).forEach(b=>b.classList.add('active'));
+
+  if(PUBLIC_PAGES.includes(name)){
+    // Cerrar cualquier modal abierto
+    closeModal(false);
+    // Smooth scroll a la sección
+    const el = document.getElementById('page-'+name);
+    if(el){
+      const top = el.getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({top: Math.max(0, top), behavior:'smooth'});
+    }
+    updateNavActive(name);
+  } else {
+    openModal(name);
+  }
+}
+
+function openModal(name){
+  const el = document.getElementById('page-'+name);
+  if(!el) return;
+  // Cerrar otros modales
+  document.querySelectorAll('.modal-page.active').forEach(m=>m.classList.remove('active'));
+  // Inyectar topbar si no existe
+  if(!el.querySelector('.modal-topbar')){
+    const topbar = document.createElement('div');
+    topbar.className = 'modal-topbar';
+    topbar.innerHTML = `
+      <button class="modal-back-btn" onclick="closeModal()">← Volver</button>
+      <span class="modal-section-title">${MODAL_TITLES[name]||name}</span>
+    `;
+    el.prepend(topbar);
+  }
+  el.classList.add('active');
+  el.scrollTop = 0;
+  document.body.classList.add('modal-open');
+  updateNavActive(name);
   renderPage(name);
-  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function closeModal(scrollBack=true){
+  const open = document.querySelectorAll('.modal-page.active');
+  open.forEach(m=>m.classList.remove('active'));
+  document.body.classList.remove('modal-open');
+  if(scrollBack && open.length){
+    // Re-activar el nav item de la sección visible en scroll
+    updateNavFromScroll();
+  }
+}
+
+function updateNavActive(name){
+  document.querySelectorAll('nav button[data-page], #bottomNav button[data-page]')
+    .forEach(b=>b.classList.toggle('active', b.dataset.page===name));
+}
+
+function updateNavFromScroll(){
+  // Determinar qué sección pública está en el viewport
+  let current = 'inicio';
+  PUBLIC_PAGES.forEach(name=>{
+    const el = document.getElementById('page-'+name);
+    if(!el) return;
+    const rect = el.getBoundingClientRect();
+    if(rect.top <= 120) current = name;
+  });
+  updateNavActive(current);
+}
+
+let _scrollObserver = null;
+function initScrollObserver(){
+  if(_scrollObserver) _scrollObserver.disconnect();
+  _scrollObserver = new IntersectionObserver((entries)=>{
+    if(document.querySelector('.modal-page.active')) return; // ignorar mientras modal abierto
+    let best = null, bestRatio = 0;
+    entries.forEach(entry=>{
+      if(entry.intersectionRatio > bestRatio){bestRatio=entry.intersectionRatio;best=entry.target;}
+    });
+    if(best){
+      updateNavActive(best.id.replace('page-',''));
+    }
+  },{threshold:[0.1,0.3,0.5,0.7],rootMargin:'-62px 0px -30% 0px'});
+  PUBLIC_PAGES.forEach(name=>{
+    const el = document.getElementById('page-'+name);
+    if(el) _scrollObserver.observe(el);
+  });
 }
 function showTab(prefix,tab){
   // Tabs dentro de una página
@@ -1133,8 +1580,15 @@ function renderPage(name){
 // ════════════════════════════════════════════════
 // UTILS
 // ════════════════════════════════════════════════
+function toggleRulesBanner(){
+  const body=document.getElementById('rulesBannerBody');
+  const btn=document.getElementById('rulesBannerBtn');
+  if(!body||!btn)return;
+  const collapsed=body.classList.toggle('collapsed');
+  btn.textContent=collapsed?'▼ Ver reglas':'▲ Ocultar';
+}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
-function colorAvatar(s){const c=['#1a5c38','#c8a84b','#2c6e9e','#8e3b8e','#b85c1a','#2e7d52'];let h=0;for(let x of s)h=x.charCodeAt(0)+((h<<5)-h);return c[Math.abs(h)%c.length];}
+function colorAvatar(s){const c=['#00994d','#7c22e8','#0ea5e9','#f59e0b','#ef4444','#8b5cf6'];let h=0;for(let x of s)h=x.charCodeAt(0)+((h<<5)-h);return c[Math.abs(h)%c.length];}
 function iniciales(n){return n.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();}
 // Mapa explícito equipo → bandera emoji
 const FLAGS = {
@@ -1200,10 +1654,8 @@ const FLAGS = {
 };
 // Extrae solo el nombre sin emoji (todo después del primer espacio)
 function nombreCorto(e){
+  if(!e) return '?';
   const parts=e.split(' ');
-  // Si empieza con emoji de bandera (carácter no ASCII), saltar primeras palabras que lo compongan
-  // Los emojis de bandera pueden ser "🇲🇽" (1 token) o "🏴󠁧󠁢󠁥󠁮󠁧󠁿" (multi token)
-  // Estrategia: buscar el nombre en el mapa de FLAGS y devolverlo directamente
   for(const [nombre] of Object.entries(FLAGS)){
     if(e.includes(nombre))return nombre;
   }
@@ -1211,6 +1663,7 @@ function nombreCorto(e){
 }
 // Devuelve el emoji de bandera del equipo
 function bandera(e){
+  if(!e) return '🏳️';
   for(const [nombre,flag] of Object.entries(FLAGS)){
     if(e.includes(nombre))return flag;
   }
@@ -1315,67 +1768,148 @@ function getGanadorCategoria(cat){
 function renderGanadores(){
   const el = document.getElementById('ganadoresContainer');
   if(!el) return;
-  
-  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">';
-  
-  CATEGORIAS_PREMIOS.forEach(cat => {
-    const ganadores = getGanadorCategoria(cat);
-    const isTop3 = cat.tipo === 'top3';
-    const hayDatos = ganadores.length > 0;
-    const mostrarN = isTop3 ? 3 : 1;
-    
-    html += `<div style="background:#fff;border-radius:12px;border:1.5px solid ${hayDatos?'var(--oro)':'var(--borde)'};overflow:hidden;box-shadow:${hayDatos?'0 2px 10px rgba(200,168,75,.2)':'none'}">`;
-    
-    // Header tarjeta
-    html += `<div style="background:${hayDatos?'linear-gradient(135deg,var(--verde),#0d3520)':'#f5f5f5'};padding:11px 14px;display:flex;align-items:center;gap:8px">
-      <span style="font-size:18px">${cat.icono}</span>
-      <span style="font-family:'Bebas Neue',cursive;font-size:14px;letter-spacing:1px;color:${hayDatos?'var(--oro2)':'var(--texto2)'};line-height:1.2">${cat.label}</span>
+
+  const conDatos = CATEGORIAS_PREMIOS.filter(cat => getGanadorCategoria(cat).length > 0);
+  const pendientes = CATEGORIAS_PREMIOS.filter(cat => getGanadorCategoria(cat).length === 0);
+
+  let html = '';
+
+  if(conDatos.length === 0){
+    html = `<div style="background:rgba(255,255,255,.04);border-radius:12px;border:1px solid var(--cbd);padding:20px;text-align:center;color:var(--tx2);margin-bottom:12px">
+      <div style="font-size:32px;margin-bottom:8px">⏳</div>
+      <div style="font-weight:700;margin-bottom:4px">Sin partidos jugados aún</div>
+      <div style="font-size:12px">Los ganadores aparecerán aquí cuando se carguen resultados</div>
     </div>`;
-    
-    // Contenido
-    html += '<div style="padding:12px 14px">';
-    
-    if(!hayDatos){
-      html += `<div style="text-align:center;padding:12px 6px;color:var(--texto2);font-size:12px">
-        <div style="font-size:24px;margin-bottom:6px">⏳</div>
-        <div>Sin partidos jugados aún</div>
-      </div>`;
-    } else {
+  } else {
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:16px">';
+    conDatos.forEach(cat => {
+      const ganadores = getGanadorCategoria(cat);
+      const isTop3 = cat.tipo === 'top3';
+      const mostrarN = isTop3 ? 3 : 1;
       const visibles = ganadores.slice(0, mostrarN);
-      // Detectar empate en el primer lugar
       const maxPts = visibles[0]._pts;
       const empates = ganadores.filter(p=>p._pts===maxPts);
-      
+
+      html += `<div style="background:rgba(0,0,0,.5);border-radius:12px;border:1.5px solid rgba(0,255,136,.35);overflow:hidden;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,255,136,.08)">
+        <div style="background:linear-gradient(135deg,rgba(139,47,255,.25),rgba(0,255,136,.08));padding:11px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.07)">
+          <span style="font-size:18px">${cat.icono}</span>
+          <span style="font-family:'Bebas Neue',cursive;font-size:14px;letter-spacing:1px;color:var(--g);line-height:1.2;flex:1;text-shadow:0 0 12px rgba(0,255,136,.3)">${cat.label}</span>
+        </div>
+        <div style="padding:12px 14px">`;
+
       visibles.forEach((p, i) => {
         const rk = i + 1;
         const medal = rk===1?(empates.length>1?'🤝':'🥇'):rk===2?'🥈':'🥉';
         const isYo = currentUser && currentUser.id === p.id;
         const esGanador = rk===1;
-        html += `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i>0?'border-top:1px solid #f0ede8':''}">
+        html += `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i>0?'border-top:1px solid rgba(255,255,255,.05)':''}">
           <span style="font-size:${esGanador?'22px':'18px'}">${medal}</span>
           <div class="avatar" style="background:${colorAvatar(p.nombre)};color:#fff;width:${esGanador?'34px':'28px'};height:${esGanador?'34px':'28px'};font-size:${esGanador?'12px':'10px'};flex-shrink:0">${iniciales(p.nombre)}</div>
           <div style="flex:1;min-width:0">
-            <div style="font-weight:700;font-size:${esGanador?'14px':'12px'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.nombre}${isYo?' ✦':''}</div>
-            <div style="font-size:11px;color:var(--texto2)">${p.area}</div>
+            <div style="font-weight:700;font-size:${esGanador?'14px':'12px'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--tx)">${p.nombre}${isYo?' ✦':''}</div>
+            <div style="font-size:11px;color:var(--tx2)">${p.area}</div>
           </div>
           <div style="text-align:right;flex-shrink:0">
-            <div style="font-family:'Bebas Neue',cursive;font-size:${esGanador?'26px':'20px'};color:${esGanador?'var(--verde)':'var(--texto2)'};line-height:1">${p._pts}</div>
-            <div style="font-size:10px;color:var(--texto2)">pts</div>
+            <div style="font-family:'Bebas Neue',cursive;font-size:${esGanador?'26px':'20px'};color:${esGanador?'var(--g)':'var(--tx2)'};line-height:1">${p._pts}</div>
+            <div style="font-size:10px;color:var(--tx2)">pts</div>
           </div>
         </div>`;
       });
-      // Si hay empate en 1° para categorías de 1 ganador, mostrar aviso
       if(!isTop3 && empates.length > 1){
-        html += `<div style="margin-top:8px;background:#fdf2d8;border-radius:6px;padding:6px 10px;font-size:11px;color:#8a6c1a;text-align:center">
-          🤝 Empate entre ${empates.length} participantes
-        </div>`;
+        html += `<div style="margin-top:8px;background:rgba(255,184,0,.1);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--o2);text-align:center">🤝 Empate entre ${empates.length} participantes</div>`;
       }
-    }
-    html += '</div></div>';
-  });
-  
-  html += '</div>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+  }
+
+  // Categorías pendientes como tira compacta
+  if(pendientes.length > 0){
+    html += `<div style="margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">⏳ Pendientes (${pendientes.length})</div>
+      <div class="pending-cats-strip">
+        ${pendientes.map(cat=>`<span class="chip" style="font-size:11px">${cat.icono} ${cat.label}</span>`).join('')}
+      </div>
+    </div>`;
+  }
+
   el.innerHTML = html;
+}
+
+function mostrarReglasPopup(){
+  const el=document.getElementById('reglasPopup');
+  if(el){el.style.display='flex';}
+}
+function cerrarReglasPopup(){
+  const el=document.getElementById('reglasPopup');
+  if(el){el.style.display='none';}
+}
+
+// ════════════════════════════════════════════════
+// GANADORES POR SEMANA — FASE DE GRUPOS (Inicio)
+// ════════════════════════════════════════════════
+function renderGanadoresSemanaGrupos(){
+  const el = document.getElementById('dashGanadoresSemanas');
+  if(!el) return;
+
+  // Las 3 semanas de grupos
+  const semanasGrupos = ['S1','S2','S3'];
+  const uid = currentUser ? currentUser.id : null;
+
+  el.innerHTML = semanasGrupos.map(sid => {
+    const sem = SEMANAS_DEF.find(s => s.id === sid);
+    if(!sem) return '';
+
+    const cat = {tipo:'fecha', semana: sid};
+    const ganadores = getGanadorCategoria(cat);
+    const hayDatos = ganadores.length > 0;
+
+    const headerHtml = `<div class="gsem-header">
+      <span style="font-size:16px">⚽</span>
+      <span class="gsem-header-label">${sem.label}</span>
+      <span class="gsem-fechas">${sem.fechas}</span>
+    </div>`;
+
+    if(!hayDatos){
+      return `<div class="gsem-card pending">
+        ${headerHtml}
+        <div class="gsem-pending-body">
+          <div class="gsem-pending-icon">⏳</div>
+          <div class="gsem-pending-txt">Sin partidos jugados aún</div>
+        </div>
+      </div>`;
+    }
+
+    const g = ganadores[0];
+    const empates = ganadores.filter(p => p._pts === g._pts);
+    const esYo = uid && g.id === uid;
+    const medal = empates.length > 1 ? '🤝' : '🥇';
+
+    return `<div class="gsem-card">
+      ${headerHtml}
+      <div class="gsem-body">
+        <div class="gsem-winner-row">
+          <div class="gsem-medal">${medal}</div>
+          <div class="avatar" style="background:${colorAvatar(g.nombre)};color:#fff;width:36px;height:36px;font-size:12px;flex-shrink:0">${iniciales(g.nombre)}</div>
+          <div style="flex:1;min-width:0">
+            <div class="gsem-name">${g.nombre}${esYo?' ✦':''}</div>
+            <div class="gsem-area">${g.area}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div class="gsem-pts">${g._pts}</div>
+            <div class="gsem-pts-label">pts</div>
+          </div>
+        </div>
+        ${empates.length > 1
+          ? `<div class="gsem-tie">🤝 Empate entre ${empates.length} participantes</div>`
+          : `<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+               <span class="chip" style="font-size:11px">🎯 ${g._exactos} exactos</span>
+               <span class="chip" style="font-size:11px">✅ ${g._ganadores} gan.</span>
+             </div>`
+        }
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ════════════════════════════════════════════════
@@ -1489,7 +2023,7 @@ function renderInicio(){
       const esYo=g.id===uid;
       return`<div style="margin-bottom:12px">
         <div style="font-size:11px;font-weight:700;color:var(--texto2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${sem.label}</div>
-        <div style="display:flex;align-items:center;gap:10px;background:#fffae8;border-radius:10px;padding:10px;border:1px solid var(--oro)">
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,215,0,.07);border-radius:10px;padding:10px;border:1px solid rgba(255,215,0,.2)">
           <span style="font-size:24px">🥇</span>
           <div class="avatar" style="background:${colorAvatar(g.nombre)};color:#fff;width:36px;height:36px;font-size:12px">${iniciales(g.nombre)}</div>
           <div style="flex:1">
@@ -1538,6 +2072,9 @@ function renderInicio(){
   }
   actualizarCD();
   cdInterval=setInterval(actualizarCD,1000);
+
+  // Ganadores semana fase de grupos
+  renderGanadoresSemanaGrupos();
 }
 
 // ════════════════════════════════════════════════
@@ -1622,7 +2159,7 @@ function renderPremios(){
         </div>
       </div>
       <div class="premio-card-body">
-        ${desc?`<div style="font-size:12px;color:var(--texto2);margin-bottom:10px;padding:6px 8px;background:#f8f8f8;border-radius:6px;border-left:3px solid var(--verde)">🎁 ${desc}</div>`:''}
+        ${desc?`<div style="font-size:12px;color:var(--texto2);margin-bottom:10px;padding:6px 8px;background:rgba(0,255,136,.08);border-radius:6px;border-left:3px solid var(--verde);color:var(--tx2)">🎁 ${desc}</div>`:''}
         ${hayDatos?`
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
             <span style="font-size:22px">${empates.length>1?'🤝':'🥇'}</span>
@@ -1633,7 +2170,7 @@ function renderPremios(){
             </div>
             <div style="font-family:'Bebas Neue',cursive;font-size:28px;color:var(--verde)">${g._pts}<span style="font-size:11px;font-family:'DM Sans',sans-serif;color:var(--texto2)"> pts</span></div>
           </div>
-          ${empates.length>1?`<div style="background:#fdf2d8;border-radius:6px;padding:6px 10px;font-size:11px;color:#8a6c1a">🤝 Empate entre ${empates.length} participantes</div>`:''}
+          ${empates.length>1?`<div style="background:rgba(255,184,0,.1);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--o2)">🤝 Empate entre ${empates.length} participantes</div>`:''}
         `:`<div style="text-align:center;padding:16px;color:var(--texto2)"><div style="font-size:28px;margin-bottom:6px">⏳</div><div style="font-size:12px">Sin partidos jugados aún</div></div>`}
       </div>
     </div>`;
@@ -1659,7 +2196,7 @@ function renderPremios(){
         </div>
       </div>
       <div class="premio-card-body">
-        ${descTop3&&i===0?`<div style="font-size:12px;color:var(--texto2);margin-bottom:10px;padding:6px 8px;background:#f8f8f8;border-radius:6px;border-left:3px solid ${pod.color}">🎁 ${descTop3}</div>`:''}
+        ${descTop3&&i===0?`<div style="font-size:12px;color:var(--texto2);margin-bottom:10px;padding:6px 8px;background:rgba(255,184,0,.08);border-radius:6px;border-left:3px solid ${pod.color};color:var(--tx2)">🎁 ${descTop3}</div>`:''}
         ${g?`
           <div style="display:flex;align-items:center;gap:10px">
             <div class="avatar" style="background:${colorAvatar(g.nombre)};color:#fff;width:40px;height:40px;font-size:13px">${iniciales(g.nombre)}</div>
@@ -1693,7 +2230,7 @@ function renderPremios(){
       const g=gs[0];
       const empates=gs.filter(p=>p._pts===g._pts);
       const esYo=currentUser&&currentUser.id===g.id;
-      return`<tr style="${esYo?'background:#f0f7f3':''}">
+      return`<tr style="${esYo?'background:rgba(0,255,136,.06)':''}">
         <td><div style="font-weight:600;font-size:13px">${cat.icono} ${cat.label}</div></td>
         <td><div style="display:flex;align-items:center;gap:8px">
           <div class="avatar" style="background:${colorAvatar(g.nombre)};color:#fff;width:28px;height:28px;font-size:9px">${iniciales(g.nombre)}</div>
@@ -1731,7 +2268,7 @@ function renderRanking(){
   const hayPuntos=data.some(p=>p._stats.pts>0);
   document.getElementById('rankingCharts').style.display=hayPuntos?'':'none';
 
-  let html='<div class="table-wrap"><table><thead><tr><th>#</th><th>Participante</th><th>Área</th><th style="text-align:center">Puntos</th><th style="text-align:center">🎯 Exacto (5)</th><th style="text-align:center">📏 Diferencia (3)</th><th style="text-align:center">✅ Ganador (1)</th><th style="text-align:center">❌ Fallos</th><th style="text-align:center">Jugados</th></tr></thead><tbody>';
+  let html='<div class="table-wrap"><table><thead><tr><th>#</th><th>Participante</th><th class="rank-col-hide">Área</th><th style="text-align:center">Puntos</th><th style="text-align:center">🎯 Exacto</th><th style="text-align:center" class="rank-col-hide">📏 Dif.</th><th style="text-align:center">✅ Gan.</th><th style="text-align:center" class="rank-col-hide">❌ Fallos</th><th style="text-align:center" class="rank-col-hide">Jugados</th></tr></thead><tbody>';
   data.forEach((p,i)=>{
     const rk=i+1;
     const medal=rk===1?'🥇':rk===2?'🥈':rk===3?'🥉':'';
@@ -1747,13 +2284,13 @@ function renderRanking(){
           ${esYo?'<span class="badge badge-verde" style="font-size:10px">Tú</span>':''}
         </div>
       </div></td>
-      <td><span class="badge badge-gris">${p.area}</span></td>
+      <td class="rank-col-hide"><span class="badge badge-gris">${p.area}</span></td>
       <td style="text-align:center"><span style="font-family:'Bebas Neue',cursive;font-size:26px;color:var(--verde)">${p._stats.pts}</span></td>
       <td style="text-align:center">${p._stats.exactos}</td>
-      <td style="text-align:center">${p._stats.diferencias||0}</td>
+      <td style="text-align:center" class="rank-col-hide">${p._stats.diferencias||0}</td>
       <td style="text-align:center">${p._stats.ganadores}</td>
-      <td style="text-align:center">${p._stats.fallos}</td>
-      <td style="text-align:center;color:var(--texto2)">${p._stats.total}</td>
+      <td style="text-align:center" class="rank-col-hide">${p._stats.fallos}</td>
+      <td style="text-align:center;color:var(--texto2)" class="rank-col-hide">${p._stats.total}</td>
     </tr>`;
   });
   html+='</tbody></table></div>';
@@ -1780,7 +2317,7 @@ function renderChartPrecision(data){
   const d=data.filter(p=>p._stats.total>0);if(!d.length)return;
   charts.pr=new Chart(ctx,{type:'bar',
     data:{labels:d.map(p=>p.nombre.split(' ')[0]),datasets:[{
-      label:'% Aciertos',data:d.map(p=>Math.round((p._stats.exactos+p._stats.ganadores)/p._stats.total*100)),
+      label:'% Aciertos',data:d.map(p=>Math.round((p._stats.exactos+(p._stats.diferencias||0)+p._stats.ganadores)/p._stats.total*100)),
       backgroundColor:'#1a5c3899',borderColor:'#1a5c38',borderWidth:1.5
     }]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
@@ -1906,6 +2443,9 @@ function renderPronoEliminatoria(){
 }
 function updateProno(input){
   const uid=currentUser?currentUser.id:null;if(!uid)return;
+  const pid=input.dataset.pid;
+  // Guard: no permitir editar si el partido no está habilitado
+  if(!partidoHabilitado(pid)){input.value='';return;}
   // Sanitizar: solo enteros entre 0 y 20
   let val=input.value;
   if(val!==''){
@@ -1916,7 +2456,7 @@ function updateProno(input){
     val=String(n);
   }
   if(!DB.pronosticos[uid])DB.pronosticos[uid]={};
-  const pid=input.dataset.pid,side=input.dataset.side;
+  const side=input.dataset.side;
   if(!DB.pronosticos[uid][pid])DB.pronosticos[uid][pid]={g1:'',g2:''};
   DB.pronosticos[uid][pid][side]=val;
   saveDB();
@@ -1998,7 +2538,7 @@ function renderResumenPronosticos(){
       <div class="puntos-row"><span>❌ Fallo</span><span class="badge badge-rojo">0 pts</span></div>
       <div class="puntos-row"><span>📊 Total acumulado</span><span>${s.pts} puntos</span></div>
     </div>
-    <div style="margin-top:14px;background:#f0f7f3;border-radius:8px;padding:12px;font-size:13px;color:var(--verde)">
+    <div style="margin-top:14px;background:rgba(0,255,136,.06);border-radius:8px;padding:12px;font-size:13px;color:var(--g);border:1px solid rgba(0,255,136,.15)">
       ✏️ Puedes modificar tus pronósticos mientras la ronda esté abierta. Al cerrarse, quedan fijos. Los puntos se acumulan en todo el torneo.
     </div>`;
 }
@@ -2014,10 +2554,11 @@ document.getElementById('newPin').addEventListener('input',function(){
 function registrarParticipante(){
   const nombre=document.getElementById('newNombre').value.trim();
   const area=document.getElementById('newArea').value.trim();
-  const pin=String(document.getElementById('newPin').value).slice(0,4);
-  if(!nombre||!area||pin.length<4){toast('⚠️ Completa todos los campos (PIN = 4 dígitos)');return;}
+  const pin=String(document.getElementById('newPin').value).replace(/\D/g,'').slice(0,4);
+  if(!nombre||!area){toast('⚠️ Completa nombre y área');return;}
+  if(pin.length!==4){toast('⚠️ El PIN debe ser exactamente 4 dígitos numéricos');return;}
   if(DB.participantes.find(p=>p.nombre.toLowerCase()===nombre.toLowerCase())){toast('⚠️ Ya existe ese participante');return;}
-  DB.participantes.push({id:'p_'+Date.now(),nombre,area,pin,fechaReg:new Date().toISOString()});
+  DB.participantes.push({id:'p_'+Date.now(),nombre,area,pin,pinCambiado:false,fechaReg:new Date().toISOString()});
   saveDB();populateLoginSelect();
   ['newNombre','newArea','newPin'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('pinPreview').style.display='none';
@@ -2231,7 +2772,7 @@ function renderDetalleParticipante(){
     <div class="puntos-row"><span>🎯 Marcadores exactos</span><span>${s.exactos}</span></div>
     <div class="puntos-row"><span>✅ Ganadores</span><span>${s.ganadores}</span></div>
     <div class="puntos-row"><span>❌ Fallos</span><span>${s.fallos}</span></div>
-    <div class="puntos-row"><span>📊 % Aciertos</span><span>${s.total>0?Math.round((s.exactos+s.ganadores)/s.total*100):0}%</span></div>
+    <div class="puntos-row"><span>📊 % Aciertos</span><span>${s.total>0?Math.round((s.exactos+(s.diferencias||0)+s.ganadores)/s.total*100):0}%</span></div>
     <div class="puntos-row"><span>Partidos evaluados</span><span>${s.total}</span></div>
   </div>`;
 }
@@ -2321,7 +2862,7 @@ function borrarTodosPronosticos(){
 const SEMANAS_DEF = [
   {id:'S1', label:'Semana 1 — Jornada 1 de Grupos', fechas:'11–14 Jun',
    partidos:['A1','A2','B1','D1','B2','C1','C2','D2','E1','F1','E2','F2','H1','G1','H2','G2','I1','I2','J1','J2','K1','L1','L2','K2']},
-  {id:'S2', label:'Semana 2 — Jornada 2 de Grupos', fechas:'15–21 Jun',
+  {id:'S2', label:'Semana 2 — Jornada 2 de Grupos', fechas:'15–23 Jun',
    partidos:['A3','B3','B4','A4','D3','C3','C4','D4','F3','E3','E4','F4','H3','G3','H4','G4','J3','I3','I4','J4','K3','L3','L4','K4']},
   {id:'S3', label:'Semana 3 — Jornada 3 de Grupos', fechas:'22–27 Jun',
    partidos:['A5','A6','B5','B6','C5','C6','D5','D6','E5','E6','F5','F6','G5','G6','H5','H6','I5','I6','J5','J6','K5','K6','L5','L6']},
@@ -2492,13 +3033,13 @@ function renderSemanasContainer(){
       }).length;
     }, 0);
 
-    const borderColor = cerrada ? '#c0392b' : hab ? 'var(--verde)' : 'var(--borde)';
-    const bgColor = cerrada ? '#fdf0ee' : hab ? '#f0f7f3' : '#fafafa';
+    const borderColor = cerrada ? 'rgba(255,68,68,.5)' : hab ? 'rgba(0,255,136,.4)' : 'var(--borde)';
+    const bgColor = cerrada ? 'rgba(255,68,68,.07)' : hab ? 'rgba(0,255,136,.06)' : 'rgba(255,255,255,.03)';
 
     return `<div style="border:2px solid ${borderColor};background:${bgColor};border-radius:10px;padding:14px 16px;margin-bottom:10px">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <div style="flex:1;min-width:220px">
-          <div style="font-weight:700;font-size:14px;color:${cerrada?'var(--rojo)':hab?'var(--verde)':'var(--texto)'}">${sem.label}</div>
+          <div style="font-weight:700;font-size:14px;color:${cerrada?'var(--r)':hab?'var(--g)':'var(--tx)'}">${sem.label}</div>
           <div style="font-size:12px;color:var(--texto2);margin-top:3px">📅 ${sem.fechas} &nbsp;·&nbsp; ${countPartidos} partidos &nbsp;·&nbsp; ${jugados} con resultado &nbsp;·&nbsp; ${totalPronos} pronósticos</div>
           ${(()=>{
             // Mostrar cierres por día para esta semana
@@ -2654,7 +3195,7 @@ function renderTodosPronos(){
       </div>`;
 
     if(!semanaCerrada && !jugado){
-      html += `<div style="background:#fdf2d8;border-radius:8px;padding:12px;text-align:center;font-size:13px;color:#8a6c1a">
+      html += `<div style="background:rgba(255,184,0,.08);border-radius:8px;padding:12px;text-align:center;font-size:13px;color:var(--o2);border:1px solid rgba(255,184,0,.15)">
         🔒 Los pronósticos se revelarán cuando la semana cierre o comience el partido
       </div>`;
     } else {
@@ -2683,7 +3224,7 @@ function renderTodosPronos(){
           else { resultado = '<span class="badge badge-rojo">❌ Fallo</span>'; clsBorde='border-left:3px solid #e74c3c'; }
         }
 
-        html += `<tr style="${esYo?'background:#f0f7f3;':''}${clsBorde?clsBorde+';':''}">
+        html += `<tr style="${esYo?'background:rgba(0,255,136,.06);':''}${clsBorde?clsBorde+';':''}">
           <td><div style="display:flex;align-items:center;gap:7px"><div class="avatar" style="background:${colorAvatar(u.nombre)};color:#fff;width:28px;height:28px;font-size:10px">${iniciales(u.nombre)}</div><span style="font-weight:600;font-size:13px">${u.nombre}${esYo?" ✦":""}</span></div></td>
           <td style="text-align:center">
             ${tienePrno
@@ -2728,6 +3269,7 @@ function formatFechaCierre(isoStr){
 }
 
 function verificarCierresAutomaticos(){
+  if(!isAdmin) return; // solo el admin cierra semanas
   const ahora = new Date();
   let cambios = false;
   // 1. Cierre manual del admin por semana (override)
@@ -2794,24 +3336,105 @@ function borrarCierreAuto(semId){
 }
 
 // ════════════════════════════════════════════════
+// DEMO MODE
+// ════════════════════════════════════════════════
+function entrarDemo(){
+  // ── Participantes ──────────────────────────────
+  const participantes = [
+    {id:'d1',nombre:'Víctor Montiel',area:'Administración',pin:'1234',pinCambiado:true},
+    {id:'d2',nombre:'Diego García',area:'Ventas',pin:'2222',pinCambiado:true},
+    {id:'d3',nombre:'Ana Torres',area:'RRHH',pin:'3333',pinCambiado:true},
+    {id:'d4',nombre:'Carlos Ruiz',area:'Finanzas',pin:'4444',pinCambiado:true},
+    {id:'d5',nombre:'María López',area:'Marketing',pin:'5555',pinCambiado:true},
+    {id:'d6',nombre:'Pedro Sánchez',area:'TI',pin:'6666',pinCambiado:true},
+    {id:'d7',nombre:'Lucía Flores',area:'Legal',pin:'7777',pinCambiado:true},
+    {id:'d8',nombre:'Roberto Díaz',area:'Operaciones',pin:'8888',pinCambiado:true},
+    {id:'d9',nombre:'Camila Vargas',area:'Diseño',pin:'9999',pinCambiado:true},
+    {id:'d10',nombre:'Javier Morales',area:'Dirección',pin:'1111',pinCambiado:true},
+    {id:'d11',nombre:'Sofía Ríos',area:'Contabilidad',pin:'2345',pinCambiado:true},
+    {id:'d12',nombre:'Miguel Peña',area:'Logística',pin:'6789',pinCambiado:true},
+  ];
+
+  // ── Resultados de los primeros 24 partidos ─────
+  const resultados = {
+    'A1':[2,0],'A2':[1,1],'B1':[0,1],'D1':[3,1],'B2':[2,2],'C1':[1,0],
+    'C2':[0,2],'D2':[1,3],'E1':[2,1],'F1':[0,0],'E2':[4,1],'F2':[2,0],
+    'H1':[1,2],'G1':[3,0],'H2':[1,1],'G2':[0,1],'I1':[2,0],'I2':[1,1],
+    'J1':[3,2],'J2':[0,0],'K1':[1,0],'L1':[2,1],'L2':[1,1],'K2':[0,2],
+  };
+
+  // ── Pronósticos ficticios por participante ─────
+  // Cada participante tiene un "nivel de habilidad" diferente
+  const pronosticos = {};
+  const pids = Object.keys(resultados);
+  const rng = (seed) => { let s=seed; return ()=>{ s=(s*16807+0)%2147483647; return(s-1)/2147483646; }; };
+
+  participantes.forEach((p, pi) => {
+    pronosticos[p.id] = {};
+    const rand = rng(pi * 7919 + 1234);
+    // nivel 0-3: 0=muy bueno (70% exactos), 1=bueno (50% exactos), 2=regular (30%), 3=malo (random)
+    const nivel = pi % 4;
+
+    pids.forEach(pid => {
+      const [r1, r2] = resultados[pid];
+      const r = rand();
+      let g1 = r1, g2 = r2;
+
+      if(nivel === 0){
+        // Muy bueno: 65% exacto, 25% mismo signo, 10% random
+        if(r < 0.65){ /* exacto */ }
+        else if(r < 0.90){ g1 = Math.max(0, r1 + (rand()>0.5?1:-1)); g2 = Math.max(0, r2 + (rand()>0.5?1:-1)); }
+        else { g1 = Math.floor(rand()*4); g2 = Math.floor(rand()*4); }
+      } else if(nivel === 1){
+        // Bueno: 40% exacto, 35% mismo signo con diferencia, 25% fallo
+        if(r < 0.40){ /* exacto */ }
+        else if(r < 0.75){ const d=rand()>0.5?1:-1; g1=Math.max(0,r1+d); g2=Math.max(0,r2+(rand()>0.4?d:0)); }
+        else { g1=Math.floor(rand()*3+1); g2=Math.floor(rand()*3); }
+      } else if(nivel === 2){
+        // Regular: 20% exacto, 30% mismo signo, 50% fallo
+        if(r < 0.20){ /* exacto */ }
+        else if(r < 0.50){ g1=Math.max(0,r1+(rand()>0.5?1:0)); g2=Math.max(0,r2+(rand()>0.5?1:0)); }
+        else { g1=Math.floor(rand()*4); g2=Math.floor(rand()*3+1); }
+      } else {
+        // Malo: básicamente random con algo de suerte
+        if(r < 0.10){ /* exacto de chiripa */ }
+        else { g1=Math.floor(rand()*4); g2=Math.floor(rand()*4); }
+      }
+      pronosticos[p.id][pid] = {g1: String(g1), g2: String(g2)};
+    });
+  });
+
+  // ── Aplicar al DB (solo en memoria, sin Firebase) ──
+  DB.participantes = participantes;
+  DB.pronosticos = pronosticos;
+  DB.semanasHabilitadas = {S1:true, S2:true};
+  DB.semanasCerradas = {S1:true};  // S1 ya cerrada → pronósticos visibles
+
+  // Aplicar resultados al fixture
+  pids.forEach(pid => {
+    const p = DB.partidos.find(x=>x.id===pid);
+    if(p){ p.gol1 = resultados[pid][0]; p.gol2 = resultados[pid][1]; }
+  });
+
+  // ── Login como primer participante ─────────────
+  currentUser = participantes[0];
+  isAdmin = false;
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('userBadgeText').textContent = participantes[0].nombre;
+  document.getElementById('userRolBadge').style.display = 'none';
+  document.querySelectorAll('.admin-only').forEach(b=>b.style.display='none');
+  document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='');
+
+  initApp();
+}
+
+// ════════════════════════════════════════════════
 // INIT
 
 populateLoginSelect();
 </script>
 
-<!-- Botón flotante Spotify — Dai Dai (Shakira x Burna Boy, canción oficial Mundial 2026) -->
-<a id="musicBtn"
-   href="https://open.spotify.com/track/1BxfuPKGuaTgP7aM0Bbdwr"
-   target="_blank"
-   rel="noopener"
-   title="🎵 Escuchar Dai Dai — Shakira x Burna Boy (Spotify)">🎵</a>
-
 <script>
-// La música ahora abre Spotify en una nueva pestaña — sin problemas de autoplay
-function toggleMusic(){
-  window.open('https://open.spotify.com/track/1BxfuPKGuaTgP7aM0Bbdwr','_blank','noopener');
-}
-// Stub vacío — se llama tras login pero ya no hace falta arrancar nada automático
 function iniciarMusicaPostLogin(){}
 </script>
 </body>
