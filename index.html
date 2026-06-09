@@ -1305,6 +1305,8 @@ function loadDB(){
         applyParsed(data);
         // Sincronizar localStorage con lo que llegó de Firebase
         localStorage.setItem('polla2026v3',JSON.stringify(data));
+        // Siempre refrescar el select del login (por si llegaron participantes nuevos)
+        populateLoginSelect();
         // Si ya hay sesión activa, re-renderizar la página actual
         if(currentUser){
           // Re-renderizar todas las secciones públicas
@@ -1315,7 +1317,6 @@ function loadDB(){
           // Re-renderizar modal abierto si hay uno
           const openModal = document.querySelector('.modal-page.active');
           if(openModal) renderPage(openModal.id.replace('page-',''));
-          populateLoginSelect();
         }
       } else {
         // Base de datos vacía: primer uso, no hay datos todavía
