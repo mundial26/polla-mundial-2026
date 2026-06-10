@@ -64,8 +64,9 @@ nav#mainNav button.active{color:var(--g);background:rgba(0,255,136,.1);box-shado
 
 /* ── BOTTOM NAV ─────────────────────────────────── */
 #bottomNav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;background:rgba(3,6,16,.95);backdrop-filter:blur(20px);border-top:1px solid rgba(0,255,136,.1)}
-#bottomNav .bnav-inner{display:flex;max-width:480px;margin:0 auto}
-#bottomNav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px 12px;background:transparent;border:none;border-top:2px solid transparent;cursor:pointer;color:rgba(255,255,255,.3);font-family:var(--fu);font-size:10px;font-weight:700;transition:.15s;line-height:1;letter-spacing:.5px;text-transform:uppercase}
+#bottomNav .bnav-inner{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-behavior:smooth}
+#bottomNav .bnav-inner::-webkit-scrollbar{display:none}
+#bottomNav button{flex:0 0 auto;min-width:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 6px 12px;background:transparent;border:none;border-top:2px solid transparent;cursor:pointer;color:rgba(255,255,255,.3);font-family:var(--fu);font-size:10px;font-weight:700;transition:.15s;line-height:1;letter-spacing:.5px;text-transform:uppercase}
 #bottomNav button .bnav-icon{font-size:19px;line-height:1}
 #bottomNav button:hover{color:rgba(255,255,255,.7)}
 #bottomNav button.active{color:var(--g);border-top-color:var(--g);text-shadow:0 0 10px rgba(0,255,136,.4)}
@@ -572,7 +573,7 @@ body.modal-open{overflow:hidden}
       <span class="bnav-icon">🏠</span><span>Inicio</span>
     </button>
     <button data-page="pronosticos" onclick="showPage('pronosticos')">
-      <span class="bnav-icon">🎯</span><span>Pronósticos</span>
+      <span class="bnav-icon">🎯</span><span>Pronós.</span>
     </button>
     <button data-page="ranking" onclick="showPage('ranking')">
       <span class="bnav-icon">🏆</span><span>Ranking</span>
@@ -582,6 +583,18 @@ body.modal-open{overflow:hidden}
     </button>
     <button data-page="premios" onclick="showPage('premios')">
       <span class="bnav-icon">🎁</span><span>Premios</span>
+    </button>
+    <button data-page="partidos" class="admin-only" onclick="showPage('partidos')" style="display:none">
+      <span class="bnav-icon">⚽</span><span>Partidos</span>
+    </button>
+    <button data-page="resultados" class="admin-only" onclick="showPage('resultados')" style="display:none">
+      <span class="bnav-icon">📝</span><span>Results.</span>
+    </button>
+    <button data-page="todos-pronos" class="admin-only" onclick="showPage('todos-pronos')" style="display:none">
+      <span class="bnav-icon">👁️</span><span>Ver Todos</span>
+    </button>
+    <button data-page="admin" class="admin-only" onclick="showPage('admin')" style="display:none">
+      <span class="bnav-icon">⚙️</span><span>Admin</span>
     </button>
   </div>
 </div>
@@ -2570,16 +2583,49 @@ function renderListaParticipantes(){
   const el=document.getElementById('listaParticipantes');
   if(!DB.participantes.length){el.innerHTML='<div class="empty"><p>Sin participantes aún</p></div>';return;}
   el.innerHTML=[...DB.participantes].sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--borde)">
-      <div style="display:flex;align-items:center;gap:9px">
+    <div id="fila_${p.id}" style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--borde)">
+      <div style="display:flex;align-items:center;gap:9px;flex:1">
         <div class="avatar" style="background:${colorAvatar(p.nombre)};color:#fff;width:32px;height:32px;font-size:11px">${iniciales(p.nombre)}</div>
-        <div>
-          <div style="font-weight:600;font-size:13px">${p.nombre}</div>
-          <div style="font-size:11px;color:var(--texto2)">${p.area} · PIN: <strong>${p.pin}</strong></div>
+        <div style="flex:1">
+          <div id="txt_${p.id}" style="font-weight:600;font-size:13px">${p.nombre}</div>
+          <div id="inp_${p.id}" style="display:none;flex-direction:column;gap:4px;margin-top:4px">
+            <input id="edit_nombre_${p.id}" value="${p.nombre}" placeholder="Nombre" style="padding:4px 8px;border-radius:6px;border:1px solid var(--g);background:var(--bg2);color:#fff;font-size:13px;width:100%;box-sizing:border-box">
+            <input id="edit_area_${p.id}" value="${p.area}" placeholder="Área" style="padding:4px 8px;border-radius:6px;border:1px solid var(--g);background:var(--bg2);color:#fff;font-size:13px;width:100%;box-sizing:border-box">
+            <input id="edit_pin_${p.id}" value="${p.pin}" placeholder="PIN (4 dígitos)" maxlength="4" style="padding:4px 8px;border-radius:6px;border:1px solid var(--g);background:var(--bg2);color:#fff;font-size:13px;width:100%;box-sizing:border-box">
+          </div>
+          <div id="sub_${p.id}" style="font-size:11px;color:var(--texto2)">${p.area} · PIN: <strong>${p.pin}</strong></div>
         </div>
       </div>
-      <button class="btn btn-rojo btn-sm" onclick="eliminarParticipante('${p.id}')">🗑️</button>
+      <div style="display:flex;gap:6px;margin-left:8px;flex-shrink:0">
+        <button id="btnEdit_${p.id}" class="btn btn-sm" style="background:var(--bg2);border:1px solid var(--borde)" onclick="editarParticipante('${p.id}')">✏️</button>
+        <button class="btn btn-rojo btn-sm" onclick="eliminarParticipante('${p.id}')">🗑️</button>
+      </div>
     </div>`).join('');
+}
+function editarParticipante(id){
+  const txtEl=document.getElementById('txt_'+id);
+  const subEl=document.getElementById('sub_'+id);
+  const inpEl=document.getElementById('inp_'+id);
+  const btnEl=document.getElementById('btnEdit_'+id);
+  if(inpEl.style.display==='none'||inpEl.style.display===''){
+    inpEl.style.display='flex';
+    txtEl.style.display='none';
+    subEl.style.display='none';
+    btnEl.textContent='💾';
+  } else {
+    const nuevoNombre=document.getElementById('edit_nombre_'+id).value.trim();
+    const nuevaArea=document.getElementById('edit_area_'+id).value.trim();
+    const nuevoPin=document.getElementById('edit_pin_'+id).value.replace(/\D/g,'').slice(0,4);
+    if(!nuevoNombre){toast('⚠️ El nombre no puede estar vacío');return;}
+    if(nuevoPin.length!==4){toast('⚠️ El PIN debe ser 4 dígitos');return;}
+    const dup=DB.participantes.find(p=>p.id!==id&&p.nombre.toLowerCase()===nuevoNombre.toLowerCase());
+    if(dup){toast('⚠️ Ya existe un participante con ese nombre');return;}
+    const p=DB.participantes.find(p=>p.id===id);
+    p.nombre=nuevoNombre;
+    if(nuevaArea)p.area=nuevaArea;
+    p.pin=nuevoPin;
+    saveDB();populateLoginSelect();renderListaParticipantes();toast('✅ Actualizado: '+nuevoNombre);
+  }
 }
 function eliminarParticipante(id){
   if(!confirm('¿Eliminar participante y todos sus pronósticos?'))return;
