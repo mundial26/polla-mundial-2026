@@ -164,7 +164,7 @@ tr:hover td{background:rgba(255,255,255,.03)}
 .score-box::-webkit-inner-spin-button,.score-box::-webkit-outer-spin-button{opacity:1}
 .score-box:focus{border-color:var(--g);outline:none;box-shadow:0 0 0 3px rgba(0,255,136,.15);background:rgba(0,255,136,.07)}
 .vs-sep{font-family:var(--fh);font-size:24px;color:var(--tx3)}
-.prono-score{background:rgba(0,255,136,.15);color:var(--g);border:1px solid rgba(0,255,136,.3);padding:4px 12px;border-radius:var(--rads);font-family:var(--fh);font-size:22px;text-shadow:0 0 10px rgba(0,255,136,.4)}
+.prono-score{background:#1e2530;color:#ffffff;border:1px solid rgba(255,255,255,.25);padding:4px 12px;border-radius:var(--rads);font-family:var(--fh);font-size:22px;font-weight:700}
 .resultado-correcto{border-left:3px solid var(--g)}
 .resultado-parcial{border-left:3px solid var(--o)}
 .resultado-incorrecto{border-left:3px solid var(--r)}
@@ -715,6 +715,10 @@ body.modal-open{overflow:hidden}
     <div id="estadoSemanaBadge"></div>
   </div>
   <div id="faltanPronosticar" style="margin-bottom:16px"></div>
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <button id="btnVistaPart" class="btn btn-sm" style="background:var(--verde);color:#000;font-weight:700" onclick="setVistaTodos('partido')">⚽ Por partido</button>
+    <button id="btnVistaUser" class="btn btn-sm" style="background:var(--bg2);border:1px solid var(--borde)" onclick="setVistaTodos('participante')">👤 Por participante</button>
+  </div>
   <div id="todosPronos"></div>
   </div><!-- /modal-body -->
 </div>
@@ -3280,6 +3284,13 @@ function partidoHabilitado(pid){
 // ════════════════════════════════════════════════
 // VER TODOS LOS PRONÓSTICOS
 // ════════════════════════════════════════════════
+function tieneProno(pr){
+  if(!pr) return false;
+  const v1 = pr.g1; const v2 = pr.g2;
+  return (v1 !== '' && v1 !== null && v1 !== undefined) &&
+         (v2 !== '' && v2 !== null && v2 !== undefined);
+}
+
 function renderTodosPronos(){
   const semId = document.getElementById('filtroSemanaTodos')?.value || 'S1';
   const sem = SEMANAS_DEF.find(s=>s.id===semId);
@@ -3316,7 +3327,7 @@ function renderTodosPronos(){
     const tieneAlgunFaltante = partidos.some(p => {
       return DB.participantes.some(u => {
         const pr = (DB.pronosticos[u.id]||{})[p.id];
-        return !pr || pr.g1 === '' || pr.g2 === '' || pr.g1 === null || pr.g2 === undefined;
+        return !tieneProno(pr);
       });
     });
     if(!tieneAlgunFaltante){
@@ -3325,7 +3336,7 @@ function renderTodosPronos(){
       const bloques = partidos.map(p => {
         const faltanEnPartido = DB.participantes.filter(u => {
           const pr = (DB.pronosticos[u.id]||{})[p.id];
-          return !pr || pr.g1 === '' || pr.g2 === '' || pr.g1 === null || pr.g2 === undefined;
+          return !tieneProno(pr);
         });
         if(!faltanEnPartido.length) return '';
         const nombres = faltanEnPartido.map(u =>
@@ -3344,7 +3355,7 @@ function renderTodosPronos(){
       }).filter(Boolean).join('');
       const totalFaltantes = new Set(partidos.flatMap(p => DB.participantes.filter(u => {
         const pr = (DB.pronosticos[u.id]||{})[p.id];
-        return !pr || pr.g1 === '' || pr.g2 === '' || pr.g1 === null || pr.g2 === undefined;
+        return !tieneProno(pr);
       }).map(u=>u.id))).size;
       faltanEl.innerHTML = `<div style="background:rgba(255,68,68,.06);border:1px solid rgba(255,68,68,.2);border-radius:10px;padding:12px 16px">
         <div style="font-size:13px;font-weight:700;color:var(--rojo);margin-bottom:10px">⚠️ Pronósticos faltantes — ${totalFaltantes} participante(s)</div>
@@ -3357,6 +3368,32 @@ function renderTodosPronos(){
   // Partido a partido: si el partido ya tiene resultado, también se revela ese pronóstico
   const semanaCerrada = !!cerrada;
 
+  renderTodosPronosVista(partidos, semanaCerrada);
+}
+
+let _vistaTodos = 'partido';
+function setVistaTodos(v){
+  _vistaTodos = v;
+  document.getElementById('btnVistaPart').style.background = v==='partido' ? 'var(--verde)' : 'var(--bg2)';
+  document.getElementById('btnVistaPart').style.color = v==='partido' ? '#000' : '';
+  document.getElementById('btnVistaUser').style.background = v==='participante' ? 'var(--verde)' : 'var(--bg2)';
+  document.getElementById('btnVistaUser').style.color = v==='participante' ? '#000' : '';
+  const semId = document.getElementById('filtroSemanaTodos')?.value || 'S1';
+  const sem = SEMANAS_DEF.find(s=>s.id===semId);
+  if(!sem) return;
+  const cerrada = DB.semanasCerradas?.[semId];
+  const semanaCerrada = !!cerrada;
+  const partidos = sem.partidos.map(pid => DB.partidos.find(p=>p.id===pid)).filter(Boolean);
+  renderTodosPronosVista(partidos, semanaCerrada);
+}
+
+function renderTodosPronosVista(partidos, semanaCerrada){
+  const el = document.getElementById('todosPronos');
+  if(!el) return;
+  if(_vistaTodos === 'participante'){
+    renderVistaParticipante(partidos, semanaCerrada, el);
+    return;
+  }
   let html = '';
   partidos.forEach(p => {
     const jugado = p.gol1 !== null && p.gol2 !== null;
@@ -3385,7 +3422,7 @@ function renderTodosPronos(){
 
       DB.participantes.forEach(u => {
         const pr = (DB.pronosticos[u.id]||{})[p.id];
-        const tienePrno = pr && pr.g1 !== '' && pr.g2 !== '';
+        const tienePrno = tieneProno(pr);
         const esYo = currentUser && currentUser.id === u.id;
 
         let resultado = '';
