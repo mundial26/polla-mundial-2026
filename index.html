@@ -3476,7 +3476,7 @@ function renderVistaParticipante(partidos, semanaCerrada, el){
       const pr = pronos[p.id];
       const tienePrno = tieneProno(pr);
       const jugado = p.gol1 !== null && p.gol2 !== null;
-      const revelado = semanaCerrada || jugado;
+      const revelado = semanaCerrada || jugado || isAdmin;
       let puntosBadge = '', rowColor = 'background:rgba(255,255,255,.03)';
       if(jugado && tienePrno){
         const exacto = parseInt(pr.g1)===p.gol1 && parseInt(pr.g2)===p.gol2;
