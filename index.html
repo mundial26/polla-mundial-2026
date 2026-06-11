@@ -714,6 +714,7 @@ body.modal-open{overflow:hidden}
     <select id="filtroSemanaTodos" onchange="renderTodosPronos()" style="width:auto"></select>
     <div id="estadoSemanaBadge"></div>
   </div>
+  <div id="faltanPronosticar" style="margin-bottom:16px"></div>
   <div id="todosPronos"></div>
   </div><!-- /modal-body -->
 </div>
@@ -3032,11 +3033,16 @@ const CIERRE_POR_PARTIDO = {
 // Para eliminatorias: día anterior al partido a 18:00 PER.
 // El admin puede sobreescribir con DB.semanasCierres para toda la semana.
 function cierreDelPartido(pid){
-  // Si la semana tiene un cierre manual del admin, ese tiene prioridad
+  // 1. Override individual por partido (máxima prioridad)
+  if(DB.cierresPorPartido && DB.cierresPorPartido[pid]){
+    return new Date(DB.cierresPorPartido[pid]);
+  }
+  // 2. Cierre manual de la semana
   const semId = semanaDePartido(pid);
   if(semId && DB.semanasCierres && DB.semanasCierres[semId]){
     return new Date(DB.semanasCierres[semId]);
   }
+  // 3. Cierre automático hardcodeado
   if(CIERRE_POR_PARTIDO[pid]) return new Date(CIERRE_POR_PARTIDO[pid]);
   return null;
 }
@@ -3115,7 +3121,7 @@ function renderSemanasContainer(){
             ${jugados===countPartidos && countPartidos>0 ? '<span class="badge badge-azul">🏁 Completa</span>' : ''}
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;min-width:200px">
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;min-width:160px">
           ${cerrada
             ? `<div style="font-size:12px;color:var(--rojo);font-weight:600;text-align:center;padding:8px">🔒 Cerrada definitivamente</div>`
             : `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none">
@@ -3125,23 +3131,56 @@ function renderSemanasContainer(){
                 </div>
                 <span style="font-size:13px;font-weight:700;color:${hab?'var(--verde)':'var(--texto2)'}">${hab?'ON':'OFF'}</span>
               </label>
-              <div style="display:flex;flex-direction:column;gap:4px;width:100%">
-                <label style="font-size:11px;font-weight:600;color:var(--texto2);margin:0">⏰ Cierre automático (hora Perú)</label>
-                <div style="display:flex;gap:4px">
-                  <input type="datetime-local" id="cierre_${sem.id}" value="${cierreLocal}"
-                    style="font-size:12px;padding:5px 8px;flex:1;min-width:0"
-                    onchange="guardarCierreAuto('${sem.id}')">
-                  ${cierreIso ? `<button class="btn btn-gris btn-sm" onclick="borrarCierreAuto('${sem.id}')" title="Quitar cierre automático" style="padding:5px 8px;font-size:12px">✕</button>` : ''}
-                </div>
-              </div>
               <button class="btn btn-rojo btn-sm" onclick="cerrarSemana('${sem.id}','${sem.label}')" style="font-size:11px;width:100%;justify-content:center">
                 🔒 Cerrar definitivamente
               </button>`
           }
         </div>
       </div>
+      ${!cerrada ? `<div style="margin-top:12px;border-top:1px solid var(--borde);padding-top:12px">${renderCierresPorPartido(sem)}</div>` : ''}
     </div>`;
   }).join('');
+}
+
+function renderCierresPorPartido(sem){
+  const ahora = new Date();
+  if(!DB.cierresPorPartido) DB.cierresPorPartido = {};
+  const partidosVencidos = sem.partidos.filter(pid => {
+    const c = CIERRE_POR_PARTIDO[pid] ? new Date(CIERRE_POR_PARTIDO[pid]) : null;
+    return c && ahora >= c;
+  });
+  if(!partidosVencidos.length) return '<div style="font-size:12px;color:var(--texto2);text-align:center;padding:4px">⏳ Ningún partido cerrado aún en esta semana</div>';
+  const filas = partidosVencidos.map(pid => {
+    const p = DB.partidos.find(x=>x.id===pid);
+    if(!p) return '';
+    const override = DB.cierresPorPartido[pid];
+    const abierto = override && new Date(override) > ahora;
+    // Calcular valor para el input datetime-local en hora Perú
+    let inputVal = '';
+    if(override){
+      try{
+        const d = new Date(override);
+        const peruMs = d.getTime() - 5*60*60*1000;
+        const pd = new Date(peruMs);
+        inputVal = pd.getUTCFullYear()+'-'+String(pd.getUTCMonth()+1).padStart(2,'0')+'-'+String(pd.getUTCDate()).padStart(2,'0')+'T'+String(pd.getUTCHours()).padStart(2,'0')+':'+String(pd.getUTCMinutes()).padStart(2,'0');
+      }catch(e){}
+    }
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap">
+      <div style="flex:1;min-width:120px">
+        <div style="font-size:12px;font-weight:700">${bandera(p.equipo1)} ${nombreCorto(p.equipo1)} vs ${nombreCorto(p.equipo2)} ${bandera(p.equipo2)}</div>
+        <div style="font-size:10px;color:var(--texto2)">${p.fecha} · ${p.hora}</div>
+        ${abierto ? `<div style="font-size:10px;color:var(--verde);font-weight:600">✅ Reabierto hasta ${formatFechaCierre(override)}</div>` : '<div style="font-size:10px;color:var(--rojo)">🔒 Cerrado</div>'}
+      </div>
+      <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+        <input type="datetime-local" id="cp_${pid}" value="${inputVal}" style="font-size:11px;padding:3px 6px;width:155px">
+        <button class="btn btn-sm" style="font-size:11px;background:#1a3a2a;border:1px solid var(--verde);color:var(--verde)" onclick="guardarCierrePartido('${pid}','${sem.id}')">✔</button>
+        <button class="btn btn-sm" style="font-size:11px;background:#1a3a2a;border:1px solid var(--verde);color:var(--verde)" onclick="extenderCierrePartido('${pid}','${sem.id}',2)">+2h</button>
+        <button class="btn btn-sm" style="font-size:11px;background:#1a3a2a;border:1px solid var(--verde);color:var(--verde)" onclick="extenderCierrePartido('${pid}','${sem.id}',4)">+4h</button>
+        ${override ? `<button class="btn btn-gris btn-sm" style="font-size:11px" onclick="quitarCierrePartido('${pid}','${sem.id}')" title="Quitar override">✕</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+  return `<div style="font-size:12px;font-weight:700;color:var(--texto2);margin-bottom:8px">⏰ Reabrir cierre por partido</div>${filas}`;
 }
 
 function toggleSemana(semId){
@@ -3168,6 +3207,52 @@ function cerrarSemana(semId, label){
 }
 
 // Devuelve el semId de la semana a la que pertenece un partido
+function guardarCierrePartido(pid, semId){
+  if(!DB.cierresPorPartido) DB.cierresPorPartido = {};
+  const val = document.getElementById('cp_'+pid)?.value;
+  if(!val){toast('⚠️ Selecciona fecha y hora');return;}
+  // Convertir hora Perú (UTC-5) a UTC
+  const [fecha, hora] = val.split('T');
+  const [y,mo,d] = fecha.split('-').map(Number);
+  const [h,mi] = hora.split(':').map(Number);
+  const utc = new Date(Date.UTC(y,mo-1,d,h+5,mi));
+  DB.cierresPorPartido[pid] = utc.toISOString();
+  saveDB(); renderSemanasContainer();
+  const p = DB.partidos.find(x=>x.id===pid);
+  toast('✅ Cierre de '+nombreCorto(p.equipo1)+' vs '+nombreCorto(p.equipo2)+' actualizado');
+}
+function extenderCierrePartido(pid, semId, horas){
+  if(!DB.cierresPorPartido) DB.cierresPorPartido = {};
+  const ahora = new Date();
+  const base = DB.cierresPorPartido[pid] ? new Date(DB.cierresPorPartido[pid]) : ahora;
+  const nuevaBase = base > ahora ? base : ahora;
+  const nuevo = new Date(nuevaBase.getTime() + horas*60*60*1000);
+  DB.cierresPorPartido[pid] = nuevo.toISOString();
+  saveDB(); renderSemanasContainer();
+  const p = DB.partidos.find(x=>x.id===pid);
+  toast('⏰ +'+horas+'h → '+nombreCorto(p.equipo1)+' vs '+nombreCorto(p.equipo2)+' cierra '+formatFechaCierre(nuevo.toISOString()));
+}
+function quitarCierrePartido(pid, semId){
+  if(!DB.cierresPorPartido) return;
+  delete DB.cierresPorPartido[pid];
+  saveDB(); renderSemanasContainer();
+  toast('✅ Override removido — cierre automático restaurado');
+}
+
+function extenderCierre(semId, horas){
+  if(!DB.semanasCierres) DB.semanasCierres = {};
+  const ahora = new Date();
+  // Si ya hay cierre manual y no ha vencido, extender desde ese; si no, extender desde ahora
+  const base = DB.semanasCierres[semId] ? new Date(DB.semanasCierres[semId]) : ahora;
+  const nuevaBase = base > ahora ? base : ahora;
+  const nuevo = new Date(nuevaBase.getTime() + horas * 60 * 60 * 1000);
+  DB.semanasCierres[semId] = nuevo.toISOString();
+  saveDB();
+  renderSemanasContainer();
+  const sem = SEMANAS_DEF.find(s=>s.id===semId);
+  toast(`⏰ Cierre de ${sem.label} extendido +${horas}h → ${formatFechaCierre(nuevo.toISOString())}`);
+}
+
 function semanaDePartido(pid){
   for(const sem of SEMANAS_DEF){
     if(sem.partidos.includes(pid)) return sem.id;
@@ -3221,6 +3306,49 @@ function renderTodosPronos(){
   if(!DB.participantes.length){
     el.innerHTML = '<div class="empty"><div class="empty-icon">👥</div><p>Sin participantes registrados aún</p></div>';
     return;
+  }
+
+  // ── Panel: quiénes faltan pronosticar por partido ──
+  const faltanEl = document.getElementById('faltanPronosticar');
+  if(faltanEl){
+    const tieneAlgunFaltante = partidos.some(p => {
+      return DB.participantes.some(u => {
+        const pr = (DB.pronosticos[u.id]||{})[p.id];
+        return !pr || pr.g1 === '' || pr.g2 === '' || pr.g1 === null || pr.g2 === undefined;
+      });
+    });
+    if(!tieneAlgunFaltante){
+      faltanEl.innerHTML = '<div style="background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--verde);font-weight:600">✅ Todos han pronosticado esta semana</div>';
+    } else {
+      const bloques = partidos.map(p => {
+        const faltanEnPartido = DB.participantes.filter(u => {
+          const pr = (DB.pronosticos[u.id]||{})[p.id];
+          return !pr || pr.g1 === '' || pr.g2 === '' || pr.g1 === null || pr.g2 === undefined;
+        });
+        if(!faltanEnPartido.length) return '';
+        const nombres = faltanEnPartido.map(u =>
+          `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(255,68,68,.12);border:1px solid rgba(255,68,68,.25);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;color:#ff9090">`+
+          `<span style="width:20px;height:20px;border-radius:50%;background:${colorAvatar(u.nombre)};display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff">${iniciales(u.nombre)}</span>`+
+          `${u.nombre}</span>`
+        ).join('');
+        return `<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+            <span style="font-size:13px;font-weight:700">${bandera(p.equipo1)} ${nombreCorto(p.equipo1)} vs ${nombreCorto(p.equipo2)} ${bandera(p.equipo2)}</span>
+            <span style="font-size:11px;color:var(--texto2)">${p.fecha} · ${p.hora}</span>
+            <span style="font-size:11px;background:rgba(255,68,68,.2);color:var(--rojo);padding:2px 8px;border-radius:10px;font-weight:700">Faltan ${faltanEnPartido.length}</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px">${nombres}</div>
+        </div>`;
+      }).filter(Boolean).join('');
+      const totalFaltantes = new Set(partidos.flatMap(p => DB.participantes.filter(u => {
+        const pr = (DB.pronosticos[u.id]||{})[p.id];
+        return !pr || pr.g1 === '' || pr.g2 === '' || pr.g1 === null || pr.g2 === undefined;
+      }).map(u=>u.id))).size;
+      faltanEl.innerHTML = `<div style="background:rgba(255,68,68,.06);border:1px solid rgba(255,68,68,.2);border-radius:10px;padding:12px 16px">
+        <div style="font-size:13px;font-weight:700;color:var(--rojo);margin-bottom:10px">⚠️ Pronósticos faltantes — ${totalFaltantes} participante(s)</div>
+        ${bloques}
+      </div>`;
+    }
   }
 
   // Pronósticos visibles: solo si la semana fue cerrada definitivamente (ya no se puede editar)
