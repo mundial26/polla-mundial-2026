@@ -3462,6 +3462,54 @@ function renderTodosPronosVista(partidos, semanaCerrada){
   el.innerHTML = html || '<div class="empty"><p>Sin partidos en esta semana</p></div>';
 }
 
+function renderVistaParticipante(partidos, semanaCerrada, el){
+  let html = '';
+  DB.participantes.sort((a,b)=>a.nombre.localeCompare(b.nombre)).forEach(u => {
+    const pronos = DB.pronosticos[u.id] || {};
+    html += `<div class="card" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div class="avatar" style="background:${colorAvatar(u.nombre)};color:#fff;width:36px;height:36px;font-size:13px">${iniciales(u.nombre)}</div>
+        <div><div style="font-weight:700;font-size:15px">${u.nombre}</div><div style="font-size:11px;color:var(--texto2)">${u.area}</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">`;
+    partidos.forEach(p => {
+      const pr = pronos[p.id];
+      const tienePrno = tieneProno(pr);
+      const jugado = p.gol1 !== null && p.gol2 !== null;
+      const revelado = semanaCerrada || jugado;
+      let puntosBadge = '', rowColor = 'background:rgba(255,255,255,.03)';
+      if(jugado && tienePrno){
+        const exacto = parseInt(pr.g1)===p.gol1 && parseInt(pr.g2)===p.gol2;
+        const difR = p.gol1-p.gol2, difP = parseInt(pr.g1)-parseInt(pr.g2);
+        const diferencia = !exacto && difP===difR;
+        const correcto = !exacto && !diferencia && Math.sign(p.gol1-p.gol2)===Math.sign(difP);
+        if(exacto){puntosBadge=`<span class="badge badge-verde">🎯 +${DB.config.puntoExacto}</span>`;rowColor='background:rgba(0,255,136,.08)';}
+        else if(diferencia){puntosBadge=`<span class="badge badge-azul">📏 +${DB.config.puntoDiferencia||3}</span>`;rowColor='background:rgba(44,110,158,.1)';}
+        else if(correcto){puntosBadge=`<span class="badge badge-oro">✅ +${DB.config.puntoGanador}</span>`;rowColor='background:rgba(255,184,0,.06)';}
+        else{puntosBadge='<span class="badge badge-rojo">❌ 0</span>';rowColor='background:rgba(255,68,68,.05)';}
+      }
+      const pronoHtml = !revelado && !tienePrno
+        ? '<span style="font-size:11px;color:var(--rojo);font-weight:600">⚠️ Sin pronóstico</span>'
+        : !revelado
+          ? '<span style="font-size:11px;color:var(--texto2)">🔒 Oculto</span>'
+          : tienePrno
+            ? `<div style="display:flex;align-items:center;gap:4px"><span style="background:#1e2530;color:#fff;border:1px solid rgba(255,255,255,.2);padding:2px 8px;border-radius:5px;font-family:'Bebas Neue',cursive;font-size:16px">${pr.g1}</span><span style="color:var(--texto2);font-size:12px">-</span><span style="background:#1e2530;color:#fff;border:1px solid rgba(255,255,255,.2);padding:2px 8px;border-radius:5px;font-family:'Bebas Neue',cursive;font-size:16px">${pr.g2}</span></div>`
+            : '<span style="font-size:11px;color:var(--rojo);font-weight:600">⚠️ Sin pronóstico</span>';
+      html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:8px;${rowColor};flex-wrap:wrap;gap:6px">
+        <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0">
+          <span style="font-size:15px">${bandera(p.equipo1)}</span>
+          <span style="font-size:12px;font-weight:600">${nombreCorto(p.equipo1)} vs ${nombreCorto(p.equipo2)}</span>
+          <span style="font-size:15px">${bandera(p.equipo2)}</span>
+          ${jugado?`<span style="font-size:11px;color:var(--texto2)">(${p.gol1}-${p.gol2})</span>`:''}
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">${pronoHtml}${puntosBadge}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  el.innerHTML = html || '<div class="empty"><p>Sin participantes</p></div>';
+}
+
 // ════════════════════════════════════════════════
 // CIERRE AUTOMÁTICO POR FECHA/HORA
 // ════════════════════════════════════════════════
