@@ -715,9 +715,9 @@ body.modal-open{overflow:hidden}
     <div id="estadoSemanaBadge"></div>
   </div>
   <div id="faltanPronosticar" style="margin-bottom:16px"></div>
-  <div style="display:flex;gap:8px;margin-bottom:12px">
-    <button id="btnVistaPart" class="btn btn-sm" style="background:var(--verde);color:#000;font-weight:700" onclick="setVistaTodos('partido')">⚽ Por partido</button>
-    <button id="btnVistaUser" class="btn btn-sm" style="background:var(--bg2);border:1px solid var(--borde)" onclick="setVistaTodos('participante')">👤 Por participante</button>
+  <div id="toggleVistaTodos" style="display:flex;gap:8px;margin-bottom:12px">
+    <button class="btn btn-sm" style="background:var(--verde);color:#000;font-weight:700" onclick="setVistaTodos('partido',this.parentElement)">⚽ Por partido</button>
+    <button class="btn btn-sm" style="background:var(--bg2);border:1px solid var(--borde)" onclick="setVistaTodos('participante',this.parentElement)">👤 Por participante</button>
   </div>
   <div id="todosPronos"></div>
   </div><!-- /modal-body -->
@@ -2779,9 +2779,15 @@ function renderEstadisticas(){
   DB.participantes.forEach(p=>{
     const pr=DB.pronosticos[p.id]||{};
     DB.partidos.forEach(partido=>{
-      const pron=pr[partido.id];if(!pron||pron.g1===''||pron.g2==='')return;
-      if(parseInt(pron.g1)>parseInt(pron.g2))ec[partido.equipo1]=(ec[partido.equipo1]||0)+1;
-      else if(parseInt(pron.g2)>parseInt(pron.g1))ec[partido.equipo2]=(ec[partido.equipo2]||0)+1;
+      const pron=pr[partido.id];
+      if(!tieneProno(pron))return;
+      const g1=parseInt(pron.g1), g2=parseInt(pron.g2);
+      if(g1>g2){ ec[partido.equipo1]=(ec[partido.equipo1]||0)+1; }
+      else if(g2>g1){ ec[partido.equipo2]=(ec[partido.equipo2]||0)+1; }
+      else { // empate: contar ambos equipos
+        ec[partido.equipo1]=(ec[partido.equipo1]||0)+1;
+        ec[partido.equipo2]=(ec[partido.equipo2]||0)+1;
+      }
     });
   });
   const topEq=Object.entries(ec).sort((a,b)=>b[1]-a[1]).slice(0,10);
@@ -3372,15 +3378,20 @@ function renderTodosPronos(){
 }
 
 let _vistaTodos = 'partido';
-function setVistaTodos(v){
+function setVistaTodos(v, container){
   _vistaTodos = v;
-  document.getElementById('btnVistaPart').style.background = v==='partido' ? 'var(--verde)' : 'var(--bg2)';
-  document.getElementById('btnVistaPart').style.color = v==='partido' ? '#000' : '';
-  document.getElementById('btnVistaUser').style.background = v==='participante' ? 'var(--verde)' : 'var(--bg2)';
-  document.getElementById('btnVistaUser').style.color = v==='participante' ? '#000' : '';
+  // Actualizar estilos de botones
+  if(container){
+    Array.from(container.children).forEach((btn,i)=>{
+      const activo = (i===0 && v==='partido') || (i===1 && v==='participante');
+      btn.style.background = activo ? 'var(--verde)' : 'var(--bg2)';
+      btn.style.color = activo ? '#000' : '';
+      btn.style.border = activo ? 'none' : '1px solid var(--borde)';
+    });
+  }
   const semId = document.getElementById('filtroSemanaTodos')?.value || 'S1';
   const sem = SEMANAS_DEF.find(s=>s.id===semId);
-  if(!sem) return;
+  if(!sem){ console.warn('setVistaTodos: semana no encontrada', semId); return; }
   const cerrada = DB.semanasCerradas?.[semId];
   const semanaCerrada = !!cerrada;
   const partidos = sem.partidos.map(pid => DB.partidos.find(p=>p.id===pid)).filter(Boolean);
