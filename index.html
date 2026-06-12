@@ -1430,7 +1430,10 @@ function loginAdmin(){
   document.getElementById('userBadgeText').textContent='Admin';
   document.getElementById('userRolBadge').style.display='';
   // Mostrar pestañas admin en header nav, ocultar pronósticos
-  document.querySelectorAll('.admin-only').forEach(b=>b.style.display='');
+  document.querySelectorAll('.admin-only').forEach(b=>{
+    // Botones del bottomNav necesitan display:flex, los del header display:inline-flex
+    b.style.display = b.closest('#bottomNav') ? 'flex' : 'inline-flex';
+  });
   document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='none');
   initApp();
   iniciarMusicaPostLogin();
