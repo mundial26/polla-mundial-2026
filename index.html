@@ -70,8 +70,8 @@ nav#mainNav button.active{color:var(--g);background:rgba(0,255,136,.1);box-shado
 #bottomNav button .bnav-icon{font-size:19px;line-height:1}
 #bottomNav button:hover{color:rgba(255,255,255,.7)}
 #bottomNav button.active{color:var(--g);border-top-color:var(--g);text-shadow:0 0 10px rgba(0,255,136,.4)}
-@media(min-width:1024px){#bottomNav{display:none!important};body.logged-in main{padding-bottom:24px};nav#mainNav{display:flex!important}}
-@media(max-width:1023px){nav#mainNav{display:none!important};#bottomNav.visible{display:block};body.logged-in main{padding-bottom:80px}}
+@media(min-width:768px){#bottomNav{display:none!important};#menuHamburguesa{display:none!important};body.logged-in main{padding-bottom:24px};nav#mainNav{display:flex!important}}
+@media(max-width:767px){nav#mainNav{display:none!important};#menuHamburguesa{display:flex!important};#bottomNav{display:none!important};body.logged-in main{padding-bottom:16px}}
 
 /* ── LAYOUT ─────────────────────────────────────── */
 main{max-width:1200px;margin:0 auto;padding:32px 28px;position:relative;z-index:1}
@@ -558,11 +558,31 @@ body.modal-open{overflow:hidden}
       <button data-page="todos-pronos" class="admin-only" onclick="showPage('todos-pronos')" style="display:none">👁️ Ver Todos</button>
       <button data-page="admin" class="admin-only" onclick="showPage('admin')" style="display:none">⚙️ Admin</button>
     </nav>
-    <div class="user-badge" onclick="logout()">
-      <span id="userBadgeText">—</span>
-      <span id="userRolBadge" class="rol-badge" style="display:none">ADMIN</span>
-      <span style="font-size:10px;opacity:.6;margin-left:2px">Salir</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="menuHamburguesa" onclick="toggleMenuMovil()" style="display:none;background:transparent;border:none;cursor:pointer;padding:6px;flex-direction:column;gap:5px;align-items:center;justify-content:center">
+        <span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px"></span>
+        <span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px"></span>
+        <span style="display:block;width:22px;height:2px;background:#fff;border-radius:2px"></span>
+      </button>
+      <div class="user-badge" onclick="logout()">
+        <span id="userBadgeText">—</span>
+        <span id="userRolBadge" class="rol-badge" style="display:none">ADMIN</span>
+        <span style="font-size:10px;opacity:.6;margin-left:2px">Salir</span>
+      </div>
     </div>
+  </div>
+  <!-- Menú desplegable móvil -->
+  <div id="menuMovil" style="display:none;background:rgba(3,6,16,.98);border-top:1px solid rgba(0,255,136,.15);padding:8px 0">
+    <button data-page="inicio" onclick="showPageMovil('inicio')" style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 24px;background:transparent;border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;text-align:left">🏠 Inicio</button>
+    <button data-page="pronosticos" onclick="showPageMovil('pronosticos')" style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 24px;background:transparent;border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;text-align:left">🎯 Pronósticos</button>
+    <button data-page="ranking" onclick="showPageMovil('ranking')" style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 24px;background:transparent;border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;text-align:left">🏆 Ranking</button>
+    <button data-page="participantes" onclick="showPageMovil('participantes')" style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 24px;background:transparent;border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;text-align:left">👥 Participantes</button>
+    <button data-page="premios" onclick="showPageMovil('premios')" style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 24px;background:transparent;border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;text-align:left">🎁 Premios</button>
+    <div id="menuAdminSep" style="display:none;height:1px;background:rgba(0,255,136,.15);margin:4px 0"></div>
+    <button data-page="partidos" class="menu-movil-admin" onclick="showPageMovil('partidos')" style="display:none;align-items:center;gap:12px;width:100%;padding:12px 24px;background:transparent;border:none;color:var(--verde);font-size:14px;font-weight:600;cursor:pointer;text-align:left">⚽ Partidos</button>
+    <button data-page="resultados" class="menu-movil-admin" onclick="showPageMovil('resultados')" style="display:none;align-items:center;gap:12px;width:100%;padding:12px 24px;background:transparent;border:none;color:var(--verde);font-size:14px;font-weight:600;cursor:pointer;text-align:left">📝 Resultados</button>
+    <button data-page="todos-pronos" class="menu-movil-admin" onclick="showPageMovil('todos-pronos')" style="display:none;align-items:center;gap:12px;width:100%;padding:12px 24px;background:transparent;border:none;color:var(--verde);font-size:14px;font-weight:600;cursor:pointer;text-align:left">👁️ Ver Todos</button>
+    <button data-page="admin" class="menu-movil-admin" onclick="showPageMovil('admin')" style="display:none;align-items:center;gap:12px;width:100%;padding:12px 24px;background:transparent;border:none;color:var(--verde);font-size:14px;font-weight:600;cursor:pointer;text-align:left">⚙️ Admin</button>
   </div>
 </header>
 
@@ -1431,9 +1451,12 @@ function loginAdmin(){
   document.getElementById('userRolBadge').style.display='';
   // Mostrar pestañas admin en header nav, ocultar pronósticos
   document.querySelectorAll('.admin-only').forEach(b=>{
-    // Botones del bottomNav necesitan display:flex, los del header display:inline-flex
     b.style.display = b.closest('#bottomNav') ? 'flex' : 'inline-flex';
   });
+  // Mostrar opciones admin en menú móvil
+  document.querySelectorAll('.menu-movil-admin').forEach(b=>b.style.display='flex');
+  const sep = document.getElementById('menuAdminSep');
+  if(sep) sep.style.display='block';
   document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='none');
   initApp();
   iniciarMusicaPostLogin();
@@ -3700,6 +3723,10 @@ function entrarDemo(){
   document.getElementById('userRolBadge').style.display = 'none';
   document.querySelectorAll('.admin-only').forEach(b=>b.style.display='none');
   document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='');
+  document.querySelectorAll('.menu-movil-admin').forEach(b=>b.style.display='none');
+  const sepL = document.getElementById('menuAdminSep');
+  if(sepL) sepL.style.display='none';
+  document.getElementById('menuMovil').style.display='none';
 
   initApp();
 }
@@ -3708,6 +3735,15 @@ function entrarDemo(){
 // INIT
 
 populateLoginSelect();
+
+function toggleMenuMovil(){
+  const m = document.getElementById('menuMovil');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+function showPageMovil(page){
+  document.getElementById('menuMovil').style.display = 'none';
+  showPage(page);
+}
 </script>
 
 <script>
