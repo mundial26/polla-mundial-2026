@@ -688,7 +688,12 @@ body.modal-open{overflow:hidden}
   <div class="grid-4" id="statsCards" style="margin-bottom:16px"></div>
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
-      <div style="font-weight:700;font-size:15px">Tabla de posiciones</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="font-weight:700;font-size:15px">Tabla de posiciones</div>
+        <select id="filtroRanking" onchange="renderRanking()" style="font-size:12px;padding:4px 8px;border-radius:8px;background:var(--bg2);border:1px solid var(--borde);color:#fff">
+          <option value="general">🌐 General</option>
+        </select>
+      </div>
       <div style="display:flex;gap:5px;flex-wrap:wrap">
         <span class="chip">🎯 Exacto 5 pts</span>
         <span class="chip">📏 Dif. 3 pts</span>
@@ -2300,19 +2305,48 @@ function renderPremios(){
 }
 
 
+function poblarFiltroRanking(){
+  const sel = document.getElementById('filtroRanking');
+  if(!sel) return;
+  const semanas = SEMANAS_DEF.filter(s => {
+    // Solo mostrar semanas que tienen al menos un partido jugado
+    return s.partidos.some(pid => {
+      const p = DB.partidos.find(x=>x.id===pid);
+      return p && p.gol1 !== null;
+    });
+  });
+  const current = sel.value;
+  sel.innerHTML = '<option value="general">🌐 General</option>' +
+    semanas.map(s=>`<option value="${s.id}">${s.label}</option>`).join('');
+  if(semanas.find(s=>s.id===current)||current==='general') sel.value=current;
+}
+
 function renderRanking(){
   renderGanadores();
-  const data=DB.participantes.map(p=>{p._stats=calcularPuntos(p.id);return p;}).sort((a,b)=>{
+  poblarFiltroRanking();
+  const filtro = document.getElementById('filtroRanking')?.value || 'general';
+  const esSemana = filtro !== 'general';
+  const sem = esSemana ? SEMANAS_DEF.find(s=>s.id===filtro) : null;
+  const partidoIds = sem ? sem.partidos : null;
+
+  const data = DB.participantes.map(p=>{
+    p._stats = esSemana ? calcularPuntosSemana(p.id, partidoIds) : calcularPuntos(p.id);
+    return p;
+  }).sort((a,b)=>{
     if(b._stats.pts!==a._stats.pts)return b._stats.pts-a._stats.pts;
     if(b._stats.exactos!==a._stats.exactos)return b._stats.exactos-a._stats.exactos;
     return b._stats.ganadores-a._stats.ganadores;
   });
-  const jugados=DB.partidos.filter(p=>p.gol1!==null).length;
-  const totalPronos=DB.participantes.reduce((s,p)=>s+Object.values(DB.pronosticos[p.id]||{}).filter(x=>x&&x.g1!==''&&x.g2!=='').length,0);
+
+  const partidosFiltro = esSemana
+    ? sem.partidos.map(pid=>DB.partidos.find(p=>p.id===pid)).filter(Boolean)
+    : DB.partidos;
+  const jugados = partidosFiltro.filter(p=>p.gol1!==null).length;
+  const totalPronos = DB.participantes.reduce((s,p)=>s+Object.values(DB.pronosticos[p.id]||{}).filter(x=>tieneProno(x)).length,0);
   document.getElementById('statsCards').innerHTML=`
     <div class="stat-card"><div class="stat-num">${DB.participantes.length}</div><div class="stat-label">Participantes</div></div>
     <div class="stat-card"><div class="stat-num">${jugados}</div><div class="stat-label">Partidos Jugados</div></div>
-    <div class="stat-card"><div class="stat-num">${DB.partidos.length}</div><div class="stat-label">Total Partidos</div></div>
+    <div class="stat-card"><div class="stat-num">${esSemana?partidosFiltro.length:DB.partidos.length}</div><div class="stat-label">Total Partidos</div></div>
     <div class="stat-card"><div class="stat-num">${totalPronos}</div><div class="stat-label">Pronósticos Cargados</div></div>`;
 
   if(!data.length){
@@ -3184,20 +3218,25 @@ function renderSemanasContainer(){
           }
         </div>
       </div>
-      ${!cerrada ? `<div style="margin-top:12px;border-top:1px solid var(--borde);padding-top:12px">${renderCierresPorPartido(sem)}</div>` : ''}
+      <div style="margin-top:12px;border-top:1px solid var(--borde);padding-top:12px">${renderCierresPorPartido(sem, cerrada)}</div>
     </div>`;
   }).join('');
 }
 
-function renderCierresPorPartido(sem){
+function renderCierresPorPartido(sem, cerrada){
   const ahora = new Date();
   if(!DB.cierresPorPartido) DB.cierresPorPartido = {};
-  const partidosVencidos = sem.partidos.filter(pid => {
-    const c = CIERRE_POR_PARTIDO[pid] ? new Date(CIERRE_POR_PARTIDO[pid]) : null;
-    return c && ahora >= c;
-  });
-  if(!partidosVencidos.length) return '<div style="font-size:12px;color:var(--texto2);text-align:center;padding:4px">⏳ Ningún partido cerrado aún en esta semana</div>';
-  const filas = partidosVencidos.map(pid => {
+  // Mostrar todos los partidos de la semana
+  const todosPartidos = sem.partidos;
+  if(!todosPartidos.length) return '<div style="font-size:12px;color:var(--texto2);text-align:center;padding:4px">⏳ Sin partidos en esta semana</div>';
+  
+  // Botón reabrir semana si está cerrada definitivamente
+  const btnReabrir = cerrada ? `<div style="margin-bottom:10px">
+    <button class="btn btn-sm" style="background:#1a2a3a;border:1px solid #4a9eff;color:#4a9eff;font-size:12px;width:100%;justify-content:center" 
+      onclick="reabrirSemana('${sem.id}','${sem.label}')">🔓 Reabrir semana definitivamente cerrada</button>
+  </div>` : '';
+
+  const filas = todosPartidos.map(pid => {
     const p = DB.partidos.find(x=>x.id===pid);
     if(!p) return '';
     const override = DB.cierresPorPartido[pid];
@@ -3227,7 +3266,7 @@ function renderCierresPorPartido(sem){
       </div>
     </div>`;
   }).join('');
-  return `<div style="font-size:12px;font-weight:700;color:var(--texto2);margin-bottom:8px">⏰ Reabrir cierre por partido</div>${filas}`;
+  return `${btnReabrir}<div style="font-size:12px;font-weight:700;color:var(--texto2);margin-bottom:8px">⏰ Control de cierre por partido</div>${filas}`;
 }
 
 function toggleSemana(semId){
@@ -3254,6 +3293,15 @@ function cerrarSemana(semId, label){
 }
 
 // Devuelve el semId de la semana a la que pertenece un partido
+function reabrirSemana(semId, label){
+  if(!confirm('¿Reabrir "'+label+'"? Los participantes podrán volver a pronosticar partidos que no estén cerrados.')) return;
+  if(!DB.semanasCerradas) DB.semanasCerradas = {};
+  delete DB.semanasCerradas[semId];
+  saveDB();
+  renderSemanasContainer();
+  toast('🔓 '+label+' reabierta');
+}
+
 function guardarCierrePartido(pid, semId){
   if(!DB.cierresPorPartido) DB.cierresPorPartido = {};
   const val = document.getElementById('cp_'+pid)?.value;
