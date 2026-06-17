@@ -1407,7 +1407,7 @@ function switchLoginTab(t){
 function populateLoginSelect(){
   const sel=document.getElementById('loginNombre');
   sel.innerHTML='<option value="">Selecciona tu nombre...</option>';
-  [...DB.participantes].sort((a,b)=>a.nombre.localeCompare(b.nombre))
+  [...DB.participantes].filter(p=>!p.desactivado).sort((a,b)=>a.nombre.localeCompare(b.nombre))
     .forEach(p=>sel.innerHTML+=`<option value="${p.id}">${p.nombre} — ${p.area}</option>`);
 }
 function loginParticipante(){
@@ -1417,6 +1417,7 @@ function loginParticipante(){
   if(!id){showErr('Selecciona tu nombre');return;}
   const p=DB.participantes.find(x=>x.id===id);
   if(!p||String(p.pin)!==String(pin)){showErr('PIN incorrecto');return;}
+  if(p.desactivado){showErr('Tu cuenta está desactivada. Consulta al administrador.');return;}
   currentUser=p; isAdmin=false;
   document.getElementById('loginOverlay').style.display='none';
   // Primer ingreso: forzar cambio de PIN
@@ -2659,11 +2660,11 @@ function renderListaParticipantes(){
   const el=document.getElementById('listaParticipantes');
   if(!DB.participantes.length){el.innerHTML='<div class="empty"><p>Sin participantes aún</p></div>';return;}
   el.innerHTML=[...DB.participantes].sort((a,b)=>a.nombre.localeCompare(b.nombre)).map(p=>`
-    <div id="fila_${p.id}" style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--borde)">
+    <div id="fila_${p.id}" style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--borde);opacity:${p.desactivado?'0.5':'1'}">
       <div style="display:flex;align-items:center;gap:9px;flex:1">
         <div class="avatar" style="background:${colorAvatar(p.nombre)};color:#fff;width:32px;height:32px;font-size:11px">${iniciales(p.nombre)}</div>
         <div style="flex:1">
-          <div id="txt_${p.id}" style="font-weight:600;font-size:13px">${p.nombre}</div>
+          <div id="txt_${p.id}" style="font-weight:600;font-size:13px">${p.nombre}${p.desactivado?'<span style="font-size:10px;background:#ff4444;color:#fff;padding:1px 6px;border-radius:8px;margin-left:6px">INACTIVO</span>':''}</div>
           <div id="inp_${p.id}" style="display:none;flex-direction:column;gap:4px;margin-top:4px">
             <input id="edit_nombre_${p.id}" value="${p.nombre}" placeholder="Nombre" style="padding:4px 8px;border-radius:6px;border:1px solid var(--g);background:var(--bg2);color:#fff;font-size:13px;width:100%;box-sizing:border-box">
             <input id="edit_area_${p.id}" value="${p.area}" placeholder="Área" style="padding:4px 8px;border-radius:6px;border:1px solid var(--g);background:var(--bg2);color:#fff;font-size:13px;width:100%;box-sizing:border-box">
@@ -2674,9 +2675,17 @@ function renderListaParticipantes(){
       </div>
       <div style="display:flex;gap:6px;margin-left:8px;flex-shrink:0">
         <button id="btnEdit_${p.id}" class="btn btn-sm" style="background:var(--bg2);border:1px solid var(--borde)" onclick="editarParticipante('${p.id}')">✏️</button>
+        <button class="btn btn-sm" style="background:${p.desactivado?'#1a3a1a':'#3a1a1a'};border:1px solid ${p.desactivado?'#4caf50':'#ff6b6b'};color:${p.desactivado?'#4caf50':'#ff6b6b'}" onclick="toggleDesactivar('${p.id}')">${p.desactivado?'✅':'🚫'}</button>
         <button class="btn btn-rojo btn-sm" onclick="eliminarParticipante('${p.id}')">🗑️</button>
       </div>
     </div>`).join('');
+}
+function toggleDesactivar(id){
+  const p=DB.participantes.find(x=>x.id===id);
+  if(!p) return;
+  p.desactivado=!p.desactivado;
+  saveDB();populateLoginSelect();renderListaParticipantes();
+  toast(p.desactivado?'🚫 '+p.nombre+' desactivado':'✅ '+p.nombre+' activado');
 }
 function editarParticipante(id){
   const txtEl=document.getElementById('txt_'+id);
