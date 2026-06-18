@@ -1407,8 +1407,8 @@ function switchLoginTab(t){
 function populateLoginSelect(){
   const sel=document.getElementById('loginNombre');
   sel.innerHTML='<option value="">Selecciona tu nombre...</option>';
-  [...DB.participantes].filter(p=>!p.desactivado).sort((a,b)=>a.nombre.localeCompare(b.nombre))
-    .forEach(p=>sel.innerHTML+=`<option value="${p.id}">${p.nombre} — ${p.area}</option>`);
+  [...DB.participantes].sort((a,b)=>a.nombre.localeCompare(b.nombre))
+    .forEach(p=>sel.innerHTML+=`<option value="${p.id}">${p.desactivado?'👁️ ':''} ${p.nombre} — ${p.area}${p.desactivado?' (solo ver)':''}</option>`);
 }
 function loginParticipante(){
   const id=document.getElementById('loginNombre').value;
@@ -1417,7 +1417,7 @@ function loginParticipante(){
   if(!id){showErr('Selecciona tu nombre');return;}
   const p=DB.participantes.find(x=>x.id===id);
   if(!p||String(p.pin)!==String(pin)){showErr('PIN incorrecto');return;}
-  if(p.desactivado){showErr('Tu cuenta está desactivada. Consulta al administrador.');return;}
+  // Usuario inactivo puede ingresar pero solo ver
   currentUser=p; isAdmin=false;
   document.getElementById('loginOverlay').style.display='none';
   // Primer ingreso: forzar cambio de PIN
@@ -1452,10 +1452,16 @@ function completarLogin(p){
   document.getElementById('userBadgeText').textContent=p.nombre;
   document.getElementById('userRolBadge').style.display='none';
   document.querySelectorAll('.admin-only').forEach(b=>b.style.display='none');
-  document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='');
+  if(p.desactivado){
+    // Usuario inactivo: ocultar pronósticos, mostrar aviso
+    document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='none');
+    toast('👁️ Cuenta inactiva — solo puedes ver resultados y ranking');
+  } else {
+    document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='');
+  }
   initApp();
   iniciarMusicaPostLogin();
-  mostrarReglasPopup();
+  if(!p.desactivado) mostrarReglasPopup();
 }
 function loginAdmin(){
   const pass=document.getElementById('adminPass').value;
