@@ -558,7 +558,7 @@ body.modal-open{overflow:hidden}
     </div>
     <nav id="mainNav">
       <button data-page="inicio" onclick="showPage('inicio')">🏠 Inicio</button>
-      <button data-page="pronosticos" onclick="showPage('pronosticos')">🎯 Pronósticos</button>
+      <button data-page="pronosticos" onclick="currentUser?.desactivado?toast('🚫 Tu cuenta está inactiva esta semana'):showPage('pronosticos')">🎯 Pronósticos</button>
       <button data-page="ranking" onclick="showPage('ranking')">🏆 Ranking</button>
       <button data-page="participantes" onclick="showPage('participantes')">👥 Participantes</button>
       <button data-page="premios" onclick="showPage('premios')">🎁 Premios</button>
@@ -601,7 +601,7 @@ body.modal-open{overflow:hidden}
     <button data-page="inicio" onclick="showPage('inicio')">
       <span class="bnav-icon">🏠</span><span>Inicio</span>
     </button>
-    <button data-page="pronosticos" onclick="showPage('pronosticos')">
+    <button data-page="pronosticos" onclick="currentUser?.desactivado?toast('🚫 Tu cuenta está inactiva esta semana'):showPage('pronosticos')">
       <span class="bnav-icon">🎯</span><span>Pronós.</span>
     </button>
     <button data-page="ranking" onclick="showPage('ranking')">
@@ -993,7 +993,7 @@ body.modal-open{overflow:hidden}
     <div class="card" style="margin-bottom:0">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div class="card-title" style="margin-bottom:0">🎯 Próximos</div>
-        <button class="btn btn-verde btn-sm" onclick="showPage('pronosticos')" style="font-size:11px">Pronosticar →</button>
+        <button class="btn btn-verde btn-sm" onclick="currentUser?.desactivado?toast('🚫 Tu cuenta está inactiva esta semana'):showPage('pronosticos')" style="font-size:11px">Pronosticar →</button>
       </div>
       <div id="dashProximos"></div>
     </div>
@@ -1452,12 +1452,9 @@ function completarLogin(p){
   document.getElementById('userBadgeText').textContent=p.nombre;
   document.getElementById('userRolBadge').style.display='none';
   document.querySelectorAll('.admin-only').forEach(b=>b.style.display='none');
+  document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='');
   if(p.desactivado){
-    // Usuario inactivo: ocultar pronósticos, mostrar aviso
-    document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='none');
-    toast('👁️ Cuenta inactiva — solo puedes ver resultados y ranking');
-  } else {
-    document.querySelectorAll('[data-page="pronosticos"]').forEach(b=>b.style.display='');
+    toast('👁️ Cuenta inactiva esta semana — solo puedes ver tus pronósticos anteriores');
   }
   initApp();
   iniciarMusicaPostLogin();
@@ -2494,7 +2491,8 @@ function renderPronoGrupo(g){
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px">${(()=>{
           const hab=partidoHabilitado(p.id);
           const cerrada=!!DB.semanasCerradas?.[semanaDePartido(p.id)];
-          if(!jugado&&hab){const _c=cierreDelPartido(p.id);const _ct=_c?`Cierre: ${formatFechaCierre(_c.toISOString())}`:'abierto';return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">⏰ ${_ct}</div>`;}
+          if(!jugado&&hab&&!currentUser?.desactivado){const _c=cierreDelPartido(p.id);const _ct=_c?`Cierre: ${formatFechaCierre(_c.toISOString())}`:'abierto';return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">⏰ ${_ct}</div>`;}
+          if(!jugado&&hab&&currentUser?.desactivado){if(pr.g1!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:#ff9900;font-weight:600">🚫 Cuenta inactiva</div></div>`;return`<span class="badge badge-gris">🚫 Inactivo</span>`;}
           if(!jugado&&!hab){
             if(pr.g1!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Semana cerrada':'⏸️ Semana no habilitada'}</div></div>`;
             return`<span class="badge badge-gris">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</span>`;
@@ -2524,7 +2522,8 @@ function renderPronoEliminatoria(){
             <div style="display:flex;flex-direction:column;align-items:center;gap:4px">${(()=>{
               const hab=partidoHabilitado(p.id);
               const cerrada=!!DB.semanasCerradas?.[semanaDePartido(p.id)];
-              if(!jugado&&hab)return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">✏️ Editable hasta cierre</div>`;
+              if(!jugado&&hab&&!currentUser?.desactivado)return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">✏️ Editable hasta cierre</div>`;
+              if(!jugado&&hab&&currentUser?.desactivado){if(pr.g1!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div>`;return`<span class="badge badge-gris">🚫 Inactivo</span>`;}
               if(!jugado&&!hab){
                 if(pr.g1!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px">${pr.g1}</span>-<span class="prono-score" style="font-size:15px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</div></div>`;
                 return`<span class="badge badge-gris">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</span>`;
