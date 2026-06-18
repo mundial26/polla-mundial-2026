@@ -558,7 +558,7 @@ body.modal-open{overflow:hidden}
     </div>
     <nav id="mainNav">
       <button data-page="inicio" onclick="showPage('inicio')">🏠 Inicio</button>
-      <button data-page="pronosticos" onclick="currentUser?.desactivado?toast('🚫 Tu cuenta está inactiva esta semana'):showPage('pronosticos')">🎯 Pronósticos</button>
+      <button data-page="pronosticos" onclick="showPage('pronosticos')">🎯 Pronósticos</button>
       <button data-page="ranking" onclick="showPage('ranking')">🏆 Ranking</button>
       <button data-page="participantes" onclick="showPage('participantes')">👥 Participantes</button>
       <button data-page="premios" onclick="showPage('premios')">🎁 Premios</button>
@@ -601,7 +601,7 @@ body.modal-open{overflow:hidden}
     <button data-page="inicio" onclick="showPage('inicio')">
       <span class="bnav-icon">🏠</span><span>Inicio</span>
     </button>
-    <button data-page="pronosticos" onclick="currentUser?.desactivado?toast('🚫 Tu cuenta está inactiva esta semana'):showPage('pronosticos')">
+    <button data-page="pronosticos" onclick="showPageMovil('pronosticos')">
       <span class="bnav-icon">🎯</span><span>Pronós.</span>
     </button>
     <button data-page="ranking" onclick="showPage('ranking')">
