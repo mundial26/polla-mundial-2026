@@ -993,7 +993,7 @@ body.modal-open{overflow:hidden}
     <div class="card" style="margin-bottom:0">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div class="card-title" style="margin-bottom:0">🎯 Próximos</div>
-        <button class="btn btn-verde btn-sm" onclick="showPage('pronosticos')" style="font-size:11px">Pronosticar →</button>
+        <button class="btn btn-verde btn-sm" onclick="currentUser?.desactivado?toast('🚫 Tu cuenta está inactiva esta semana'):showPage('pronosticos')" style="font-size:11px">Pronosticar →</button>
       </div>
       <div id="dashProximos"></div>
     </div>
@@ -2171,7 +2171,7 @@ function renderParticipantes(){
     const ef=p._total>0?Math.round((p._exactos+(p._diferencias||0)+p._ganadores)/p._total*100):0;
     const pct=max>0?Math.round(p._pts/max*100):0;
     const medal=i<3?medals[i]:`<span style="font-family:'Bebas Neue',cursive;font-size:15px;color:var(--texto2);line-height:1">#${i+1}</span>`;
-    return`<div class="participante-card${esYo?' pax-me':''}" style="${esYo?'border-color:var(--g);box-shadow:0 0 0 2px rgba(26,92,56,.2);':''}">
+    return`<div class="participante-card${esYo?' pax-me':''}" style="${esYo?'border-color:var(--g);box-shadow:0 0 0 2px rgba(26,92,56,.2);':''}cursor:pointer" onclick="togglePronosParticipante('${p.id}',this)">
       <!-- Posición + Avatar -->
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;width:40px">
         <div style="font-size:${i<3?'20':'15'}px;line-height:1;text-align:center">${medal}</div>
@@ -2198,6 +2198,8 @@ function renderParticipantes(){
             <div style="background:${esYo?'var(--g)':'#b5d4c2'};width:${pct}%;height:100%;border-radius:3px;transition:.4s"></div>
           </div>
         </div>
+        <!-- Pronósticos desplegables -->
+        <div id="pronos_${p.id}" style="display:none;margin-top:10px;border-top:1px solid var(--borde);padding-top:10px"></div>
       </div>
     </div>`;
   }).join('');
@@ -2206,6 +2208,65 @@ function renderParticipantes(){
 // ════════════════════════════════════════════════
 // PREMIOS
 // ════════════════════════════════════════════════
+function togglePronosParticipante(uid, card){
+  const el = document.getElementById('pronos_'+uid);
+  if(!el) return;
+  const abierto = el.style.display !== 'none';
+  // Cerrar todos los demás
+  document.querySelectorAll('[id^="pronos_"]').forEach(e=>e.style.display='none');
+  if(abierto){ el.style.display='none'; return; }
+  // Generar pronósticos de partidos cerrados
+  const ahora = new Date();
+  const pronos = DB.pronosticos[uid] || {};
+  // Solo la semana en curso: habilitada y no cerrada definitivamente
+  const semanaActual = SEMANAS_DEF.find(s => DB.semanasHabilitadas[s.id] && !DB.semanasCerradas?.[s.id]) || SEMANAS_DEF.filter(s=>DB.semanasCerradas?.[s.id]).slice(-1)[0];
+  const semanas = semanaActual ? [semanaActual] : [];
+  let rows = '';
+  semanas.forEach(sem => {
+    const partidosCerrados = sem.partidos
+      .map(pid => DB.partidos.find(p=>p.id===pid))
+      .filter(p => {
+        if(!p) return false;
+        const c = cierreDelPartido(p.id);
+        return c && ahora >= c;
+      });
+    if(!partidosCerrados.length) return;
+    rows += `<div style="font-size:10px;font-weight:700;color:var(--texto2);letter-spacing:1px;margin:8px 0 4px">${sem.label}</div>`;
+    partidosCerrados.forEach(p => {
+      const pr = pronos[p.id];
+      const jugado = p.gol1 !== null && p.gol2 !== null;
+      const tienePrno = tieneProno(pr);
+      let pts = '', rowBg = 'transparent';
+      if(jugado && tienePrno){
+        const exacto = parseInt(pr.g1)===p.gol1 && parseInt(pr.g2)===p.gol2;
+        const difR = p.gol1-p.gol2, difP = parseInt(pr.g1)-parseInt(pr.g2);
+        const diferencia = !exacto && difP===difR;
+        const correcto = !exacto && !diferencia && Math.sign(p.gol1-p.gol2)===Math.sign(difP);
+        if(exacto){pts=`<span style="color:var(--verde);font-weight:700;font-size:11px">🎯 +${DB.config.puntoExacto}</span>`;rowBg='rgba(0,255,136,.06)';}
+        else if(diferencia){pts=`<span style="color:#4a9eff;font-weight:700;font-size:11px">📏 +${DB.config.puntoDiferencia||3}</span>`;rowBg='rgba(74,158,255,.06)';}
+        else if(correcto){pts=`<span style="color:#ffd700;font-weight:700;font-size:11px">✅ +${DB.config.puntoGanador}</span>`;rowBg='rgba(255,215,0,.06)';}
+        else{pts='<span style="color:var(--rojo);font-size:11px">❌ 0</span>';}
+      }
+      const pronoStr = tienePrno
+        ? `<span style="font-family:'Bebas Neue',cursive;font-size:16px;background:#1e2530;padding:1px 7px;border-radius:4px;border:1px solid rgba(255,255,255,.15)">${pr.g1}</span>
+           <span style="color:var(--texto2);font-size:11px">-</span>
+           <span style="font-family:'Bebas Neue',cursive;font-size:16px;background:#1e2530;padding:1px 7px;border-radius:4px;border:1px solid rgba(255,255,255,.15)">${pr.g2}</span>`
+        : '<span style="font-size:11px;color:var(--rojo)">Sin pronóstico</span>';
+      rows += `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:6px;background:${rowBg};flex-wrap:wrap;gap:4px">
+        <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0">
+          <span>${bandera(p.equipo1)}</span>
+          <span style="font-size:11px;font-weight:600">${nombreCorto(p.equipo1)} vs ${nombreCorto(p.equipo2)}</span>
+          <span>${bandera(p.equipo2)}</span>
+          ${jugado?`<span style="font-size:10px;color:var(--texto2)">(${p.gol1}-${p.gol2})</span>`:''}
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">${pronoStr} ${pts}</div>
+      </div>`;
+    });
+  });
+  el.innerHTML = rows || '<div style="font-size:12px;color:var(--texto2);padding:4px">No hay partidos cerrados aún</div>';
+  el.style.display = 'block';
+}
+
 function renderPremios(){
   // Premios por jornada — basados en CATEGORIAS_PREMIOS tipo 'fecha'
   const jornadas=CATEGORIAS_PREMIOS.filter(c=>c.tipo==='fecha'||c.tipo==='acumulado');
@@ -3516,7 +3577,8 @@ function renderTodosPronosVista(partidos, semanaCerrada){
         </div>
       </div>`;
 
-    if(!semanaCerrada && !jugado){
+    const cierrePasado = cierreDelPartido(p.id) ? new Date() >= cierreDelPartido(p.id) : jugado;
+    if(!semanaCerrada && !jugado && !cierrePasado){
       html += `<div style="background:rgba(255,184,0,.08);border-radius:8px;padding:12px;text-align:center;font-size:13px;color:var(--o2);border:1px solid rgba(255,184,0,.15)">
         🔒 Los pronósticos se revelarán cuando la semana cierre o comience el partido
       </div>`;
@@ -3584,7 +3646,8 @@ function renderVistaParticipante(partidos, semanaCerrada, el){
       const pr = pronos[p.id];
       const tienePrno = tieneProno(pr);
       const jugado = p.gol1 !== null && p.gol2 !== null;
-      const revelado = semanaCerrada || jugado || isAdmin;
+      const cierrePasadoP = cierreDelPartido(p.id) ? new Date() >= cierreDelPartido(p.id) : jugado;
+      const revelado = semanaCerrada || jugado || cierrePasadoP || isAdmin;
       let puntosBadge = '', rowColor = 'background:rgba(255,255,255,.03)';
       if(jugado && tienePrno){
         const exacto = parseInt(pr.g1)===p.gol1 && parseInt(pr.g2)===p.gol2;
