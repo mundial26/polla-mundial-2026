@@ -46,12 +46,12 @@ body{font-family:var(--fb);background:var(--bg);color:var(--tx);min-height:100vh
 /* ── FONDO CAPAS FIJAS ──────────────────────────── */
 .bg-photo{position:fixed;inset:0;z-index:-5;background:url('https://pollamundialista.com/wp-content/themes/astra-child/images/fondo-estadio.jpg') center/cover no-repeat;opacity:.14}
 .bg-night{position:fixed;inset:0;z-index:-4;background:#020410}
-.bg-spotlights{position:fixed;inset:0;z-index:-3;pointer-events:none;background:radial-gradient(ellipse 40% 55% at 0% 0%,rgba(255,240,160,.05) 0%,transparent 70%),radial-gradient(ellipse 40% 55% at 100% 0%,rgba(255,240,160,.05) 0%,transparent 70%);animation:spotPulse 7s ease-in-out infinite}
+.bg-spotlights{position:fixed;inset:0;z-index:-3;pointer-events:none;background:radial-gradient(ellipse 40% 55% at 0% 0%,rgba(255,240,160,.05) 0%,transparent 70%),radial-gradient(ellipse 40% 55% at 100% 0%,rgba(255,240,160,.05) 0%,transparent 70%);animation:spotPulse 7s ease-in-out infinite;will-change:opacity}
 @keyframes spotPulse{0%,100%{opacity:.5}50%{opacity:1}}
 .bg-neon{position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 50% 30% at 50% 100%,rgba(0,200,80,.04) 0%,transparent 65%),radial-gradient(ellipse 60% 25% at 15% 5%,rgba(80,30,180,.05) 0%,transparent 60%),radial-gradient(ellipse 60% 25% at 85% 5%,rgba(80,30,180,.05) 0%,transparent 60%)}
 
 /* ── HEADER ─────────────────────────────────────── */
-header{background:rgba(3,6,16,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(0,255,136,.1)}
+header{background:rgba(3,6,16,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(0,255,136,.1);will-change:transform}
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:0 32px;max-width:1200px;margin:0 auto;height:62px;gap:16px}
 .logo{display:flex;align-items:center;gap:10px;white-space:nowrap}
 nav#mainNav{display:flex;gap:1px}
@@ -94,11 +94,11 @@ main{max-width:1200px;margin:0 auto;padding:32px 28px;position:relative;z-index:
 @media(max-width:460px){.grid-2,.grid-4{grid-template-columns:1fr}}
 
 /* ── CARD ─────────────────────────────────────────── */
-.card{background:var(--cbg);border-radius:var(--rad);border:1px solid var(--cbd);padding:24px;margin-bottom:20px;box-shadow:var(--sh-card);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.card{background:rgba(5,9,28,.88);border-radius:var(--rad);border:1px solid var(--cbd);padding:24px;margin-bottom:20px;box-shadow:var(--sh-card);contain:content}
 .card-title{font-family:var(--fu);font-size:15px;font-weight:700;color:var(--tx);margin-bottom:18px;letter-spacing:.3px;text-transform:uppercase}
 
 /* ── STATS ─────────────────────────────────────────── */
-.stat-card{background:var(--cbg);border-radius:var(--rad);border:1px solid var(--cbd);padding:22px 20px;text-align:center;backdrop-filter:blur(10px);position:relative;overflow:hidden}
+.stat-card{background:rgba(5,9,28,.88);border-radius:var(--rad);border:1px solid var(--cbd);padding:22px 20px;text-align:center;contain:content;position:relative;overflow:hidden}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent)}
 .stat-num{font-family:var(--fh);font-size:42px;color:var(--g);line-height:1;margin-top:6px;text-shadow:0 0 20px rgba(0,255,136,.4)}
 .stat-label{font-size:11px;color:var(--tx3);margin-top:6px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;font-family:var(--fu)}
@@ -161,7 +161,7 @@ tr:hover td{background:rgba(255,255,255,.03)}
 @media(max-width:640px){.rank-col-hide{display:none}}
 
 /* ── PARTIDO CARD ───────────────────────────────── */
-.partido-card{background:var(--cbg);border:1px solid var(--cbd);border-radius:var(--rad);padding:20px;margin-bottom:12px;transition:.2s;backdrop-filter:blur(8px)}
+.partido-card{background:rgba(5,9,28,.88);border:1px solid var(--cbd);border-radius:var(--rad);padding:20px;margin-bottom:12px;transition:border-color .15s,box-shadow .15s;contain:content}
 .partido-card:hover{border-color:rgba(0,255,136,.25);box-shadow:0 8px 32px rgba(0,0,0,.5)}
 .partido-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:6px}
 .partido-equipos{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px}
@@ -230,7 +230,7 @@ tr:hover td{background:rgba(255,255,255,.03)}
 .hero-pts{font-family:var(--fh);font-size:64px;color:var(--g);line-height:1;letter-spacing:-1px;text-shadow:0 0 30px rgba(0,255,136,.5),0 2px 0 rgba(0,0,0,1)}
 .hero-pts-label{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:2px;margin-top:3px;font-family:var(--fu)}
 
-.countdown-card{background:rgba(0,0,0,.65);border-radius:var(--rad);padding:28px 24px;color:#fff;text-align:center;border:1px solid rgba(0,255,136,.15);backdrop-filter:blur(12px)}
+.countdown-card{background:rgba(0,0,0,.75);border-radius:var(--rad);padding:28px 24px;color:#fff;text-align:center;border:1px solid rgba(0,255,136,.15)}
 .countdown-title{font-size:10px;text-transform:uppercase;letter-spacing:2.5px;color:rgba(255,255,255,.35);margin-bottom:16px;font-weight:700;font-family:var(--fu)}
 .countdown-digits{display:flex;justify-content:center;gap:10px;align-items:flex-end}
 .cd-block{display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -251,14 +251,14 @@ tr:hover td{background:rgba(255,255,255,.03)}
 /* ══════════════════════════════════════════════════
    PARTICIPANTES
 ══════════════════════════════════════════════════ */
-.participante-card{display:flex;align-items:center;gap:16px;background:var(--cbg);border:1px solid var(--cbd);border-radius:var(--rad);padding:20px;transition:.2s;backdrop-filter:blur(8px)}
+.participante-card{display:flex;align-items:center;gap:16px;background:rgba(5,9,28,.88);border:1px solid var(--cbd);border-radius:var(--rad);padding:20px;transition:border-color .15s,box-shadow .15s,transform .15s;contain:content}
 .participante-card:hover{border-color:rgba(0,255,136,.25);box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(-2px)}
 .participante-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 
 /* ══════════════════════════════════════════════════
    PREMIOS
 ══════════════════════════════════════════════════ */
-.premio-card{background:var(--cbg);border-radius:var(--rad);overflow:hidden;border:1px solid var(--cbd);backdrop-filter:blur(8px);transition:.2s}
+.premio-card{background:rgba(5,9,28,.88);border-radius:var(--rad);overflow:hidden;border:1px solid var(--cbd);transition:transform .15s,border-color .15s,box-shadow .15s}
 .premio-card:hover{transform:translateY(-3px);border-color:rgba(0,255,136,.25);box-shadow:0 10px 40px rgba(0,0,0,.6)}
 .premio-card-header{padding:16px 20px;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(139,47,255,.2),rgba(0,255,136,.08));border-bottom:1px solid var(--cbd)}
 .premio-card-body{padding:16px 20px}
@@ -285,7 +285,7 @@ tr:hover td{background:rgba(255,255,255,.03)}
 /* ── GANADORES SEMANA (Inicio) ───────────────────── */
 .gsem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 @media(max-width:700px){.gsem-grid{grid-template-columns:1fr}}
-.gsem-card{background:rgba(0,0,0,.55);border-radius:14px;overflow:hidden;border:1.5px solid rgba(0,255,136,.22);backdrop-filter:blur(10px);transition:.2s}
+.gsem-card{background:rgba(0,0,0,.7);border-radius:14px;overflow:hidden;border:1.5px solid rgba(0,255,136,.22);transition:border-color .15s,box-shadow .15s}
 .gsem-card:hover{border-color:rgba(0,255,136,.45);box-shadow:0 6px 28px rgba(0,255,136,.1)}
 .gsem-card.pending{border-color:rgba(255,255,255,.08);opacity:.65}
 .gsem-header{background:linear-gradient(135deg,rgba(139,47,255,.22),rgba(0,255,136,.06));padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.07)}
@@ -372,13 +372,12 @@ body.parallax-active .scroll-section{display:block}
   position:fixed;
   inset:0;
   z-index:200;
-  background:rgba(3,6,16,.98);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
+  background:rgba(3,6,16,.99);
   overflow-y:auto;
   overflow-x:hidden;
   transform:translateX(100%);
-  transition:transform .42s cubic-bezier(.4,0,.2,1);
+  transition:transform .38s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
 }
 .page.modal-page.active{transform:translateX(0)}
 body.modal-open{overflow:hidden}
@@ -386,9 +385,7 @@ body.modal-open{overflow:hidden}
 /* Header sticky dentro del modal */
 .modal-topbar{
   position:sticky;top:0;z-index:10;
-  background:rgba(3,6,16,.94);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
+  background:rgba(3,6,16,.98);
   border-bottom:1px solid rgba(0,255,136,.1);
   padding:12px 28px;
   display:flex;align-items:center;gap:16px;
@@ -1886,7 +1883,7 @@ function renderGanadores(){
       const maxPts = visibles[0]._pts;
       const empates = ganadores.filter(p=>p._pts===maxPts);
 
-      html += `<div style="background:rgba(0,0,0,.5);border-radius:12px;border:1.5px solid rgba(0,255,136,.35);overflow:hidden;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,255,136,.08)">
+      html += `<div style="background:rgba(0,0,0,.65);border-radius:12px;border:1.5px solid rgba(0,255,136,.35);overflow:hidden;box-shadow:0 4px 20px rgba(0,255,136,.08)">
         <div style="background:linear-gradient(135deg,rgba(139,47,255,.25),rgba(0,255,136,.08));padding:11px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.07)">
           <span style="font-size:18px">${cat.icono}</span>
           <span style="font-family:'Bebas Neue',cursive;font-size:14px;letter-spacing:1px;color:var(--g);line-height:1.2;flex:1;text-shadow:0 0 12px rgba(0,255,136,.3)">${cat.label}</span>
@@ -3272,16 +3269,17 @@ function renderSemanasContainer(){
   if(!DB.semanasCerradas) DB.semanasCerradas = {};
   if(!DB.semanasCierres) DB.semanasCierres = {};
 
+  // Estado de expansión persistido en memoria (no Firebase)
+  if(!window._semExpandidas) window._semExpandidas = {};
+
   el.innerHTML = SEMANAS_DEF.map(sem => {
     const cerrada = !!DB.semanasCerradas[sem.id];
     const hab = !cerrada && !!DB.semanasHabilitadas[sem.id];
     const cierreIso = DB.semanasCierres[sem.id] || '';
-    // Convertir ISO a formato datetime-local (YYYY-MM-DDTHH:MM) en hora Peru (UTC-5)
     let cierreLocal = '';
     if(cierreIso){
       try{
         const d = new Date(cierreIso);
-        // Mostrar hora Perú (UTC-5) en el input datetime-local, sin depender del TZ del navegador
         const peruMs = d.getTime() - (5 * 60 * 60 * 1000);
         const p = new Date(peruMs);
         const yyyy = p.getUTCFullYear();
@@ -3307,13 +3305,35 @@ function renderSemanasContainer(){
     const borderColor = cerrada ? 'rgba(255,68,68,.5)' : hab ? 'rgba(0,255,136,.4)' : 'var(--borde)';
     const bgColor = cerrada ? 'rgba(255,68,68,.07)' : hab ? 'rgba(0,255,136,.06)' : 'rgba(255,255,255,.03)';
 
-    return `<div style="border:2px solid ${borderColor};background:${bgColor};border-radius:10px;padding:14px 16px;margin-bottom:10px">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
-        <div style="flex:1;min-width:220px">
+    // Semanas cerradas: colapsadas por defecto; abiertas/habilitadas: siempre expandidas
+    const expandidaPorDefecto = !cerrada;
+    const expandida = cerrada ? !!window._semExpandidas[sem.id] : true;
+    const chevron = expandida ? '▲' : '▼';
+
+    return `<div style="border:2px solid ${borderColor};background:${bgColor};border-radius:10px;margin-bottom:10px;overflow:hidden">
+      <!-- HEADER siempre visible -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;cursor:${cerrada?'pointer':'default'}"
+           ${cerrada ? `onclick="toggleExpandSemana('${sem.id}')"` : ''}>
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
           <div style="font-weight:700;font-size:14px;color:${cerrada?'var(--r)':hab?'var(--g)':'var(--tx)'}">${sem.label}</div>
-          <div style="font-size:12px;color:var(--texto2);margin-top:3px">📅 ${sem.fechas} &nbsp;·&nbsp; ${countPartidos} partidos &nbsp;·&nbsp; ${jugados} con resultado &nbsp;·&nbsp; ${totalPronos} pronósticos</div>
+          <div style="font-size:12px;color:var(--texto2);white-space:nowrap">📅 ${sem.fechas}</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+            ${cerrada
+              ? '<span class="badge badge-rojo">🔒 CERRADA</span>'
+              : hab
+                ? '<span class="badge badge-verde">✅ Abierta</span>'
+                : '<span class="badge badge-gris">⏸️ Deshabilitada</span>'
+            }
+            ${jugados===countPartidos && countPartidos>0 ? '<span class="badge badge-azul">🏁 Completa</span>' : ''}
+          </div>
+          <div style="font-size:11px;color:var(--texto2);white-space:nowrap">${jugados}/${countPartidos} partidos · ${totalPronos} pronos</div>
+        </div>
+        ${cerrada ? `<span style="font-size:14px;color:var(--texto2);flex-shrink:0;padding:0 4px">${chevron}</span>` : ''}
+      </div>
+      <!-- BODY colapsable -->
+      <div id="sembody_${sem.id}" style="display:${expandida?'block':'none'}">
+        <div style="padding:0 16px 14px">
           ${(()=>{
-            // Mostrar cierres por día para esta semana
             const ahora = new Date();
             const diasVisto = new Set();
             const lineas = [];
@@ -3326,38 +3346,47 @@ function renderSemanasContainer(){
               const vencido = ahora >= cierre;
               lineas.push(`<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:${vencido?'#fde8e6':'#e0f0e7'};color:${vencido?'#c0392b':'#1a5c38'}">${vencido?'🔒':'⏰'} Partidos del día: cierre ${formatFechaCierre(isoKey)}</span>`);
             });
-            return lineas.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${lineas.join('')}</div>` : '';
+            return lineas.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px">${lineas.join('')}</div>` : '';
           })()}
-          <div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">
-            ${cerrada
-              ? '<span class="badge badge-rojo">🔒 CERRADA definitivamente</span>'
-              : hab
-                ? '<span class="badge badge-verde">✅ Abierta para pronósticos</span>'
-                : '<span class="badge badge-gris">⏸️ Deshabilitada</span>'
-            }
-            ${cierreIso && !cerrada ? `<span class="badge badge-oro">⏰ Cierre auto: ${formatFechaCierre(cierreIso)}</span>` : ''}
-            ${jugados===countPartidos && countPartidos>0 ? '<span class="badge badge-azul">🏁 Completa</span>' : ''}
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              ${cierreIso && !cerrada ? `<span class="badge badge-oro">⏰ Cierre auto: ${formatFechaCierre(cierreIso)}</span>` : ''}
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;min-width:160px">
+              ${cerrada
+                ? `<div style="font-size:12px;color:var(--rojo);font-weight:600;text-align:center;padding:4px">🔒 Cerrada definitivamente</div>`
+                : `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none">
+                    <span style="font-size:12px;font-weight:600;color:var(--texto2)">Pronósticos</span>
+                    <div onclick="toggleSemana('${sem.id}')" style="width:48px;height:26px;border-radius:13px;background:${hab?'var(--verde)':'#ccc'};position:relative;transition:.2s;cursor:pointer;flex-shrink:0">
+                      <div style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:2px;left:${hab?'24px':'2px'};transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+                    </div>
+                    <span style="font-size:13px;font-weight:700;color:${hab?'var(--verde)':'var(--texto2)'}">${hab?'ON':'OFF'}</span>
+                  </label>
+                  <button class="btn btn-rojo btn-sm" onclick="cerrarSemana('${sem.id}','${sem.label}')" style="font-size:11px;width:100%;justify-content:center">
+                    🔒 Cerrar definitivamente
+                  </button>`
+              }
+            </div>
           </div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;min-width:160px">
-          ${cerrada
-            ? `<div style="font-size:12px;color:var(--rojo);font-weight:600;text-align:center;padding:8px">🔒 Cerrada definitivamente</div>`
-            : `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none">
-                <span style="font-size:12px;font-weight:600;color:var(--texto2)">Pronósticos</span>
-                <div onclick="toggleSemana('${sem.id}')" style="width:48px;height:26px;border-radius:13px;background:${hab?'var(--verde)':'#ccc'};position:relative;transition:.2s;cursor:pointer;flex-shrink:0">
-                  <div style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:2px;left:${hab?'24px':'2px'};transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
-                </div>
-                <span style="font-size:13px;font-weight:700;color:${hab?'var(--verde)':'var(--texto2)'}">${hab?'ON':'OFF'}</span>
-              </label>
-              <button class="btn btn-rojo btn-sm" onclick="cerrarSemana('${sem.id}','${sem.label}')" style="font-size:11px;width:100%;justify-content:center">
-                🔒 Cerrar definitivamente
-              </button>`
-          }
+          <div style="border-top:1px solid var(--borde);padding-top:12px">${renderCierresPorPartido(sem, cerrada)}</div>
         </div>
       </div>
-      <div style="margin-top:12px;border-top:1px solid var(--borde);padding-top:12px">${renderCierresPorPartido(sem, cerrada)}</div>
     </div>`;
   }).join('');
+}
+
+function toggleExpandSemana(semId){
+  if(!window._semExpandidas) window._semExpandidas = {};
+  window._semExpandidas[semId] = !window._semExpandidas[semId];
+  const body = document.getElementById('sembody_'+semId);
+  if(!body) return;
+  body.style.display = window._semExpandidas[semId] ? 'block' : 'none';
+  // Actualizar chevron
+  const card = body.closest('[style*="overflow:hidden"]');
+  if(card){
+    const chev = card.querySelector('[id^="sembody_"]')?.previousElementSibling?.querySelector('span:last-child');
+    if(chev) chev.textContent = window._semExpandidas[semId] ? '▲' : '▼';
+  }
 }
 
 function renderCierresPorPartido(sem, cerrada){
