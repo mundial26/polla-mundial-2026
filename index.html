@@ -717,8 +717,12 @@ body.modal-open{overflow:hidden}
   <div class="section-title" id="pronosTitle">📋 Mis Pronósticos</div>
   <div id="progresoPronos" style="margin-bottom:16px"></div>
   <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('prono','grupos')">Grupos</button>
-    <button class="tab-btn" onclick="showTab('prono','eliminatoria')">Eliminatoria</button>
+    <button class="tab-btn active" onclick="showTab('prono','grupos')">Fase de Grupos</button>
+    <button class="tab-btn" onclick="showTab('prono','r32')">16avos</button>
+    <button class="tab-btn" onclick="showTab('prono','octavos')">Octavos</button>
+    <button class="tab-btn" onclick="showTab('prono','cuartos')">Cuartos</button>
+    <button class="tab-btn" onclick="showTab('prono','semis')">Semis</button>
+    <button class="tab-btn" onclick="showTab('prono','final')">Final</button>
     <button class="tab-btn" onclick="showTab('prono','resumen')">Mi Resumen</button>
   </div>
   <div id="prono-grupos" class="tab-content active">
@@ -728,8 +732,32 @@ body.modal-open{overflow:hidden}
       <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
     </div>
   </div>
-  <div id="prono-eliminatoria" class="tab-content">
-    <div id="pronoEliminatoriaContainer"></div>
+  <div id="prono-r32" class="tab-content">
+    <div id="pronoContainer-r32"></div>
+    <div style="margin-top:16px;text-align:right">
+      <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
+    </div>
+  </div>
+  <div id="prono-octavos" class="tab-content">
+    <div id="pronoContainer-octavos"></div>
+    <div style="margin-top:16px;text-align:right">
+      <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
+    </div>
+  </div>
+  <div id="prono-cuartos" class="tab-content">
+    <div id="pronoContainer-cuartos"></div>
+    <div style="margin-top:16px;text-align:right">
+      <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
+    </div>
+  </div>
+  <div id="prono-semis" class="tab-content">
+    <div id="pronoContainer-semis"></div>
+    <div style="margin-top:16px;text-align:right">
+      <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
+    </div>
+  </div>
+  <div id="prono-final" class="tab-content">
+    <div id="pronoContainer-final"></div>
     <div style="margin-top:16px;text-align:right">
       <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
     </div>
@@ -1623,7 +1651,7 @@ function showTab(prefix,tab){
   if(prefix==='partidos'&&tab==='grupos')renderPartidosGrupo(DB.grupoActivo);
   if(prefix==='partidos'&&tab!=='grupos')renderPartidosFase(tab);
   if(prefix==='prono'&&tab==='grupos')renderPronoGrupo(DB.pronoGrupoActivo);
-  if(prefix==='prono'&&tab==='eliminatoria')renderPronoEliminatoria();
+  if(prefix==='prono'&&['r32','octavos','cuartos','semis','final'].includes(tab))renderPronoFase(tab);
   if(prefix==='prono'&&tab==='resumen')renderResumenPronosticos();
   if(prefix==='admin-tab'&&tab==='estadisticas')renderEstadisticas();
   if(prefix==='admin-tab'&&tab==='registrar')renderListaParticipantes();
@@ -1633,7 +1661,10 @@ function showTab(prefix,tab){
 function renderPage(name){
   if(name==='inicio')renderInicio();
   if(name==='ranking')renderRanking();
-  if(name==='pronosticos'){renderPronoGrupoTabs();renderPronoGrupo(DB.pronoGrupoActivo);updateProgresoBar();}
+  if(name==='pronosticos'){renderPronoGrupoTabs();renderPronoGrupo(DB.pronoGrupoActivo);updateProgresoBar();
+    // Asegurar tab activo sea grupos al entrar
+    showTab('prono','grupos');
+  }
   if(name==='partidos'){renderGrupoTabs();renderPartidosGrupo(DB.grupoActivo);}
   if(name==='resultados')renderResultadosAdmin();
   if(name==='todos-pronos')renderTodosPronos();
@@ -2541,9 +2572,10 @@ function renderPronoGrupo(g){
     }
     return`<div class="partido-card ${cls}">
       <div class="partido-header">
-        <div style="display:flex;gap:6px;align-items:center">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           <span class="badge badge-gris">Grupo ${g}</span>
           <span style="font-size:12px;color:var(--texto2)">${p.fecha} · ${p.hora}</span>
+          ${(()=>{const _c=cierreDelPartido(p.id);return _c?`<span style="font-size:11px;color:var(--oro);font-weight:600">🔒 Cierre: ${formatFechaCierre(_c.toISOString())}</span>`:''})()}
         </div>
         ${jugado?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--texto2)">Real: <span class="prono-score" style="font-size:14px;padding:2px 7px">${p.gol1}</span>-<span class="prono-score" style="font-size:14px;padding:2px 7px">${p.gol2}</span></div>`:''}
       </div>
@@ -2566,39 +2598,63 @@ function renderPronoGrupo(g){
     </div>`;
   }).join('');
 }
-function renderPronoEliminatoria(){
+// Mapa: tab-id → fase del partido
+const PRONO_FASE_MAP={
+  'r32':'16avos','octavos':'Octavos','cuartos':'Cuartos','semis':'Semis','final':'Final'
+};
+const PRONO_FASE_LABELS={
+  'r32':'16avos de Final','octavos':'Octavos de Final','cuartos':'Cuartos de Final','semis':'Semifinal','final':'Final / 3er Puesto'
+};
+function renderPronoFase(tabId){
   const uid=currentUser?currentUser.id:null;if(!uid)return;
-  const fases=['16avos','Octavos','Cuartos','Semis','Final'];
-  const labels={'16avos':'16avos de Final','Octavos':'Octavos de Final','Cuartos':'Cuartos de Final','Semis':'Semifinal','Final':'Final / 3er Puesto'};
+  const fase=PRONO_FASE_MAP[tabId];
+  const containerId='pronoContainer-'+tabId;
+  const container=document.getElementById(containerId);
+  if(!container)return;
   const pronos=DB.pronosticos[uid]||{};
-  const bannerNote = `<div style="background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:10px 14px;font-size:12px;color:#ffd700;font-weight:600;margin-bottom:16px">⚠️ Solo se pronostica el resultado a los 90 minutos. Prórroga y penales no cuentan para el puntaje.</div>`;
-  document.getElementById('pronoEliminatoriaContainer').innerHTML=bannerNote+fases.map(fase=>{
-    const ps=DB.partidos.filter(p=>p.fase===fase);if(!ps.length)return'';
-    return`<div style="margin-bottom:22px">
-      <div style="font-family:'Bebas Neue',cursive;font-size:19px;color:var(--verde);margin-bottom:10px;padding-bottom:4px;border-bottom:2px solid var(--oro)">${labels[fase]||fase}</div>
-      ${ps.map(p=>{const pr=pronos[p.id]||{g1:'',g2:''};const jugado=p.gol1!==null&&p.gol2!==null;
-        return`<div class="partido-card">
-          <div style="font-size:12px;color:var(--texto2);margin-bottom:8px">${p.equipo1} vs ${p.equipo2} · ${p.fecha}</div>
-          <div class="partido-equipos">
-            <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo1)}</div><div class="equipo-nombre">${p.equipo1}</div></div>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:4px">${(()=>{
-              const hab=partidoHabilitado(p.id);
-              const cerrada=!!DB.semanasCerradas?.[semanaDePartido(p.id)];
-              if(!jugado&&hab&&!currentUser?.desactivado)return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">✏️ Solo resultado 90 min</div>`;
-              if(!jugado&&hab&&currentUser?.desactivado){if(pr.g1!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div>`;return`<span class="badge badge-gris">🚫 Inactivo</span>`;}
-              if(!jugado&&!hab){
-                if(pr.g1!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px">${pr.g1}</span>-<span class="prono-score" style="font-size:15px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</div></div>`;
-                return`<span class="badge badge-gris">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</span>`;
-              }
-              if(jugado&&pr.g1!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px">${pr.g1}</span>-<span class="prono-score" style="font-size:15px">${pr.g2}</span></div>`;
-              return'<span style="font-size:12px;color:var(--texto2)">Sin pronóstico</span>';
-            })()}</div>
-            <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo2)}</div><div class="equipo-nombre">${p.equipo2}</div></div>
-          </div>
-        </div>`;}).join('')}
+  const ps=DB.partidos.filter(p=>p.fase===fase);
+  const bannerNote=tabId!=='grupos'?`<div style="background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:10px 14px;font-size:12px;color:#ffd700;font-weight:600;margin-bottom:16px">⚠️ Solo se pronostica el resultado a los 90 minutos. Prórroga y penales no cuentan para el puntaje.</div>`:'';
+  if(!ps.length){container.innerHTML=bannerNote+`<div class="empty" style="padding:24px;text-align:center"><div style="font-size:32px;margin-bottom:8px">⏳</div><p style="color:var(--texto2);font-size:13px">Los equipos se definirán durante el torneo</p></div>`;return;}
+  container.innerHTML=bannerNote+ps.map(p=>{
+    const pr=pronos[p.id]||{g1:'',g2:''};
+    const jugado=p.gol1!==null&&p.gol2!==null;
+    let cls='';
+    if(jugado&&pr.g1!==''&&pr.g2!==''){
+      const exacto=parseInt(pr.g1)===p.gol1&&parseInt(pr.g2)===p.gol2;
+      const correcto=Math.sign(p.gol1-p.gol2)===Math.sign(parseInt(pr.g1)-parseInt(pr.g2));
+      cls=exacto?'resultado-correcto':correcto?'resultado-parcial':'resultado-incorrecto';
+    }
+    const hab=partidoHabilitado(p.id);
+    const cerrada=!!DB.semanasCerradas?.[semanaDePartido(p.id)];
+    const cierre=cierreDelPartido(p.id);
+    const cierreStr=cierre?formatFechaCierre(cierre.toISOString()):'';
+    return`<div class="partido-card ${cls}">
+      <div class="partido-header">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <span class="badge badge-gris">${PRONO_FASE_LABELS[tabId]||fase}</span>
+          <span style="font-size:12px;color:var(--texto2)">${p.fecha} · ${p.hora}</span>
+          ${cierreStr?`<span style="font-size:11px;color:var(--oro);font-weight:600">🔒 Cierre: ${cierreStr}</span>`:''}
+        </div>
+        ${jugado?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--texto2)">Real: <span class="prono-score" style="font-size:14px;padding:2px 7px">${p.gol1}</span>-<span class="prono-score" style="font-size:14px;padding:2px 7px">${p.gol2}</span></div>`:''}
+      </div>
+      <div class="partido-equipos">
+        <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo1)}</div><div class="equipo-nombre">${p.equipo1}</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">${(()=>{
+          if(!jugado&&hab&&!currentUser?.desactivado)return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">✏️ Solo resultado 90 min</div>`;
+          if(!jugado&&hab&&currentUser?.desactivado){if(pr.g1!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div>`;return`<span class="badge badge-gris">🚫 Inactivo</span>`;}
+          if(!jugado&&!hab){
+            if(pr.g1!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</div></div>`;
+            return`<span class="badge badge-gris">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</span>`;
+          }
+          if(jugado&&pr.g1!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px">${pr.g1}</span>-<span class="prono-score" style="font-size:15px">${pr.g2}</span></div>`;
+          return'<span style="font-size:12px;color:var(--texto2)">Sin pronóstico</span>';
+        })()}</div>
+        <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo2)}</div><div class="equipo-nombre">${p.equipo2}</div></div>
+      </div>
     </div>`;
   }).join('');
 }
+function renderPronoEliminatoria(){renderPronoFase('r32');}// legado — ya no se usa directamente
 function updateProno(input){
   const uid=currentUser?currentUser.id:null;if(!uid)return;
   const pid=input.dataset.pid;
@@ -2661,8 +2717,13 @@ function guardarPronosticos(){
   const grupoActivo = DB.pronoGrupoActivo;
   if(document.getElementById('prono-grupos')?.classList.contains('active')){
     renderPronoGrupo(grupoActivo);
-  } else if(document.getElementById('prono-eliminatoria')?.classList.contains('active')){
-    renderPronoEliminatoria();
+  } else {
+    const fasesTabs=['r32','octavos','cuartos','semis','final'];
+    for(const t of fasesTabs){
+      if(document.getElementById('prono-'+t)?.classList.contains('active')){
+        renderPronoFase(t);break;
+      }
+    }
   }
 }
 
