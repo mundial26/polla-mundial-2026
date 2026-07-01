@@ -1336,7 +1336,9 @@ function applyParsed(parsed){
 }
 
 // saveDB: guarda en Firebase (y también en localStorage como respaldo offline)
+let _lastSaveTs = 0;
 function saveDB(){
+  _lastSaveTs = Date.now();
   // Respaldo local siempre
   localStorage.setItem('polla2026v3',JSON.stringify(DB));
   // Guardar en Firebase si está disponible
@@ -1393,9 +1395,12 @@ function loadDB(){
           renderRanking();
           renderParticipantes();
           renderPremios();
-          // Re-renderizar modal abierto si hay uno
+          // Re-renderizar modal abierto solo si el cambio vino de otro cliente
+          // (si fue nuestro propio saveDB hace menos de 3s, evitar re-render que resetea el tab)
           const openModal = document.querySelector('.modal-page.active');
-          if(openModal) renderPage(openModal.id.replace('page-',''));
+          if(openModal && (Date.now() - _lastSaveTs) > 3000){
+            renderPage(openModal.id.replace('page-',''));
+          }
         }
       } else {
         // Base de datos vacía: primer uso, no hay datos todavía
@@ -1658,9 +1663,16 @@ function showTab(prefix,tab){
 function renderPage(name){
   if(name==='inicio')renderInicio();
   if(name==='ranking')renderRanking();
-  if(name==='pronosticos'){renderPronoGrupoTabs();renderPronoGrupo(DB.pronoGrupoActivo);updateProgresoBar();
-    // Asegurar tab activo sea grupos al entrar
-    showTab('prono','grupos');
+  if(name==='pronosticos'){
+    renderPronoGrupoTabs();
+    updateProgresoBar();
+    // Preservar el tab activo si ya hay uno; si no, ir a grupos
+    const tabActivo = document.querySelector('#page-pronosticos .tab-content.active');
+    const tabId = tabActivo ? tabActivo.id.replace('prono-','') : 'grupos';
+    if(tabId==='grupos') renderPronoGrupo(DB.pronoGrupoActivo);
+    else if(['r32','octavos','cuartos','semis','final'].includes(tabId)) renderPronoFase(tabId);
+    else if(tabId==='resumen') renderResumenPronosticos();
+    else showTab('prono','grupos'); // fallback primera vez
   }
   if(name==='partidos'){renderGrupoTabs();renderPartidosGrupo(DB.grupoActivo);}
   if(name==='resultados')renderResultadosAdmin();
