@@ -2567,7 +2567,8 @@ function renderPronoGrupo(g){
       const correcto=Math.sign(p.gol1-p.gol2)===Math.sign(parseInt(pr.g1)-parseInt(pr.g2));
       cls=exacto?'resultado-correcto':correcto?'resultado-parcial':'resultado-incorrecto';
     }
-    return`<div class="partido-card ${cls}">
+    const incompleto = !jugado && (pr.g1!==''||pr.g2!=='') && !(pr.g1!==''&&pr.g2!=='');
+    return`<div class="partido-card ${cls}"${incompleto?' style="outline:2px solid rgba(255,184,0,.7)"':''}>
       <div class="partido-header">
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           <span class="badge badge-gris">Grupo ${g}</span>
@@ -2581,13 +2582,15 @@ function renderPronoGrupo(g){
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px">${(()=>{
           const hab=partidoHabilitado(p.id);
           const cerrada=!!DB.semanasCerradas?.[semanaDePartido(p.id)];
-          if(!jugado&&hab&&!currentUser?.desactivado){const _c=cierreDelPartido(p.id);const _ct=_c?`Cierre: ${formatFechaCierre(_c.toISOString())}`:'abierto';return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">⏰ ${_ct}</div>`;}
+          if(!jugado&&hab&&!currentUser?.desactivado){const _c=cierreDelPartido(p.id);const _ct=_c?`Cierre: ${formatFechaCierre(_c.toISOString())}`:'abierto';return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">⏰ ${_ct}</div>${incompleto?'<div style="font-size:11px;color:#ffd700;font-weight:700;margin-top:2px">⚠️ Falta completar el marcador</div>':''}`;}
           if(!jugado&&hab&&currentUser?.desactivado){if(pr.g1!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:#ff9900;font-weight:600">🚫 Cuenta inactiva</div></div>`;return`<span class="badge badge-gris">🚫 Inactivo</span>`;}
           if(!jugado&&!hab){
-            if(pr.g1!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Semana cerrada':'⏸️ Semana no habilitada'}</div></div>`;
+            if(pr.g1!==''&&pr.g2!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Semana cerrada':'⏸️ Semana no habilitada'}</div></div>`;
+            if(incompleto)return`<span class="badge badge-oro">⚠️ Incompleto — no se contará</span>`;
             return`<span class="badge badge-gris">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</span>`;
           }
-          if(jugado&&pr.g1!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div>`;
+          if(jugado&&pr.g1!==''&&pr.g2!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div>`;
+          if(jugado&&incompleto)return'<span class="badge badge-rojo">⚠️ Incompleto — sin puntos</span>';
           return'<span style="font-size:12px;color:var(--texto2)">Sin pronóstico</span>';
         })()}</div>
         <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo2)}</div><div class="equipo-nombre">${nombreCorto(p.equipo2)}</div></div>
@@ -2615,6 +2618,7 @@ function renderPronoFase(tabId){
   container.innerHTML=bannerNote+ps.map(p=>{
     const pr=pronos[p.id]||{g1:'',g2:''};
     const jugado=p.gol1!==null&&p.gol2!==null;
+    const incompleto=!jugado&&(pr.g1!==''||pr.g2!=='')&&!(pr.g1!==''&&pr.g2!=='');
     let cls='';
     if(jugado&&pr.g1!==''&&pr.g2!==''){
       const exacto=parseInt(pr.g1)===p.gol1&&parseInt(pr.g2)===p.gol2;
@@ -2625,7 +2629,7 @@ function renderPronoFase(tabId){
     const cerrada=!!DB.semanasCerradas?.[semanaDePartido(p.id)];
     const cierre=cierreDelPartido(p.id);
     const cierreStr=cierre?formatFechaCierre(cierre.toISOString()):'';
-    return`<div class="partido-card ${cls}">
+    return`<div class="partido-card ${cls}"${incompleto?' style="outline:2px solid rgba(255,184,0,.7)"':''}>
       <div class="partido-header">
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           <span class="badge badge-gris">${PRONO_FASE_LABELS[tabId]||fase}</span>
@@ -2637,13 +2641,15 @@ function renderPronoFase(tabId){
       <div class="partido-equipos">
         <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo1)}</div><div class="equipo-nombre">${p.equipo1}</div></div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px">${(()=>{
-          if(!jugado&&hab&&!currentUser?.desactivado)return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">✏️ Solo resultado 90 min</div>`;
-          if(!jugado&&hab&&currentUser?.desactivado){if(pr.g1!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div>`;return`<span class="badge badge-gris">🚫 Inactivo</span>`;}
+          if(!jugado&&hab&&!currentUser?.desactivado)return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">✏️ Solo resultado 90 min</div>${incompleto?'<div style="font-size:11px;color:#ffd700;font-weight:700;margin-top:2px">⚠️ Falta completar el marcador</div>':''}`;
+          if(!jugado&&hab&&currentUser?.desactivado){if(pr.g1!==''&&pr.g2!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div>`;return`<span class="badge badge-gris">🚫 Inactivo</span>`;}
           if(!jugado&&!hab){
-            if(pr.g1!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</div></div>`;
+            if(pr.g1!==''&&pr.g2!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</div></div>`;
+            if(incompleto)return`<span class="badge badge-oro">⚠️ Incompleto — no se contará</span>`;
             return`<span class="badge badge-gris">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</span>`;
           }
-          if(jugado&&pr.g1!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px">${pr.g1}</span>-<span class="prono-score" style="font-size:15px">${pr.g2}</span></div>`;
+          if(jugado&&pr.g1!==''&&pr.g2!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px">${pr.g1}</span>-<span class="prono-score" style="font-size:15px">${pr.g2}</span></div>`;
+          if(jugado&&incompleto)return'<span class="badge badge-rojo">⚠️ Incompleto — sin puntos</span>';
           return'<span style="font-size:12px;color:var(--texto2)">Sin pronóstico</span>';
         })()}</div>
         <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo2)}</div><div class="equipo-nombre">${p.equipo2}</div></div>
@@ -2658,7 +2664,7 @@ function updateProno(input){
   // Guard: no permitir editar si el partido no está habilitado
   if(!partidoHabilitado(pid)){input.value='';return;}
   // Sanitizar: solo enteros entre 0 y 20
-  let val=input.value;
+  let val=input.value.trim();
   if(val!==''){
     let n=parseInt(val);
     if(isNaN(n)||n<0)n=0;
@@ -2670,6 +2676,30 @@ function updateProno(input){
   const side=input.dataset.side;
   if(!DB.pronosticos[uid][pid])DB.pronosticos[uid][pid]={g1:'',g2:''};
   DB.pronosticos[uid][pid][side]=val;
+
+  // Feedback visual inmediato: marcar la card si el pronóstico está incompleto
+  const pr=DB.pronosticos[uid][pid];
+  const ambos=pr.g1!==''&&pr.g2!=='';
+  const ninguno=pr.g1===''&&pr.g2==='';
+  // Buscar la card padre del input
+  const card=input.closest('.partido-card');
+  if(card){
+    card.style.outline = ambos||ninguno ? '' : '2px solid rgba(255,184,0,.7)';
+    // Mensaje de advertencia dentro de la card
+    let warn=card.querySelector('.prono-warn');
+    if(!ambos&&!ninguno){
+      if(!warn){
+        warn=document.createElement('div');
+        warn.className='prono-warn';
+        warn.style.cssText='font-size:11px;color:#ffd700;font-weight:700;margin-top:6px;text-align:center';
+        warn.textContent='⚠️ Falta completar el marcador';
+        card.appendChild(warn);
+      }
+    } else {
+      if(warn) warn.remove();
+    }
+  }
+
   saveDB();
 }
 function guardarPronosticos(){
@@ -2678,39 +2708,47 @@ function guardarPronosticos(){
   saveDB();
   updateProgresoBar();
 
-  // Aviso: verificar si hay partidos habilitados del mismo día sin pronóstico
+  // Clasificar partidos habilitados sin resultado aún
   const pronos = DB.pronosticos[uid]||{};
-  const ahora = new Date();
-  // Agrupar partidos habilitados por fecha de cierre (día)
-  const faltanPorDia = {};
+  const parciales = []; // tienen g1 o g2 pero no ambos
+  const vacios = [];    // no tienen ninguno
+
   DB.partidos.forEach(p=>{
     if(p.gol1!==null) return; // ya jugado
     if(!partidoHabilitado(p.id)) return;
     const pr = pronos[p.id];
-    const tienePrno = pr && pr.g1!=='' && pr.g2!=='';
-    if(!tienePrno){
-      const cierre = cierreDelPartido(p.id);
-      const diaKey = cierre ? cierre.toISOString().substring(0,10) : 'sin-cierre';
-      if(!faltanPorDia[diaKey]) faltanPorDia[diaKey]=[];
-      faltanPorDia[diaKey].push(p);
-    }
+    const tieneG1 = pr && pr.g1!=='';
+    const tieneG2 = pr && pr.g2!=='';
+    if(tieneG1&&tieneG2) return; // completo ✓
+    const label = `${p.equipo1} vs ${p.equipo2} (${p.fecha})`;
+    if(tieneG1||tieneG2) parciales.push(label);
+    else vacios.push(label);
   });
-  const diasConFaltantes = Object.keys(faltanPorDia);
-  if(diasConFaltantes.length>0){
-    const lista = diasConFaltantes.map(d=>{
-      const ps = faltanPorDia[d];
-      return `• ${ps.length} partido(s) pendiente(s) con cierre ${formatFechaCierre(new Date(d+'T23:00:00Z').toISOString())}`;
-    }).join('\n');
-    toast(`⚠️ Guardado, pero tienes pronósticos pendientes`);
-    // Mostrar alerta detallada levemente diferida para no solapar el toast
-    setTimeout(()=>{
-      alert(`✅ Pronósticos guardados.\n\n⚠️ Atención: tienes partidos habilitados sin pronosticar:\n\n${lista}\n\nRecuerda que debes pronosticar todos los partidos del día antes del cierre para obtener puntos.`);
-    }, 400);
-  } else {
-    toast('✅ Pronósticos guardados');
+
+  if(parciales.length===0&&vacios.length===0){
+    toast('✅ Pronósticos guardados correctamente');
+    return;
   }
 
-  // Re-render pantalla activa
+  // Construir mensaje detallado
+  let msg='✅ Guardado, pero hay pronósticos incompletos:\n';
+  if(parciales.length){
+    msg+=`\n⚠️ Marcador incompleto (falta un gol) — NO se contarán:\n`;
+    parciales.forEach(l=>{ msg+=`  • ${l}\n`; });
+  }
+  if(vacios.length){
+    msg+=`\n📭 Sin pronosticar:\n`;
+    vacios.forEach(l=>{ msg+=`  • ${l}\n`; });
+  }
+  msg+='\nSolo se puntúan pronósticos con ambos marcadores completos.';
+
+  toast(parciales.length
+    ? `⚠️ ${parciales.length} pronóstico(s) incompleto(s) — no se grabarán`
+    : `⚠️ Guardado con ${vacios.length} partido(s) sin pronosticar`
+  );
+  setTimeout(()=>{ alert(msg); }, 400);
+
+  // Re-render pantalla activa para que se vean los outlines
   const grupoActivo = DB.pronoGrupoActivo;
   if(document.getElementById('prono-grupos')?.classList.contains('active')){
     renderPronoGrupo(grupoActivo);
