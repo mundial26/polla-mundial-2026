@@ -46,12 +46,12 @@ body{font-family:var(--fb);background:var(--bg);color:var(--tx);min-height:100vh
 /* ── FONDO CAPAS FIJAS ──────────────────────────── */
 .bg-photo{position:fixed;inset:0;z-index:-5;background:url('https://pollamundialista.com/wp-content/themes/astra-child/images/fondo-estadio.jpg') center/cover no-repeat;opacity:.14}
 .bg-night{position:fixed;inset:0;z-index:-4;background:#020410}
-.bg-spotlights{position:fixed;inset:0;z-index:-3;pointer-events:none;background:radial-gradient(ellipse 40% 55% at 0% 0%,rgba(255,240,160,.05) 0%,transparent 70%),radial-gradient(ellipse 40% 55% at 100% 0%,rgba(255,240,160,.05) 0%,transparent 70%);animation:spotPulse 7s ease-in-out infinite;will-change:opacity}
+.bg-spotlights{position:fixed;inset:0;z-index:-3;pointer-events:none;background:radial-gradient(ellipse 40% 55% at 0% 0%,rgba(255,240,160,.05) 0%,transparent 70%),radial-gradient(ellipse 40% 55% at 100% 0%,rgba(255,240,160,.05) 0%,transparent 70%);animation:spotPulse 7s ease-in-out infinite}
 @keyframes spotPulse{0%,100%{opacity:.5}50%{opacity:1}}
 .bg-neon{position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 50% 30% at 50% 100%,rgba(0,200,80,.04) 0%,transparent 65%),radial-gradient(ellipse 60% 25% at 15% 5%,rgba(80,30,180,.05) 0%,transparent 60%),radial-gradient(ellipse 60% 25% at 85% 5%,rgba(80,30,180,.05) 0%,transparent 60%)}
 
 /* ── HEADER ─────────────────────────────────────── */
-header{background:rgba(3,6,16,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(0,255,136,.1);will-change:transform}
+header{background:rgba(3,6,16,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#fff;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(0,255,136,.1)}
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:0 32px;max-width:1200px;margin:0 auto;height:62px;gap:16px}
 .logo{display:flex;align-items:center;gap:10px;white-space:nowrap}
 nav#mainNav{display:flex;gap:1px}
@@ -94,11 +94,11 @@ main{max-width:1200px;margin:0 auto;padding:32px 28px;position:relative;z-index:
 @media(max-width:460px){.grid-2,.grid-4{grid-template-columns:1fr}}
 
 /* ── CARD ─────────────────────────────────────────── */
-.card{background:rgba(5,9,28,.88);border-radius:var(--rad);border:1px solid var(--cbd);padding:24px;margin-bottom:20px;box-shadow:var(--sh-card);contain:content}
+.card{background:var(--cbg);border-radius:var(--rad);border:1px solid var(--cbd);padding:24px;margin-bottom:20px;box-shadow:var(--sh-card);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .card-title{font-family:var(--fu);font-size:15px;font-weight:700;color:var(--tx);margin-bottom:18px;letter-spacing:.3px;text-transform:uppercase}
 
 /* ── STATS ─────────────────────────────────────────── */
-.stat-card{background:rgba(5,9,28,.88);border-radius:var(--rad);border:1px solid var(--cbd);padding:22px 20px;text-align:center;contain:content;position:relative;overflow:hidden}
+.stat-card{background:var(--cbg);border-radius:var(--rad);border:1px solid var(--cbd);padding:22px 20px;text-align:center;backdrop-filter:blur(10px);position:relative;overflow:hidden}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent)}
 .stat-num{font-family:var(--fh);font-size:42px;color:var(--g);line-height:1;margin-top:6px;text-shadow:0 0 20px rgba(0,255,136,.4)}
 .stat-label{font-size:11px;color:var(--tx3);margin-top:6px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;font-family:var(--fu)}
@@ -161,7 +161,7 @@ tr:hover td{background:rgba(255,255,255,.03)}
 @media(max-width:640px){.rank-col-hide{display:none}}
 
 /* ── PARTIDO CARD ───────────────────────────────── */
-.partido-card{background:rgba(5,9,28,.88);border:1px solid var(--cbd);border-radius:var(--rad);padding:20px;margin-bottom:12px;transition:border-color .15s,box-shadow .15s;contain:content}
+.partido-card{background:var(--cbg);border:1px solid var(--cbd);border-radius:var(--rad);padding:20px;margin-bottom:12px;transition:.2s;backdrop-filter:blur(8px)}
 .partido-card:hover{border-color:rgba(0,255,136,.25);box-shadow:0 8px 32px rgba(0,0,0,.5)}
 .partido-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:6px}
 .partido-equipos{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px}
@@ -230,7 +230,7 @@ tr:hover td{background:rgba(255,255,255,.03)}
 .hero-pts{font-family:var(--fh);font-size:64px;color:var(--g);line-height:1;letter-spacing:-1px;text-shadow:0 0 30px rgba(0,255,136,.5),0 2px 0 rgba(0,0,0,1)}
 .hero-pts-label{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:2px;margin-top:3px;font-family:var(--fu)}
 
-.countdown-card{background:rgba(0,0,0,.75);border-radius:var(--rad);padding:28px 24px;color:#fff;text-align:center;border:1px solid rgba(0,255,136,.15)}
+.countdown-card{background:rgba(0,0,0,.65);border-radius:var(--rad);padding:28px 24px;color:#fff;text-align:center;border:1px solid rgba(0,255,136,.15);backdrop-filter:blur(12px)}
 .countdown-title{font-size:10px;text-transform:uppercase;letter-spacing:2.5px;color:rgba(255,255,255,.35);margin-bottom:16px;font-weight:700;font-family:var(--fu)}
 .countdown-digits{display:flex;justify-content:center;gap:10px;align-items:flex-end}
 .cd-block{display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -251,14 +251,14 @@ tr:hover td{background:rgba(255,255,255,.03)}
 /* ══════════════════════════════════════════════════
    PARTICIPANTES
 ══════════════════════════════════════════════════ */
-.participante-card{display:flex;align-items:center;gap:16px;background:rgba(5,9,28,.88);border:1px solid var(--cbd);border-radius:var(--rad);padding:20px;transition:border-color .15s,box-shadow .15s,transform .15s;contain:content}
+.participante-card{display:flex;align-items:center;gap:16px;background:var(--cbg);border:1px solid var(--cbd);border-radius:var(--rad);padding:20px;transition:.2s;backdrop-filter:blur(8px)}
 .participante-card:hover{border-color:rgba(0,255,136,.25);box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(-2px)}
 .participante-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 
 /* ══════════════════════════════════════════════════
    PREMIOS
 ══════════════════════════════════════════════════ */
-.premio-card{background:rgba(5,9,28,.88);border-radius:var(--rad);overflow:hidden;border:1px solid var(--cbd);transition:transform .15s,border-color .15s,box-shadow .15s}
+.premio-card{background:var(--cbg);border-radius:var(--rad);overflow:hidden;border:1px solid var(--cbd);backdrop-filter:blur(8px);transition:.2s}
 .premio-card:hover{transform:translateY(-3px);border-color:rgba(0,255,136,.25);box-shadow:0 10px 40px rgba(0,0,0,.6)}
 .premio-card-header{padding:16px 20px;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(139,47,255,.2),rgba(0,255,136,.08));border-bottom:1px solid var(--cbd)}
 .premio-card-body{padding:16px 20px}
@@ -285,7 +285,7 @@ tr:hover td{background:rgba(255,255,255,.03)}
 /* ── GANADORES SEMANA (Inicio) ───────────────────── */
 .gsem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 @media(max-width:700px){.gsem-grid{grid-template-columns:1fr}}
-.gsem-card{background:rgba(0,0,0,.7);border-radius:14px;overflow:hidden;border:1.5px solid rgba(0,255,136,.22);transition:border-color .15s,box-shadow .15s}
+.gsem-card{background:rgba(0,0,0,.55);border-radius:14px;overflow:hidden;border:1.5px solid rgba(0,255,136,.22);backdrop-filter:blur(10px);transition:.2s}
 .gsem-card:hover{border-color:rgba(0,255,136,.45);box-shadow:0 6px 28px rgba(0,255,136,.1)}
 .gsem-card.pending{border-color:rgba(255,255,255,.08);opacity:.65}
 .gsem-header{background:linear-gradient(135deg,rgba(139,47,255,.22),rgba(0,255,136,.06));padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.07)}
@@ -372,12 +372,13 @@ body.parallax-active .scroll-section{display:block}
   position:fixed;
   inset:0;
   z-index:200;
-  background:rgba(3,6,16,.99);
+  background:rgba(3,6,16,.98);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
   overflow-y:auto;
   overflow-x:hidden;
   transform:translateX(100%);
-  transition:transform .38s cubic-bezier(.4,0,.2,1);
-  will-change:transform;
+  transition:transform .42s cubic-bezier(.4,0,.2,1);
 }
 .page.modal-page.active{transform:translateX(0)}
 body.modal-open{overflow:hidden}
@@ -385,7 +386,9 @@ body.modal-open{overflow:hidden}
 /* Header sticky dentro del modal */
 .modal-topbar{
   position:sticky;top:0;z-index:10;
-  background:rgba(3,6,16,.98);
+  background:rgba(3,6,16,.94);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid rgba(0,255,136,.1);
   padding:12px 28px;
   display:flex;align-items:center;gap:16px;
@@ -714,12 +717,8 @@ body.modal-open{overflow:hidden}
   <div class="section-title" id="pronosTitle">📋 Mis Pronósticos</div>
   <div id="progresoPronos" style="margin-bottom:16px"></div>
   <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('prono','grupos')">Fase de Grupos</button>
-    <button class="tab-btn" onclick="showTab('prono','r32')">16avos</button>
-    <button class="tab-btn" onclick="showTab('prono','octavos')">Octavos</button>
-    <button class="tab-btn" onclick="showTab('prono','cuartos')">Cuartos</button>
-    <button class="tab-btn" onclick="showTab('prono','semis')">Semis</button>
-    <button class="tab-btn" onclick="showTab('prono','final')">Final</button>
+    <button class="tab-btn active" onclick="showTab('prono','grupos')">Grupos</button>
+    <button class="tab-btn" onclick="showTab('prono','eliminatoria')">Eliminatoria</button>
     <button class="tab-btn" onclick="showTab('prono','resumen')">Mi Resumen</button>
   </div>
   <div id="prono-grupos" class="tab-content active">
@@ -729,32 +728,8 @@ body.modal-open{overflow:hidden}
       <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
     </div>
   </div>
-  <div id="prono-r32" class="tab-content">
-    <div id="pronoContainer-r32"></div>
-    <div style="margin-top:16px;text-align:right">
-      <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
-    </div>
-  </div>
-  <div id="prono-octavos" class="tab-content">
-    <div id="pronoContainer-octavos"></div>
-    <div style="margin-top:16px;text-align:right">
-      <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
-    </div>
-  </div>
-  <div id="prono-cuartos" class="tab-content">
-    <div id="pronoContainer-cuartos"></div>
-    <div style="margin-top:16px;text-align:right">
-      <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
-    </div>
-  </div>
-  <div id="prono-semis" class="tab-content">
-    <div id="pronoContainer-semis"></div>
-    <div style="margin-top:16px;text-align:right">
-      <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
-    </div>
-  </div>
-  <div id="prono-final" class="tab-content">
-    <div id="pronoContainer-final"></div>
+  <div id="prono-eliminatoria" class="tab-content">
+    <div id="pronoEliminatoriaContainer"></div>
     <div style="margin-top:16px;text-align:right">
       <button class="btn btn-verde" onclick="guardarPronosticos()">💾 Guardar Pronósticos</button>
     </div>
@@ -1248,20 +1223,14 @@ function buildPartidos(){
     {id:'R14',fase:'16avos',e1:'Australia',e2:'Egipto',f:'03 Jul',h:'13:00 PER',s:'AT&T Stadium, Dallas'},
     {id:'R10',fase:'16avos',e1:'Portugal',e2:'Croacia',f:'02 Jul',h:'18:00 PER',s:'BMO Field, Toronto'},
     {id:'R11',fase:'16avos',e1:'Argentina',e2:'Cabo Verde',f:'03 Jul',h:'17:00 PER',s:'Hard Rock Stadium, Miami'},
-    {id:'O1',fase:'Octavos',e1:'Canadá',e2:'Marruecos',f:'04 Jul',h:'12:00 PER',s:'NRG Stadium, Houston'},
-    {id:'O2',fase:'Octavos',e1:'Paraguay',e2:'Francia',f:'04 Jul',h:'16:00 PER',s:'Lincoln Financial Field, Filadelfia'},
-    {id:'O3',fase:'Octavos',e1:'Brasil',e2:'Noruega',f:'05 Jul',h:'15:00 PER',s:'MetLife Stadium, Nueva Jersey'},
-    {id:'O4',fase:'Octavos',e1:'México',e2:'Inglaterra',f:'05 Jul',h:'19:00 PER',s:'Estadio Azteca, Ciudad de México'},
-    {id:'O5',fase:'Octavos',e1:'Portugal',e2:'España',f:'06 Jul',h:'14:00 PER',s:'AT&T Stadium, Dallas'},
-    {id:'O6',fase:'Octavos',e1:'Estados Unidos',e2:'Bélgica',f:'06 Jul',h:'16:00 PER',s:'Lumen Field, Seattle'},
-    {id:'O7',fase:'Octavos',e1:'Argentina',e2:'Egipto',f:'07 Jul',h:'11:00 PER',s:'Mercedes-Benz Stadium, Atlanta'},
-    {id:'O8',fase:'Octavos',e1:'Suiza',e2:'Colombia',f:'07 Jul',h:'15:00 PER',s:'BC Place, Vancouver'},
-    {id:'QF1',fase:'Cuartos',e1:'Francia',e2:'Marruecos',f:'09 Jul',h:'15:00 PER',s:'Gillette Stadium, Boston'},
-    {id:'QF2',fase:'Cuartos',e1:'España',e2:'Bélgica',f:'10 Jul',h:'14:00 PER',s:'SoFi Stadium, Los Ángeles'},
-    {id:'QF3',fase:'Cuartos',e1:'Noruega',e2:'Inglaterra',f:'11 Jul',h:'16:00 PER',s:'Hard Rock Stadium, Miami'},
-    {id:'QF4',fase:'Cuartos',e1:'Argentina',e2:'Suiza',f:'11 Jul',h:'20:00 PER',s:'Arrowhead Stadium, Kansas City'},
-    {id:'SF1',fase:'Semis',e1:'G. QF1/QF2',e2:'G. QF1/QF2',f:'14 Jul',h:'14:00 PER',s:'AT&T Stadium, Dallas'},
-    {id:'SF2',fase:'Semis',e1:'G. QF3/QF4',e2:'G. QF3/QF4',f:'15 Jul',h:'14:00 PER',s:'Mercedes-Benz, Atlanta'},
+    {id:'O1',fase:'Octavos',e1:'G. R13/R04',e2:'G. R06/R09',f:'05 Jul',h:'Por definir',s:'Por definir'},
+    {id:'O2',fase:'Octavos',e1:'G. R03/R12',e2:'G. R02/R07',f:'05 Jul',h:'Por definir',s:'Por definir'},
+    {id:'O3',fase:'Octavos',e1:'G. R01/R16',e2:'G. R11/R15',f:'06 Jul',h:'Por definir',s:'Por definir'},
+    {id:'O4',fase:'Octavos',e1:'G. R05/R08',e2:'G. R10/R14',f:'07 Jul',h:'Por definir',s:'Por definir'},
+    {id:'QF1',fase:'Cuartos',e1:'G. O1',e2:'G. O2',f:'11 Jul',h:'Por definir',s:'Por definir'},
+    {id:'QF2',fase:'Cuartos',e1:'G. O3',e2:'G. O4',f:'12 Jul',h:'Por definir',s:'Por definir'},
+    {id:'SF1',fase:'Semis',e1:'Francia',e2:'España',f:'14 Jul',h:'14:00 PER',s:'AT&T Stadium, Dallas'},
+    {id:'SF2',fase:'Semis',e1:'Inglaterra',e2:'Argentina',f:'15 Jul',h:'14:00 PER',s:'Mercedes-Benz Stadium, Atlanta'},
     {id:'TP',fase:'Final',e1:'3er Puesto A',e2:'3er Puesto B',f:'18 Jul',h:'Por definir',s:'Hard Rock Stadium, Miami'},
     {id:'FN',fase:'Final',e1:'Finalista 1',e2:'Finalista 2',f:'19 Jul',h:'Por definir',s:'MetLife Stadium, Nueva Jersey'},
   ];
@@ -1342,9 +1311,7 @@ function applyParsed(parsed){
 }
 
 // saveDB: guarda en Firebase (y también en localStorage como respaldo offline)
-let _lastSaveTs = 0;
 function saveDB(){
-  _lastSaveTs = Date.now();
   // Respaldo local siempre
   localStorage.setItem('polla2026v3',JSON.stringify(DB));
   // Guardar en Firebase si está disponible
@@ -1401,12 +1368,9 @@ function loadDB(){
           renderRanking();
           renderParticipantes();
           renderPremios();
-          // Re-renderizar modal abierto solo si el cambio vino de otro cliente
-          // (si fue nuestro propio saveDB hace menos de 3s, evitar re-render que resetea el tab)
+          // Re-renderizar modal abierto si hay uno
           const openModal = document.querySelector('.modal-page.active');
-          if(openModal && (Date.now() - _lastSaveTs) > 3000){
-            renderPage(openModal.id.replace('page-',''));
-          }
+          if(openModal) renderPage(openModal.id.replace('page-',''));
         }
       } else {
         // Base de datos vacía: primer uso, no hay datos todavía
@@ -1659,7 +1623,7 @@ function showTab(prefix,tab){
   if(prefix==='partidos'&&tab==='grupos')renderPartidosGrupo(DB.grupoActivo);
   if(prefix==='partidos'&&tab!=='grupos')renderPartidosFase(tab);
   if(prefix==='prono'&&tab==='grupos')renderPronoGrupo(DB.pronoGrupoActivo);
-  if(prefix==='prono'&&['r32','octavos','cuartos','semis','final'].includes(tab))renderPronoFase(tab);
+  if(prefix==='prono'&&tab==='eliminatoria')renderPronoEliminatoria();
   if(prefix==='prono'&&tab==='resumen')renderResumenPronosticos();
   if(prefix==='admin-tab'&&tab==='estadisticas')renderEstadisticas();
   if(prefix==='admin-tab'&&tab==='registrar')renderListaParticipantes();
@@ -1669,17 +1633,7 @@ function showTab(prefix,tab){
 function renderPage(name){
   if(name==='inicio')renderInicio();
   if(name==='ranking')renderRanking();
-  if(name==='pronosticos'){
-    renderPronoGrupoTabs();
-    updateProgresoBar();
-    // Preservar el tab activo si ya hay uno; si no, ir a grupos
-    const tabActivo = document.querySelector('#page-pronosticos .tab-content.active');
-    const tabId = tabActivo ? tabActivo.id.replace('prono-','') : 'grupos';
-    if(tabId==='grupos') renderPronoGrupo(DB.pronoGrupoActivo);
-    else if(['r32','octavos','cuartos','semis','final'].includes(tabId)) renderPronoFase(tabId);
-    else if(tabId==='resumen') renderResumenPronosticos();
-    else showTab('prono','grupos'); // fallback primera vez
-  }
+  if(name==='pronosticos'){renderPronoGrupoTabs();renderPronoGrupo(DB.pronoGrupoActivo);updateProgresoBar();}
   if(name==='partidos'){renderGrupoTabs();renderPartidosGrupo(DB.grupoActivo);}
   if(name==='resultados')renderResultadosAdmin();
   if(name==='todos-pronos')renderTodosPronos();
@@ -1901,7 +1855,7 @@ function renderGanadores(){
       const maxPts = visibles[0]._pts;
       const empates = ganadores.filter(p=>p._pts===maxPts);
 
-      html += `<div style="background:rgba(0,0,0,.65);border-radius:12px;border:1.5px solid rgba(0,255,136,.35);overflow:hidden;box-shadow:0 4px 20px rgba(0,255,136,.08)">
+      html += `<div style="background:rgba(0,0,0,.5);border-radius:12px;border:1.5px solid rgba(0,255,136,.35);overflow:hidden;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,255,136,.08)">
         <div style="background:linear-gradient(135deg,rgba(139,47,255,.25),rgba(0,255,136,.08));padding:11px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.07)">
           <span style="font-size:18px">${cat.icono}</span>
           <span style="font-family:'Bebas Neue',cursive;font-size:14px;letter-spacing:1px;color:var(--g);line-height:1.2;flex:1;text-shadow:0 0 12px rgba(0,255,136,.3)">${cat.label}</span>
@@ -2585,13 +2539,11 @@ function renderPronoGrupo(g){
       const correcto=Math.sign(p.gol1-p.gol2)===Math.sign(parseInt(pr.g1)-parseInt(pr.g2));
       cls=exacto?'resultado-correcto':correcto?'resultado-parcial':'resultado-incorrecto';
     }
-    const incompleto = !jugado && (pr.g1!==''||pr.g2!=='') && !(pr.g1!==''&&pr.g2!=='');
-    return`<div class="partido-card ${cls}"${incompleto?' style="outline:2px solid rgba(255,184,0,.7)"':''}>
+    return`<div class="partido-card ${cls}">
       <div class="partido-header">
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <div style="display:flex;gap:6px;align-items:center">
           <span class="badge badge-gris">Grupo ${g}</span>
           <span style="font-size:12px;color:var(--texto2)">${p.fecha} · ${p.hora}</span>
-          ${(()=>{const _c=cierreDelPartido(p.id);return _c?`<span style="font-size:11px;color:var(--oro);font-weight:600">🔒 Cierre: ${formatFechaCierre(_c.toISOString())}</span>`:''})()}
         </div>
         ${jugado?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--texto2)">Real: <span class="prono-score" style="font-size:14px;padding:2px 7px">${p.gol1}</span>-<span class="prono-score" style="font-size:14px;padding:2px 7px">${p.gol2}</span></div>`:''}
       </div>
@@ -2600,15 +2552,13 @@ function renderPronoGrupo(g){
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px">${(()=>{
           const hab=partidoHabilitado(p.id);
           const cerrada=!!DB.semanasCerradas?.[semanaDePartido(p.id)];
-          if(!jugado&&hab&&!currentUser?.desactivado){const _c=cierreDelPartido(p.id);const _ct=_c?`Cierre: ${formatFechaCierre(_c.toISOString())}`:'abierto';return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">⏰ ${_ct}</div>${incompleto?'<div style="font-size:11px;color:#ffd700;font-weight:700;margin-top:2px">⚠️ Falta completar el marcador</div>':''}`;}
+          if(!jugado&&hab&&!currentUser?.desactivado){const _c=cierreDelPartido(p.id);const _ct=_c?`Cierre: ${formatFechaCierre(_c.toISOString())}`:'abierto';return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">⏰ ${_ct}</div>`;}
           if(!jugado&&hab&&currentUser?.desactivado){if(pr.g1!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:#ff9900;font-weight:600">🚫 Cuenta inactiva</div></div>`;return`<span class="badge badge-gris">🚫 Inactivo</span>`;}
           if(!jugado&&!hab){
-            if(pr.g1!==''&&pr.g2!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Semana cerrada':'⏸️ Semana no habilitada'}</div></div>`;
-            if(incompleto)return`<span class="badge badge-oro">⚠️ Incompleto — no se contará</span>`;
+            if(pr.g1!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Semana cerrada':'⏸️ Semana no habilitada'}</div></div>`;
             return`<span class="badge badge-gris">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</span>`;
           }
-          if(jugado&&pr.g1!==''&&pr.g2!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div>`;
-          if(jugado&&incompleto)return'<span class="badge badge-rojo">⚠️ Incompleto — sin puntos</span>';
+          if(jugado&&pr.g1!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div>`;
           return'<span style="font-size:12px;color:var(--texto2)">Sin pronóstico</span>';
         })()}</div>
         <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo2)}</div><div class="equipo-nombre">${nombreCorto(p.equipo2)}</div></div>
@@ -2616,73 +2566,46 @@ function renderPronoGrupo(g){
     </div>`;
   }).join('');
 }
-// Mapa: tab-id → fase del partido
-const PRONO_FASE_MAP={
-  'r32':'16avos','octavos':'Octavos','cuartos':'Cuartos','semis':'Semis','final':'Final'
-};
-const PRONO_FASE_LABELS={
-  'r32':'16avos de Final','octavos':'Octavos de Final','cuartos':'Cuartos de Final','semis':'Semifinal','final':'Final / 3er Puesto'
-};
-function renderPronoFase(tabId){
+function renderPronoEliminatoria(){
   const uid=currentUser?currentUser.id:null;if(!uid)return;
-  const fase=PRONO_FASE_MAP[tabId];
-  const containerId='pronoContainer-'+tabId;
-  const container=document.getElementById(containerId);
-  if(!container)return;
+  const fases=['16avos','Octavos','Cuartos','Semis','Final'];
+  const labels={'16avos':'16avos de Final','Octavos':'Octavos de Final','Cuartos':'Cuartos de Final','Semis':'Semifinal','Final':'Final / 3er Puesto'};
   const pronos=DB.pronosticos[uid]||{};
-  const ps=DB.partidos.filter(p=>p.fase===fase);
-  const bannerNote=tabId!=='grupos'?`<div style="background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:10px 14px;font-size:12px;color:#ffd700;font-weight:600;margin-bottom:16px">⚠️ Solo se pronostica el resultado a los 90 minutos. Prórroga y penales no cuentan para el puntaje.</div>`:'';
-  if(!ps.length){container.innerHTML=bannerNote+`<div class="empty" style="padding:24px;text-align:center"><div style="font-size:32px;margin-bottom:8px">⏳</div><p style="color:var(--texto2);font-size:13px">Los equipos se definirán durante el torneo</p></div>`;return;}
-  container.innerHTML=bannerNote+ps.map(p=>{
-    const pr=pronos[p.id]||{g1:'',g2:''};
-    const jugado=p.gol1!==null&&p.gol2!==null;
-    const incompleto=!jugado&&(pr.g1!==''||pr.g2!=='')&&!(pr.g1!==''&&pr.g2!=='');
-    let cls='';
-    if(jugado&&pr.g1!==''&&pr.g2!==''){
-      const exacto=parseInt(pr.g1)===p.gol1&&parseInt(pr.g2)===p.gol2;
-      const correcto=Math.sign(p.gol1-p.gol2)===Math.sign(parseInt(pr.g1)-parseInt(pr.g2));
-      cls=exacto?'resultado-correcto':correcto?'resultado-parcial':'resultado-incorrecto';
-    }
-    const hab=partidoHabilitado(p.id);
-    const cerrada=!!DB.semanasCerradas?.[semanaDePartido(p.id)];
-    const cierre=cierreDelPartido(p.id);
-    const cierreStr=cierre?formatFechaCierre(cierre.toISOString()):'';
-    return`<div class="partido-card ${cls}"${incompleto?' style="outline:2px solid rgba(255,184,0,.7)"':''}>
-      <div class="partido-header">
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-          <span class="badge badge-gris">${PRONO_FASE_LABELS[tabId]||fase}</span>
-          <span style="font-size:12px;color:var(--texto2)">${p.fecha} · ${p.hora}</span>
-          ${cierreStr?`<span style="font-size:11px;color:var(--oro);font-weight:600">🔒 Cierre: ${cierreStr}</span>`:''}
-        </div>
-        ${jugado?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--texto2)">Real: <span class="prono-score" style="font-size:14px;padding:2px 7px">${p.gol1}</span>-<span class="prono-score" style="font-size:14px;padding:2px 7px">${p.gol2}</span></div>`:''}
-      </div>
-      <div class="partido-equipos">
-        <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo1)}</div><div class="equipo-nombre">${p.equipo1}</div></div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">${(()=>{
-          if(!jugado&&hab&&!currentUser?.desactivado)return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">✏️ Solo resultado 90 min</div>${incompleto?'<div style="font-size:11px;color:#ffd700;font-weight:700;margin-top:2px">⚠️ Falta completar el marcador</div>':''}`;
-          if(!jugado&&hab&&currentUser?.desactivado){if(pr.g1!==''&&pr.g2!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div>`;return`<span class="badge badge-gris">🚫 Inactivo</span>`;}
-          if(!jugado&&!hab){
-            if(pr.g1!==''&&pr.g2!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</div></div>`;
-            if(incompleto)return`<span class="badge badge-oro">⚠️ Incompleto — no se contará</span>`;
-            return`<span class="badge badge-gris">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</span>`;
-          }
-          if(jugado&&pr.g1!==''&&pr.g2!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px">${pr.g1}</span>-<span class="prono-score" style="font-size:15px">${pr.g2}</span></div>`;
-          if(jugado&&incompleto)return'<span class="badge badge-rojo">⚠️ Incompleto — sin puntos</span>';
-          return'<span style="font-size:12px;color:var(--texto2)">Sin pronóstico</span>';
-        })()}</div>
-        <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo2)}</div><div class="equipo-nombre">${p.equipo2}</div></div>
-      </div>
+  const bannerNote = `<div style="background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:10px 14px;font-size:12px;color:#ffd700;font-weight:600;margin-bottom:16px">⚠️ Solo se pronostica el resultado a los 90 minutos. Prórroga y penales no cuentan para el puntaje.</div>`;
+  document.getElementById('pronoEliminatoriaContainer').innerHTML=bannerNote+fases.map(fase=>{
+    const ps=DB.partidos.filter(p=>p.fase===fase);if(!ps.length)return'';
+    return`<div style="margin-bottom:22px">
+      <div style="font-family:'Bebas Neue',cursive;font-size:19px;color:var(--verde);margin-bottom:10px;padding-bottom:4px;border-bottom:2px solid var(--oro)">${labels[fase]||fase}</div>
+      ${ps.map(p=>{const pr=pronos[p.id]||{g1:'',g2:''};const jugado=p.gol1!==null&&p.gol2!==null;
+        return`<div class="partido-card">
+          <div style="font-size:12px;color:var(--texto2);margin-bottom:8px">${p.equipo1} vs ${p.equipo2} · ${p.fecha}</div>
+          <div class="partido-equipos">
+            <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo1)}</div><div class="equipo-nombre">${p.equipo1}</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px">${(()=>{
+              const hab=partidoHabilitado(p.id);
+              const cerrada=!!DB.semanasCerradas?.[semanaDePartido(p.id)];
+              if(!jugado&&hab&&!currentUser?.desactivado)return`<div class="score-input"><input class="score-box" type="number" min="0" max="20" value="${pr.g1}" data-pid="${p.id}" data-side="g1" onchange="updateProno(this)"><span class="vs-sep">-</span><input class="score-box" type="number" min="0" max="20" value="${pr.g2}" data-pid="${p.id}" data-side="g2" onchange="updateProno(this)"></div><div style="font-size:10px;color:var(--verde);font-weight:600">✏️ Solo resultado 90 min</div>`;
+              if(!jugado&&hab&&currentUser?.desactivado){if(pr.g1!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g1}</span><span style="color:var(--texto2)">-</span><span class="prono-score" style="font-size:15px;padding:2px 8px">${pr.g2}</span></div>`;return`<span class="badge badge-gris">🚫 Inactivo</span>`;}
+              if(!jugado&&!hab){
+                if(pr.g1!=='')return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px">${pr.g1}</span>-<span class="prono-score" style="font-size:15px">${pr.g2}</span></div><div style="font-size:10px;color:var(--rojo);font-weight:600">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</div></div>`;
+                return`<span class="badge badge-gris">${cerrada?'🔒 Cerrado':'⏸️ No habilitado'}</span>`;
+              }
+              if(jugado&&pr.g1!=='')return`<div style="display:flex;align-items:center;gap:4px"><span class="prono-score" style="font-size:15px">${pr.g1}</span>-<span class="prono-score" style="font-size:15px">${pr.g2}</span></div>`;
+              return'<span style="font-size:12px;color:var(--texto2)">Sin pronóstico</span>';
+            })()}</div>
+            <div class="equipo-col"><div class="equipo-bandera">${bandera(p.equipo2)}</div><div class="equipo-nombre">${p.equipo2}</div></div>
+          </div>
+        </div>`;}).join('')}
     </div>`;
   }).join('');
 }
-function renderPronoEliminatoria(){renderPronoFase('r32');}// legado — ya no se usa directamente
 function updateProno(input){
   const uid=currentUser?currentUser.id:null;if(!uid)return;
   const pid=input.dataset.pid;
   // Guard: no permitir editar si el partido no está habilitado
   if(!partidoHabilitado(pid)){input.value='';return;}
   // Sanitizar: solo enteros entre 0 y 20
-  let val=input.value.trim();
+  let val=input.value;
   if(val!==''){
     let n=parseInt(val);
     if(isNaN(n)||n<0)n=0;
@@ -2694,30 +2617,6 @@ function updateProno(input){
   const side=input.dataset.side;
   if(!DB.pronosticos[uid][pid])DB.pronosticos[uid][pid]={g1:'',g2:''};
   DB.pronosticos[uid][pid][side]=val;
-
-  // Feedback visual inmediato: marcar la card si el pronóstico está incompleto
-  const pr=DB.pronosticos[uid][pid];
-  const ambos=pr.g1!==''&&pr.g2!=='';
-  const ninguno=pr.g1===''&&pr.g2==='';
-  // Buscar la card padre del input
-  const card=input.closest('.partido-card');
-  if(card){
-    card.style.outline = ambos||ninguno ? '' : '2px solid rgba(255,184,0,.7)';
-    // Mensaje de advertencia dentro de la card
-    let warn=card.querySelector('.prono-warn');
-    if(!ambos&&!ninguno){
-      if(!warn){
-        warn=document.createElement('div');
-        warn.className='prono-warn';
-        warn.style.cssText='font-size:11px;color:#ffd700;font-weight:700;margin-top:6px;text-align:center';
-        warn.textContent='⚠️ Falta completar el marcador';
-        card.appendChild(warn);
-      }
-    } else {
-      if(warn) warn.remove();
-    }
-  }
-
   saveDB();
 }
 function guardarPronosticos(){
@@ -2726,57 +2625,44 @@ function guardarPronosticos(){
   saveDB();
   updateProgresoBar();
 
-  // Clasificar partidos habilitados sin resultado aún
+  // Aviso: verificar si hay partidos habilitados del mismo día sin pronóstico
   const pronos = DB.pronosticos[uid]||{};
-  const parciales = []; // tienen g1 o g2 pero no ambos
-  const vacios = [];    // no tienen ninguno
-
+  const ahora = new Date();
+  // Agrupar partidos habilitados por fecha de cierre (día)
+  const faltanPorDia = {};
   DB.partidos.forEach(p=>{
     if(p.gol1!==null) return; // ya jugado
     if(!partidoHabilitado(p.id)) return;
     const pr = pronos[p.id];
-    const tieneG1 = pr && pr.g1!=='';
-    const tieneG2 = pr && pr.g2!=='';
-    if(tieneG1&&tieneG2) return; // completo ✓
-    const label = `${p.equipo1} vs ${p.equipo2} (${p.fecha})`;
-    if(tieneG1||tieneG2) parciales.push(label);
-    else vacios.push(label);
+    const tienePrno = pr && pr.g1!=='' && pr.g2!=='';
+    if(!tienePrno){
+      const cierre = cierreDelPartido(p.id);
+      const diaKey = cierre ? cierre.toISOString().substring(0,10) : 'sin-cierre';
+      if(!faltanPorDia[diaKey]) faltanPorDia[diaKey]=[];
+      faltanPorDia[diaKey].push(p);
+    }
   });
-
-  if(parciales.length===0&&vacios.length===0){
-    toast('✅ Pronósticos guardados correctamente');
-    return;
+  const diasConFaltantes = Object.keys(faltanPorDia);
+  if(diasConFaltantes.length>0){
+    const lista = diasConFaltantes.map(d=>{
+      const ps = faltanPorDia[d];
+      return `• ${ps.length} partido(s) pendiente(s) con cierre ${formatFechaCierre(new Date(d+'T23:00:00Z').toISOString())}`;
+    }).join('\n');
+    toast(`⚠️ Guardado, pero tienes pronósticos pendientes`);
+    // Mostrar alerta detallada levemente diferida para no solapar el toast
+    setTimeout(()=>{
+      alert(`✅ Pronósticos guardados.\n\n⚠️ Atención: tienes partidos habilitados sin pronosticar:\n\n${lista}\n\nRecuerda que debes pronosticar todos los partidos del día antes del cierre para obtener puntos.`);
+    }, 400);
+  } else {
+    toast('✅ Pronósticos guardados');
   }
 
-  // Construir mensaje detallado
-  let msg='✅ Guardado, pero hay pronósticos incompletos:\n';
-  if(parciales.length){
-    msg+=`\n⚠️ Marcador incompleto (falta un gol) — NO se contarán:\n`;
-    parciales.forEach(l=>{ msg+=`  • ${l}\n`; });
-  }
-  if(vacios.length){
-    msg+=`\n📭 Sin pronosticar:\n`;
-    vacios.forEach(l=>{ msg+=`  • ${l}\n`; });
-  }
-  msg+='\nSolo se puntúan pronósticos con ambos marcadores completos.';
-
-  toast(parciales.length
-    ? `⚠️ ${parciales.length} pronóstico(s) incompleto(s) — no se grabarán`
-    : `⚠️ Guardado con ${vacios.length} partido(s) sin pronosticar`
-  );
-  setTimeout(()=>{ alert(msg); }, 400);
-
-  // Re-render pantalla activa para que se vean los outlines
+  // Re-render pantalla activa
   const grupoActivo = DB.pronoGrupoActivo;
   if(document.getElementById('prono-grupos')?.classList.contains('active')){
     renderPronoGrupo(grupoActivo);
-  } else {
-    const fasesTabs=['r32','octavos','cuartos','semis','final'];
-    for(const t of fasesTabs){
-      if(document.getElementById('prono-'+t)?.classList.contains('active')){
-        renderPronoFase(t);break;
-      }
-    }
+  } else if(document.getElementById('prono-eliminatoria')?.classList.contains('active')){
+    renderPronoEliminatoria();
   }
 }
 
@@ -3188,9 +3074,9 @@ const SEMANAS_DEF = [
   {id:'S4', label:'Semana 4 — 16avos de Final', fechas:'28 Jun – 3 Jul',
    partidos:['R13','R03','R05','R06','R01','R09','R15','R02','R12','R07','R04','R08','R16','R14','R10','R11']},
   {id:'S5', label:'Semana 5 — Octavos de Final', fechas:'4 Jul – 7 Jul',
-   partidos:['O1','O2','O3','O4','O5','O6','O7','O8']},
+   partidos:['O1','O2','O3','O4']},
   {id:'S6', label:'Semana 6 — Cuartos de Final', fechas:'9 Jul – 11 Jul',
-   partidos:['QF1','QF2','QF3','QF4']},
+   partidos:['QF1','QF2']},
   {id:'S7', label:'Semana 7 — Semifinal', fechas:'14 Jul – 15 Jul',
    partidos:['SF1','SF2']},
   {id:'S8', label:'Semana 8 — Final y 3er Puesto', fechas:'18 Jul – 19 Jul',
@@ -3292,8 +3178,8 @@ const CIERRE_POR_PARTIDO = {
   'O4': '2026-07-06T23:00:00.000Z',
   'QF1': '2026-07-10T23:00:00.000Z',
   'QF2': '2026-07-11T23:00:00.000Z',
-  'SF1': '2026-07-14T23:00:00.000Z',
-  'SF2': '2026-07-15T23:00:00.000Z',
+  'SF1': '2026-07-14T19:00:00.000Z',
+  'SF2': '2026-07-15T19:00:00.000Z',
   'TP': '2026-07-17T23:00:00.000Z',
   'FN': '2026-07-17T23:00:00.000Z'
 };
@@ -3325,17 +3211,16 @@ function renderSemanasContainer(){
   if(!DB.semanasCerradas) DB.semanasCerradas = {};
   if(!DB.semanasCierres) DB.semanasCierres = {};
 
-  // Estado de expansión persistido en memoria (no Firebase)
-  if(!window._semExpandidas) window._semExpandidas = {};
-
   el.innerHTML = SEMANAS_DEF.map(sem => {
     const cerrada = !!DB.semanasCerradas[sem.id];
     const hab = !cerrada && !!DB.semanasHabilitadas[sem.id];
     const cierreIso = DB.semanasCierres[sem.id] || '';
+    // Convertir ISO a formato datetime-local (YYYY-MM-DDTHH:MM) en hora Peru (UTC-5)
     let cierreLocal = '';
     if(cierreIso){
       try{
         const d = new Date(cierreIso);
+        // Mostrar hora Perú (UTC-5) en el input datetime-local, sin depender del TZ del navegador
         const peruMs = d.getTime() - (5 * 60 * 60 * 1000);
         const p = new Date(peruMs);
         const yyyy = p.getUTCFullYear();
@@ -3361,35 +3246,13 @@ function renderSemanasContainer(){
     const borderColor = cerrada ? 'rgba(255,68,68,.5)' : hab ? 'rgba(0,255,136,.4)' : 'var(--borde)';
     const bgColor = cerrada ? 'rgba(255,68,68,.07)' : hab ? 'rgba(0,255,136,.06)' : 'rgba(255,255,255,.03)';
 
-    // Semanas cerradas: colapsadas por defecto; abiertas/habilitadas: siempre expandidas
-    const expandidaPorDefecto = !cerrada;
-    const expandida = cerrada ? !!window._semExpandidas[sem.id] : true;
-    const chevron = expandida ? '▲' : '▼';
-
-    return `<div style="border:2px solid ${borderColor};background:${bgColor};border-radius:10px;margin-bottom:10px;overflow:hidden">
-      <!-- HEADER siempre visible -->
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;cursor:${cerrada?'pointer':'default'}"
-           ${cerrada ? `onclick="toggleExpandSemana('${sem.id}')"` : ''}>
-        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+    return `<div style="border:2px solid ${borderColor};background:${bgColor};border-radius:10px;padding:14px 16px;margin-bottom:10px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px">
           <div style="font-weight:700;font-size:14px;color:${cerrada?'var(--r)':hab?'var(--g)':'var(--tx)'}">${sem.label}</div>
-          <div style="font-size:12px;color:var(--texto2);white-space:nowrap">📅 ${sem.fechas}</div>
-          <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
-            ${cerrada
-              ? '<span class="badge badge-rojo">🔒 CERRADA</span>'
-              : hab
-                ? '<span class="badge badge-verde">✅ Abierta</span>'
-                : '<span class="badge badge-gris">⏸️ Deshabilitada</span>'
-            }
-            ${jugados===countPartidos && countPartidos>0 ? '<span class="badge badge-azul">🏁 Completa</span>' : ''}
-          </div>
-          <div style="font-size:11px;color:var(--texto2);white-space:nowrap">${jugados}/${countPartidos} partidos · ${totalPronos} pronos</div>
-        </div>
-        ${cerrada ? `<span style="font-size:14px;color:var(--texto2);flex-shrink:0;padding:0 4px">${chevron}</span>` : ''}
-      </div>
-      <!-- BODY colapsable -->
-      <div id="sembody_${sem.id}" style="display:${expandida?'block':'none'}">
-        <div style="padding:0 16px 14px">
+          <div style="font-size:12px;color:var(--texto2);margin-top:3px">📅 ${sem.fechas} &nbsp;·&nbsp; ${countPartidos} partidos &nbsp;·&nbsp; ${jugados} con resultado &nbsp;·&nbsp; ${totalPronos} pronósticos</div>
           ${(()=>{
+            // Mostrar cierres por día para esta semana
             const ahora = new Date();
             const diasVisto = new Set();
             const lineas = [];
@@ -3402,47 +3265,38 @@ function renderSemanasContainer(){
               const vencido = ahora >= cierre;
               lineas.push(`<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:${vencido?'#fde8e6':'#e0f0e7'};color:${vencido?'#c0392b':'#1a5c38'}">${vencido?'🔒':'⏰'} Partidos del día: cierre ${formatFechaCierre(isoKey)}</span>`);
             });
-            return lineas.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px">${lineas.join('')}</div>` : '';
+            return lineas.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${lineas.join('')}</div>` : '';
           })()}
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              ${cierreIso && !cerrada ? `<span class="badge badge-oro">⏰ Cierre auto: ${formatFechaCierre(cierreIso)}</span>` : ''}
-            </div>
-            <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;min-width:160px">
-              ${cerrada
-                ? `<div style="font-size:12px;color:var(--rojo);font-weight:600;text-align:center;padding:4px">🔒 Cerrada definitivamente</div>`
-                : `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none">
-                    <span style="font-size:12px;font-weight:600;color:var(--texto2)">Pronósticos</span>
-                    <div onclick="toggleSemana('${sem.id}')" style="width:48px;height:26px;border-radius:13px;background:${hab?'var(--verde)':'#ccc'};position:relative;transition:.2s;cursor:pointer;flex-shrink:0">
-                      <div style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:2px;left:${hab?'24px':'2px'};transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
-                    </div>
-                    <span style="font-size:13px;font-weight:700;color:${hab?'var(--verde)':'var(--texto2)'}">${hab?'ON':'OFF'}</span>
-                  </label>
-                  <button class="btn btn-rojo btn-sm" onclick="cerrarSemana('${sem.id}','${sem.label}')" style="font-size:11px;width:100%;justify-content:center">
-                    🔒 Cerrar definitivamente
-                  </button>`
-              }
-            </div>
+          <div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">
+            ${cerrada
+              ? '<span class="badge badge-rojo">🔒 CERRADA definitivamente</span>'
+              : hab
+                ? '<span class="badge badge-verde">✅ Abierta para pronósticos</span>'
+                : '<span class="badge badge-gris">⏸️ Deshabilitada</span>'
+            }
+            ${cierreIso && !cerrada ? `<span class="badge badge-oro">⏰ Cierre auto: ${formatFechaCierre(cierreIso)}</span>` : ''}
+            ${jugados===countPartidos && countPartidos>0 ? '<span class="badge badge-azul">🏁 Completa</span>' : ''}
           </div>
-          <div style="border-top:1px solid var(--borde);padding-top:12px">${renderCierresPorPartido(sem, cerrada)}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;min-width:160px">
+          ${cerrada
+            ? `<div style="font-size:12px;color:var(--rojo);font-weight:600;text-align:center;padding:8px">🔒 Cerrada definitivamente</div>`
+            : `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none">
+                <span style="font-size:12px;font-weight:600;color:var(--texto2)">Pronósticos</span>
+                <div onclick="toggleSemana('${sem.id}')" style="width:48px;height:26px;border-radius:13px;background:${hab?'var(--verde)':'#ccc'};position:relative;transition:.2s;cursor:pointer;flex-shrink:0">
+                  <div style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:2px;left:${hab?'24px':'2px'};transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+                </div>
+                <span style="font-size:13px;font-weight:700;color:${hab?'var(--verde)':'var(--texto2)'}">${hab?'ON':'OFF'}</span>
+              </label>
+              <button class="btn btn-rojo btn-sm" onclick="cerrarSemana('${sem.id}','${sem.label}')" style="font-size:11px;width:100%;justify-content:center">
+                🔒 Cerrar definitivamente
+              </button>`
+          }
         </div>
       </div>
+      <div style="margin-top:12px;border-top:1px solid var(--borde);padding-top:12px">${renderCierresPorPartido(sem, cerrada)}</div>
     </div>`;
   }).join('');
-}
-
-function toggleExpandSemana(semId){
-  if(!window._semExpandidas) window._semExpandidas = {};
-  window._semExpandidas[semId] = !window._semExpandidas[semId];
-  const body = document.getElementById('sembody_'+semId);
-  if(!body) return;
-  body.style.display = window._semExpandidas[semId] ? 'block' : 'none';
-  // Actualizar chevron
-  const card = body.closest('[style*="overflow:hidden"]');
-  if(card){
-    const chev = card.querySelector('[id^="sembody_"]')?.previousElementSibling?.querySelector('span:last-child');
-    if(chev) chev.textContent = window._semExpandidas[semId] ? '▲' : '▼';
-  }
 }
 
 function renderCierresPorPartido(sem, cerrada){
