@@ -1293,8 +1293,8 @@ function applyParsed(parsed){
       if(idx>=0){
         DB.partidos[idx].gol1 = (saved.gol1 !== undefined && saved.gol1 !== -1) ? saved.gol1 : null;
         DB.partidos[idx].gol2 = (saved.gol2 !== undefined && saved.gol2 !== -1) ? saved.gol2 : null;
-        // Restaurar nombres de equipo solo si vienen definidos, no vacíos y no son placeholders viejos
-        const esValido = v => v !== undefined && v !== null && v.trim() !== '' && !v.startsWith('G.');
+        // Restaurar nombres de equipo solo si vienen definidos, son texto real y no son placeholders/índices viejos
+        const esValido = v => typeof v === 'string' && v.trim() !== '' && !v.startsWith('G.') && !/^\d+$/.test(v.trim());
         if(esValido(saved.equipo1)) DB.partidos[idx].equipo1 = saved.equipo1;
         if(esValido(saved.equipo2)) DB.partidos[idx].equipo2 = saved.equipo2;
       }
